@@ -73,21 +73,6 @@ namespace CopyRecipeBookMVC.Infrastructure.Migrations
                     b.ToTable("Ingredients");
                 });
 
-            modelBuilder.Entity("CopyRecipeBookMVC.Domain.Model.IngredientUnit", b =>
-                {
-                    b.Property<int>("UnitId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IngredientId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UnitId", "IngredientId");
-
-                    b.HasIndex("IngredientId");
-
-                    b.ToTable("IngredientUnit");
-                });
-
             modelBuilder.Entity("CopyRecipeBookMVC.Domain.Model.Recipe", b =>
                 {
                     b.Property<int>("Id")
@@ -132,12 +117,17 @@ namespace CopyRecipeBookMVC.Infrastructure.Migrations
                     b.Property<int>("IngredientId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Quantity")
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(3,1)");
+
+                    b.Property<int>("UnitId")
                         .HasColumnType("int");
 
                     b.HasKey("RecipeId", "IngredientId");
 
                     b.HasIndex("IngredientId");
+
+                    b.HasIndex("UnitId");
 
                     b.ToTable("RecipeIngredient");
                 });
@@ -381,25 +371,6 @@ namespace CopyRecipeBookMVC.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("CopyRecipeBookMVC.Domain.Model.IngredientUnit", b =>
-                {
-                    b.HasOne("CopyRecipeBookMVC.Domain.Model.Ingredient", "Ingredient")
-                        .WithMany("IngredientUnits")
-                        .HasForeignKey("IngredientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CopyRecipeBookMVC.Domain.Model.Unit", "Unit")
-                        .WithMany("IngredientUnit")
-                        .HasForeignKey("UnitId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Ingredient");
-
-                    b.Navigation("Unit");
-                });
-
             modelBuilder.Entity("CopyRecipeBookMVC.Domain.Model.Recipe", b =>
                 {
                     b.HasOne("CopyRecipeBookMVC.Domain.Model.Category", "Category")
@@ -441,9 +412,17 @@ namespace CopyRecipeBookMVC.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("CopyRecipeBookMVC.Domain.Model.Unit", "Unit")
+                        .WithMany("RecipeIngredients")
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Ingredient");
 
                     b.Navigation("Recipe");
+
+                    b.Navigation("Unit");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -509,8 +488,6 @@ namespace CopyRecipeBookMVC.Infrastructure.Migrations
 
             modelBuilder.Entity("CopyRecipeBookMVC.Domain.Model.Ingredient", b =>
                 {
-                    b.Navigation("IngredientUnits");
-
                     b.Navigation("RecipeIngredient");
                 });
 
@@ -526,7 +503,7 @@ namespace CopyRecipeBookMVC.Infrastructure.Migrations
 
             modelBuilder.Entity("CopyRecipeBookMVC.Domain.Model.Unit", b =>
                 {
-                    b.Navigation("IngredientUnit");
+                    b.Navigation("RecipeIngredients");
                 });
 #pragma warning restore 612, 618
         }

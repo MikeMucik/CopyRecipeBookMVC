@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CopyRecipeBookMVC.Infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20240812151000_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240813145551_UnitDatabase")]
+    partial class UnitDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -71,10 +71,6 @@ namespace CopyRecipeBookMVC.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Unit")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.ToTable("Ingredients");
@@ -124,12 +120,17 @@ namespace CopyRecipeBookMVC.Infrastructure.Migrations
                     b.Property<int>("IngredientId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Quantity")
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(3,1)");
+
+                    b.Property<int>("UnitId")
                         .HasColumnType("int");
 
                     b.HasKey("RecipeId", "IngredientId");
 
                     b.HasIndex("IngredientId");
+
+                    b.HasIndex("UnitId");
 
                     b.ToTable("RecipeIngredient");
                 });
@@ -152,6 +153,23 @@ namespace CopyRecipeBookMVC.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Times");
+                });
+
+            modelBuilder.Entity("CopyRecipeBookMVC.Domain.Model.Unit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Units");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -397,9 +415,17 @@ namespace CopyRecipeBookMVC.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("CopyRecipeBookMVC.Domain.Model.Unit", "Unit")
+                        .WithMany("RecipeIngredients")
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Ingredient");
 
                     b.Navigation("Recipe");
+
+                    b.Navigation("Unit");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -476,6 +502,11 @@ namespace CopyRecipeBookMVC.Infrastructure.Migrations
             modelBuilder.Entity("CopyRecipeBookMVC.Domain.Model.Time", b =>
                 {
                     b.Navigation("Recipes");
+                });
+
+            modelBuilder.Entity("CopyRecipeBookMVC.Domain.Model.Unit", b =>
+                {
+                    b.Navigation("RecipeIngredients");
                 });
 #pragma warning restore 612, 618
         }

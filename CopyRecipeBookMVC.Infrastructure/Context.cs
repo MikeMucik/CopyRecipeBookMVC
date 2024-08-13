@@ -16,8 +16,7 @@ namespace CopyRecipeBookMVC.Infrastructure
 		public DbSet<Ingredient> Ingredients { get; set; }
 		public DbSet<Recipe> Recipes { get; set; }
 		public DbSet<RecipeIngredient> RecipeIngredient { get; set; }
-		public DbSet<Time> Times { get; set; }
-		public DbSet<IngredientUnit> IngredientUnit {  get; set; }
+		public DbSet<Time> Times { get; set; }		
 		public DbSet<Unit> Units { get; set; }
         public Context(DbContextOptions options) : base(options)
         {            
@@ -30,6 +29,10 @@ namespace CopyRecipeBookMVC.Infrastructure
 				.HasKey(it => new { it.RecipeId, it.IngredientId });
 
 			builder.Entity<RecipeIngredient>()
+				.Property(ri => ri.Quantity)
+				.HasColumnType("decimal(3,1)");
+
+			builder.Entity<RecipeIngredient>()
 				.HasOne<Recipe>(r => r.Recipe)
 				.WithMany(ri => ri.RecipeIngredient)
 				.HasForeignKey(r  => r.IngredientId);
@@ -39,17 +42,9 @@ namespace CopyRecipeBookMVC.Infrastructure
 				.WithMany(ri => ri.RecipeIngredient)
 				.HasForeignKey(i => i.IngredientId);
 
-			builder.Entity<IngredientUnit>()
-				.HasKey(it =>new { it.UnitId, it.IngredientId });
-
-			builder.Entity<IngredientUnit>()
-				.HasOne<Ingredient>(i => i.Ingredient)
-				.WithMany(iu => iu.IngredientUnits)
-				.HasForeignKey(i => i.IngredientId);
-
-			builder.Entity<IngredientUnit>()
+			builder.Entity<RecipeIngredient>()
 				.HasOne<Unit>(i => i.Unit)
-				.WithMany(iu => iu.IngredientUnit)
+				.WithMany(ri => ri.RecipeIngredients)
 				.HasForeignKey(i => i.UnitId);
 		}
 	}

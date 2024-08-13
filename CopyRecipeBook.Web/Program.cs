@@ -1,6 +1,9 @@
+using CopyRecipeBookMVC.Application.Mapping;
+using CopyRecipeBookMVC.Domain.Interfaces;
 using CopyRecipeBookMVC.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using CopyRecipeBookMVC.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,8 +15,12 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
 	.AddEntityFrameworkStores<Context>();
-builder.Services.AddControllersWithViews();
 
+builder.Services.AddAplication();
+builder.Services.AddInfrastructure();
+
+builder.Services.AddControllersWithViews();
+//builder.Services.AddAutoMapper(typeof(MappingProfile));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

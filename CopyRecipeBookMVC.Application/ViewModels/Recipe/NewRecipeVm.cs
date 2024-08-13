@@ -13,10 +13,10 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 		public string Name { get; set; }
 		public int CategoryId { get; set; }
 		public int DifficultyId { get; set; }
-		public int TimeId { get; set; }
-		public int TimeAmount { get; set; }
-		public string TimeUnit { get; set; }
-		public List<IngredientForNewRecipeVm> Ingredients { get; set; }
+		public int? TimeId { get; set; }
+		public int? TimeAmount { get; set; }
+		public string? TimeUnit { get; set; }
+		public List<IngredientForNewRecipeVm> Ingredients { get; set; } = new List<IngredientForNewRecipeVm>();
 		public string Description { get; set; }
 	}
 }
