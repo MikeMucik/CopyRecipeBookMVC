@@ -18,11 +18,16 @@ namespace CopyRecipeBookMVC.Application.Services
 		private readonly IRecipeRepository _recipeRepo;
 		private readonly IIngredientRepository _ingredientRepo;
 		private readonly IMapper _mapper;
-		public RecipeService(IRecipeRepository recipeRepo,IIngredientRepository ingredientRepo, IMapper mapper)
+		private readonly IICategoryRepository _categoryRepo;
+		public RecipeService(IRecipeRepository recipeRepo, 
+			IIngredientRepository ingredientRepo,
+			IICategoryRepository categoryRepo,
+			IMapper mapper)
 		{
 			_recipeRepo = recipeRepo;
 			_ingredientRepo = ingredientRepo;
 			_mapper = mapper;
+			_categoryRepo = categoryRepo;
 		}
 		public int AddRecipe(NewRecipeVm recipe)
 		{
@@ -65,31 +70,41 @@ namespace CopyRecipeBookMVC.Application.Services
 			{
 				throw new Exception("Recipe is null");
 			}
-            var recipeVm = _mapper.Map<RecipeDetailsVm>(recipe);
+			var recipeVm = _mapper.Map<RecipeDetailsVm>(recipe);
 			return recipeVm;
 		}
 
-		public ListRecipesByCategoryVm GetRecipesByCategory(int pageSize, int pageNumber, int categoryId)
+		public ListRecipesByCategoryVm GetRecipesByCategory(int pageSize, int pageNumber, string categoryName)
 		{
 			var recipes = _recipeRepo.GetAllRecipes()
-				.Where(r => categoryId == r.Category.Id)
+				.Where(r => categoryName == r.Category.Name)
 				.ProjectTo<RecipeListForVm>(_mapper.ConfigurationProvider).ToList();
 
-            var recipesToShow = recipes
-                .Skip(pageSize * (pageNumber - 1))
-                .Take(pageSize)
-                .ToList();
-
-            var recipeList = new ListRecipesByCategoryVm()
-            {
-                RecipesByCategory = recipesToShow,
-                PageSize = pageSize,
-                CurrentPage = pageNumber,
-                CategoryId = categoryId,
-                Count = recipes.Count
-            };
-
-            return recipeList;
+			var recipesToShow = recipes
+				.Skip(pageSize * (pageNumber - 1))
+				.Take(pageSize)
+				.ToList();
+			
+			var recipeList = new ListRecipesByCategoryVm()
+			{
+				RecipesByCategory = recipesToShow,
+				PageSize = pageSize,
+				CurrentPage = pageNumber,
+				CategoryId = categoryName,
+				Count = recipes.Count,
+				Categories = _categoryRepo.GetAllCategories()	
+					.Select(c => new SelectListCategories
+						{
+							Value = c.Name,  // Zmieniono na nazwę
+							Text = c.Name
+						})
+					.ToList()
+			};
+			//if (recipes.Count == 0)
+			//{
+			//	recipeList = String.Empty;
+			//}
+			return recipeList;
 		}
 
 		public ListRecipeForListVm GetRecipesByDifficulty(int difficultyId)

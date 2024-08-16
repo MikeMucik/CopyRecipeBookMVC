@@ -11,7 +11,10 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
         public List<RecipeListForVm> RecipesByCategory { get; set; }
         public int CurrentPage { get; set; }
         public int PageSize { get; set; }
-        public int CategoryId { get; set; }
+        public string CategoryId { get; set; } //zmiana itn na string
         public int Count { get; set; }
+
+
+		public List<SelectListCategories> Categories { get; set; }
     }
 }

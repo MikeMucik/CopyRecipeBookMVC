@@ -12,7 +12,11 @@
 
 <form asp-action="ViewByCategory" asp-controller="Recipe" method="post">
 	<div class="row-md6">
-		<input type="number" asp-for="CategoryId" name="categoryId" id="categoryId" />
+		@*<label for="categoryId">Wybierz kategorię:</label>
+		<select asp-for="CategoryId" asp-items="Model.Categories">
+			<option value="">--Wybierz kategorię --<</option>
+		</select>*@
+		<input type="text" asp-for="CategoryId" name="categoryId" id="categoryId" />
 		<input type="submit" value="Wyszukaj" />
 	</div>
 

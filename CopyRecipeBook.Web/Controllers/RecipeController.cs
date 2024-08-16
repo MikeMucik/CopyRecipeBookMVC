@@ -1,6 +1,7 @@
 ﻿using CopyRecipeBookMVC.Application.Interfaces;
 using CopyRecipeBookMVC.Application.ViewModels.Recipe;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CopyRecipeBook.Web.Controllers
 {
@@ -50,12 +51,20 @@ namespace CopyRecipeBook.Web.Controllers
 		[HttpGet]
 		public IActionResult ViewByCategory ()
 		{
-			var model = _recipeService.GetRecipesByCategory(1, 1, 0);
+		//	var categories = _categoryRepo.GetAllCategories()
+		//.Select(c => new SelectListItem
+		//{
+		//	Value = c.Id.ToString(),
+		//	Text = c.Name
+		//})
+		//.ToList();
+			var model = _recipeService.GetRecipesByCategory(1, 1, "")
+				;
 			return View(model);
 		}
 
 		[HttpPost] 
-		public IActionResult ViewByCategory (int pageSize, int? pageNumber, int categoryId)
+		public IActionResult ViewByCategory (int pageSize, int? pageNumber, string categoryId)
 		{
             if (!pageNumber.HasValue)
             {
