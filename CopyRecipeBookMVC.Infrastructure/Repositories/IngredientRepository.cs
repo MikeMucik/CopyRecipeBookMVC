@@ -22,7 +22,7 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
             return ingredient.Id;
         }
 
-        public IEnumerable<Ingredient> GetAllIngredients ()
+        public IQueryable<Ingredient> GetAllIngredients ()
         {
             return _context.Ingredients;
         }
@@ -40,7 +40,7 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
             return unit.Id;
         }
 
-        public IEnumerable<Unit> GetAllUnits ()
+        public IQueryable<Unit> GetAllUnits ()
         {
             return _context.Units;
         }

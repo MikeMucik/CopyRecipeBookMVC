@@ -16,13 +16,15 @@ namespace CopyRecipeBookMVC.Application.Services
 	public class RecipeService : IRecipeService
 	{
 		private readonly IRecipeRepository _recipeRepo;
+		private readonly IIngredientRepository _ingredientRepo;
 		private readonly IMapper _mapper;
-        public RecipeService(IRecipeRepository recipeRepo, IMapper mapper)
-        {
-            _recipeRepo = recipeRepo;
+		public RecipeService(IRecipeRepository recipeRepo,IIngredientRepository ingredientRepo, IMapper mapper)
+		{
+			_recipeRepo = recipeRepo;
+			_ingredientRepo = ingredientRepo;
 			_mapper = mapper;
-        }
-        public int AddRecipe(NewRecipeVm recipe)
+		}
+		public int AddRecipe(NewRecipeVm recipe)
 		{
 			throw new NotImplementedException();
 		}
@@ -32,15 +34,25 @@ namespace CopyRecipeBookMVC.Application.Services
 			throw new NotImplementedException();
 		}
 
-		public ListRecipeForListVm GetAllRecipesForList()
+		public ListRecipeForListVm GetAllRecipesForList(int pageSize, int pageNumber, string searchString)
 		{
 			var recipes = _recipeRepo.GetAllRecipes()
-				.ProjectTo<RecipeListForVm>(_mapper.ConfigurationProvider).ToList();
+				.Where(r => r.Name.StartsWith(searchString))
+				.ProjectTo<RecipeListForVm>(_mapper.ConfigurationProvider)
+				.ToList();
+
+			var recipesToShow = recipes
+				.Skip(pageSize * (pageNumber - 1))
+				.Take(pageSize)
+				.ToList();
 
 			var recipeList = new ListRecipeForListVm()
 			{
-				Recipes = recipes,
-				Count = recipes.Count()
+				Recipes = recipesToShow,
+				PageSize = pageSize,
+				CurrentPage = pageNumber,
+				SearchString = searchString,
+				Count = recipes.Count
 			};
 
 			return recipeList;
@@ -49,29 +61,41 @@ namespace CopyRecipeBookMVC.Application.Services
 		public RecipeDetailsVm GetRecipe(int id)
 		{
 			var recipe = _recipeRepo.GetRecipeById(id);
-			var recipeVm = _mapper.Map<RecipeDetailsVm>(recipe);
+			if (recipe == null)
+			{
+				throw new Exception("Recipe is null");
+			}
+            var recipeVm = _mapper.Map<RecipeDetailsVm>(recipe);
 			return recipeVm;
 		}
 
-		public ListRecipeForListVm GetRecipesByCategory(int categoryId)
+		public ListRecipesByCategoryVm GetRecipesByCategory(int pageSize, int pageNumber, int categoryId)
 		{
 			var recipes = _recipeRepo.GetAllRecipes()
-				.Where(r =>  categoryId == r.CategoryId)
+				.Where(r => categoryId == r.Category.Id)
 				.ProjectTo<RecipeListForVm>(_mapper.ConfigurationProvider).ToList();
 
-			var recipeList = new ListRecipeForListVm()
-			{
-				Recipes = recipes,
-				Count = recipes.Count()
-			};
+            var recipesToShow = recipes
+                .Skip(pageSize * (pageNumber - 1))
+                .Take(pageSize)
+                .ToList();
 
-			return recipeList;
+            var recipeList = new ListRecipesByCategoryVm()
+            {
+                RecipesByCategory = recipesToShow,
+                PageSize = pageSize,
+                CurrentPage = pageNumber,
+                CategoryId = categoryId,
+                Count = recipes.Count
+            };
+
+            return recipeList;
 		}
 
 		public ListRecipeForListVm GetRecipesByDifficulty(int difficultyId)
 		{
 			var recipes = _recipeRepo.GetAllRecipes()
-				.Where(r => difficultyId == r.DifficultyId)
+				.Where(r => difficultyId == r.Difficulty.Id)
 				.ProjectTo<RecipeListForVm>(_mapper.ConfigurationProvider).ToList();
 
 			var recipeList = new ListRecipeForListVm()

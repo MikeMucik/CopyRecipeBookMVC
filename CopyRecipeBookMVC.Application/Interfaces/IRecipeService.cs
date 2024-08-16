@@ -12,10 +12,10 @@ namespace CopyRecipeBookMVC.Application.Interfaces
 	{
 		int AddRecipe(NewRecipeVm recipe);
 		void DeleteRecipe(int id);
-		ListRecipeForListVm GetAllRecipesForList();
+		ListRecipeForListVm GetAllRecipesForList(int pageSize, int pageNumber, string searchString);
 		RecipeDetailsVm GetRecipe(int id);
 		int UpdaterRecipe(Recipe recipe);
-		ListRecipeForListVm GetRecipesByCategory(int categoryId);
+		ListRecipesByCategoryVm GetRecipesByCategory(int pageSize, int pageNumber, int categoryId);
 		ListRecipeForListVm GetRecipesByDifficulty(int difficultyId);
 
 	}

@@ -1,0 +1,101 @@
+﻿@model CopyRecipeBookMVC.Application.ViewModels.Recipe.ListRecipesByCategoryVm
+
+@{
+	ViewData["Title"] = "ViewByCategory";
+}
+
+<h1>ViewByCategory</h1>
+
+<p>
+	<a asp-action="Create">Create New</a>
+</p>
+
+<form asp-action="ViewByCategory" asp-controller="Recipe" method="post">
+	<div class="row-md6">
+		<input type="number" asp-for="CategoryId" name="categoryId" id="categoryId" />
+		<input type="submit" value="Wyszukaj" />
+	</div>
+
+	<div class="row">
+<table class="table">
+	<thead>
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.RecipesByCategory[0].Id)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.RecipesByCategory.First().Name)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.RecipesByCategory.First().Category)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.RecipesByCategory.First().Diffculty)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.RecipesByCategory.First().Time)
+			</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model.RecipesByCategory)
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.Id)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Name)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Category)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Diffculty)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Time)
+				</td>
+				<td>
+					@Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+					@Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+					@Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+	</div>
+	<div class="row-md4">
+		<table>
+			<tr>
+				@for (int i = 1; i <= Math.Ceiling(Model.Count / (double)Model.PageSize); i++)
+				{
+					<td>
+						@if (i != Model.CurrentPage)
+						{
+							<a href="javascript:PagerClick(@i)">@i</a>
+						}
+						else
+						{
+							<span>@i</span>
+						}
+					</td>
+				}
+			</tr>
+		</table>
+		<input type="hidden" name="pageNumber" id="pageNumber" />
+		<input type="hidden" name="pageSize" id="pageSize" value="2" />
+	</div>
+</form>
+
+@section Scripts
+ {
+	<script type="text/javascript">
+		function PagerClick(index) {
+			document.getElementById("pageNumber").value = index;
+			document.forms[0].submit();
+		}
+	</script>
+}

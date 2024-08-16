@@ -41,7 +41,11 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
 				.Include(r => r.Time)
 				.Include(r => r.RecipeIngredient)
 					.ThenInclude(i => i.Ingredient)
-				.FirstOrDefault(r => r.Id == id);				;
+				.Include(r=> r.RecipeIngredient)
+					.ThenInclude(i => i.Unit)
+				.FirstOrDefault(r => r.Id == id);
+			
+				
 			if (recipe == null)
 			{
 				Console.WriteLine("Not Found");

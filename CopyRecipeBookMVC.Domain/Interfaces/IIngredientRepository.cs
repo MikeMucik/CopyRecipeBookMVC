@@ -10,10 +10,10 @@ namespace CopyRecipeBookMVC.Domain.Interfaces
 	public interface IIngredientRepository
 	{
 		int AddIngredient (Ingredient ingredient);
-		IEnumerable<Ingredient> GetAllIngredients ();
+		IQueryable<Ingredient> GetAllIngredients ();
 		Ingredient GetIngredientById (int id);
 		int AddUnit (Unit unit);
-		IEnumerable<Unit> GetAllUnits ();
+		IQueryable<Unit> GetAllUnits ();
 		Unit GetUnitById (int id);
 	}
 }

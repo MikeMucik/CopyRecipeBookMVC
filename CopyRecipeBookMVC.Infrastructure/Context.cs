@@ -26,7 +26,7 @@ namespace CopyRecipeBookMVC.Infrastructure
 			base.OnModelCreating(builder);
 
 			builder.Entity<RecipeIngredient>()
-				.HasKey(it => new { it.RecipeId, it.IngredientId });
+				.HasKey(it => new { it.RecipeId, it.IngredientId, it.UnitId });
 
 			builder.Entity<RecipeIngredient>()
 				.Property(ri => ri.Quantity)
@@ -35,7 +35,7 @@ namespace CopyRecipeBookMVC.Infrastructure
 			builder.Entity<RecipeIngredient>()
 				.HasOne<Recipe>(r => r.Recipe)
 				.WithMany(ri => ri.RecipeIngredient)
-				.HasForeignKey(r  => r.IngredientId);
+				.HasForeignKey(r  => r.RecipeId);
 
 			builder.Entity<RecipeIngredient>()
 				.HasOne<Ingredient>(i => i.Ingredient)
