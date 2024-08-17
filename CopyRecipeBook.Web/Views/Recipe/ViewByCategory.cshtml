@@ -12,12 +12,11 @@
 
 <form asp-action="ViewByCategory" asp-controller="Recipe" method="post">
 	<div class="row-md6">
-		@*<label for="categoryId">Wybierz kategorię:</label>
-		<select asp-for="CategoryId" asp-items="Model.Categories">
-			<option value="">--Wybierz kategorię --<</option>
-		</select>*@
-		<input type="text" asp-for="CategoryId" name="categoryId" id="categoryId" />
-		<input type="submit" value="Wyszukaj" />
+		<label for="categoryId">Wybierz kategorię:</label>
+		<select asp-for="CategoryId" asp-items="ViewBag.Categories">
+			<option value="" Wybierz kategorię></option>
+		</select>
+		<input type="submit" value=" Wyszukaj " />
 	</div>
 
 	<div class="row">
@@ -34,7 +33,7 @@
 				@Html.DisplayNameFor(model => model.RecipesByCategory.First().Category)
 			</th>
 			<th>
-				@Html.DisplayNameFor(model => model.RecipesByCategory.First().Diffculty)
+				@Html.DisplayNameFor(model => model.RecipesByCategory.First().Difficulty)
 			</th>
 			<th>
 				@Html.DisplayNameFor(model => model.RecipesByCategory.First().Time)
@@ -56,7 +55,7 @@
 					@Html.DisplayFor(modelItem => item.Category)
 				</td>
 				<td>
-					@Html.DisplayFor(modelItem => item.Diffculty)
+					@Html.DisplayFor(modelItem => item.Difficulty)
 				</td>
 				<td>
 					@Html.DisplayFor(modelItem => item.Time)

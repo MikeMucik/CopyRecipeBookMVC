@@ -7,8 +7,8 @@ using CopyRecipeBookMVC.Domain.Model;
 
 namespace CopyRecipeBookMVC.Domain.Interfaces
 {
-	public interface IICategoryRepository
+	public interface IDifficultyRepository
 	{
-		IEnumerable<Category> GetAllCategories();
+		IEnumerable<Difficulty> GetAllDifficulties();
 	}
 }

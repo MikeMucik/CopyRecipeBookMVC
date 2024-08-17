@@ -8,16 +8,16 @@ using CopyRecipeBookMVC.Domain.Model;
 
 namespace CopyRecipeBookMVC.Infrastructure.Repositories
 {
-	public class CategoryRepository : ICategoryRepository
+	public class DifficultyRepository : IDifficultyRepository
 	{
 		private readonly Context _context;
-        public CategoryRepository(Context context)
+        public DifficultyRepository(Context context)
         {
             _context = context;
         }
-        public IEnumerable<Category> GetAllCategories()
+        public IEnumerable<Difficulty> GetAllDifficulties()
 		{
-			return _context.Categories.ToList();
+			return _context.Difficulties.ToList();
 		}
 	}
 }

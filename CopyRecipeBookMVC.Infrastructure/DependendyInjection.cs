@@ -16,7 +16,8 @@ namespace CopyRecipeBookMVC.Infrastructure
             services.AddTransient<IRecipeRepository, RecipeRepository>();
             services.AddTransient<IIngredientRepository, IngredientRepository>();
             services.AddTransient<ITimeRepositoy, TimeRepository>();
-            services.AddTransient<IICategoryRepository, CategoryRepository>();
+            services.AddTransient<ICategoryRepository, CategoryRepository>();
+            services.AddTransient<IDifficultyRepository, DifficultyRepository>();
             return services;
         }
     }

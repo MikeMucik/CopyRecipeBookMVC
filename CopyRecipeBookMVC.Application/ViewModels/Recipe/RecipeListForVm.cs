@@ -12,7 +12,7 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 	{
 		public int Id { get; set; }
 		public string Name { get; set; }
-		public string Diffculty { get; set; }
+		public string Difficulty { get; set; }
 		public string Category { get; set; }
 		public string Time { get; set; }
 
@@ -20,7 +20,7 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 		{
 			profile.CreateMap<Domain.Model.Recipe, RecipeListForVm>()
 				.ForMember(n => n.Category, opt => opt.MapFrom(s => s.Category.Name))
-				.ForMember(n => n.Diffculty, opt => opt.MapFrom(s => s.Difficulty.Name))
+				.ForMember(n => n.Difficulty, opt => opt.MapFrom(s => s.Difficulty.Name))
 				.ForMember(n => n.Time, opt => opt.MapFrom(s => s.Time.Amount + " " + s.Time.Unit));
 
 		}

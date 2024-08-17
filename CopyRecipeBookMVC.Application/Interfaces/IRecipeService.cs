@@ -15,8 +15,8 @@ namespace CopyRecipeBookMVC.Application.Interfaces
 		ListRecipeForListVm GetAllRecipesForList(int pageSize, int pageNumber, string searchString);
 		RecipeDetailsVm GetRecipe(int id);
 		int UpdaterRecipe(Recipe recipe);
-		ListRecipesByCategoryVm GetRecipesByCategory(int pageSize, int pageNumber, string categoryId);
-		ListRecipeForListVm GetRecipesByDifficulty(int difficultyId);
+		ListRecipesByCategoryVm GetRecipesByCategory(int pageSize, int pageNumber, int categoryId);
+		ListRecipesByDifficultyVm GetRecipesByDifficulty(int pageSize, int pageNumber, int difficultyId);
 
 	}
 }
