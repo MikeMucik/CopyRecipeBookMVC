@@ -19,6 +19,7 @@ namespace CopyRecipeBookMVC.Application
 			services.AddTransient<ITimeService, TimeService>();
 			services.AddTransient<ICategoryService, CategoryService>();
 			services.AddTransient<IDifficultyService, DifficultyService>();
+			services.AddTransient<IUnitService, UnitService>();
 			services.AddAutoMapper(Assembly.GetExecutingAssembly());
 			return services;
 		}

@@ -4,10 +4,10 @@
 	ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Spis przepisów</h1>
 
 <p>
-	<a asp-action="Create">Create New</a>
+	<a asp-action="AddRecipe">Stwórz nowy przepis</a>
 </p>
 
 <form asp-action="Index" asp-controller="Recipe" method="post">
@@ -59,7 +59,7 @@
 						</td>
 						<td>
 							@Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-							@Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+							@Html.ActionLink("Szczegóły przepisu", "ViewDetails", new { id=item.Id }) |
 							@Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
 						</td>
 					</tr>

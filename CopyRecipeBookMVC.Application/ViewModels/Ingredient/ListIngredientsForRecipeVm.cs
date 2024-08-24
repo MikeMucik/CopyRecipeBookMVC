@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace CopyRecipeBookMVC.Application.ViewModels.Ingredient
 {
-    internal class ListIngredientsForRecipeVm
+    public class ListIngredientsForRecipeVm
     {
+        public List<IngredientForListVm> Ingredients { get; set; }
     }
 }

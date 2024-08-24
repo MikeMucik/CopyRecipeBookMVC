@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,9 +12,13 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 	public class RecipeListForVm : IMapFrom<Domain.Model.Recipe>
 	{
 		public int Id { get; set; }
+		[DisplayName("Nazwa przepisu")]
 		public string Name { get; set; }
+		[DisplayName("Poziom trudności")]
 		public string Difficulty { get; set; }
+		[DisplayName("Kategoria")]
 		public string Category { get; set; }
+		[DisplayName("Czas przygotowania dania")]
 		public string Time { get; set; }
 
 		public void Mapping(Profile profile)

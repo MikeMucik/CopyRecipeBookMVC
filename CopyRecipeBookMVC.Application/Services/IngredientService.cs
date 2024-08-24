@@ -3,41 +3,52 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using CopyRecipeBookMVC.Application.Interfaces;
+using CopyRecipeBookMVC.Application.ViewModels.Ingredient;
+using CopyRecipeBookMVC.Domain.Interfaces;
 using CopyRecipeBookMVC.Domain.Model;
 
 namespace CopyRecipeBookMVC.Application.Services
 {
 	public class IngredientService : IIngredientService
 	{
-		public int AddIngredient(Ingredient ingredient)
-		{
-			throw new NotImplementedException();
+		private readonly IIngredientRepository _ingredientRepo;
+		private readonly IMapper _mapper;
+        public IngredientService(IIngredientRepository ingredientRepo, IMapper mapper)
+		{ 
+			_ingredientRepo = ingredientRepo;
+			_mapper = mapper;
 		}
 
-		public int AddUnit(Unit unit)
+		public void AddCompleteIngredients (RecipeIngredient recipeIngredient)
 		{
-			throw new NotImplementedException();
-		}
+			var completeIngredient = _mapper.Map<RecipeIngredient>(recipeIngredient);
+			_ingredientRepo.AddCompleteIngredients(completeIngredient);
 
-		public List<Ingredient> GetAllIngredients()
-		{
-			throw new NotImplementedException();
 		}
+        
+        public int AddIngredient(IngredientForNewRecipeVm ingredient)
+		{
+			var ingredientNew = _mapper.Map<Ingredient>(ingredient);
+			var id = _ingredientRepo.AddIngredient(ingredientNew);
+			return id;
+		}		
 
-		public List<Unit> GetAllUnits()
+		public ListIngredientsForRecipeVm GetListIngredientForList()
 		{
-			throw new NotImplementedException();
-		}
+			var ingredient = _ingredientRepo.GetAllIngredients();
+			var ingredientVms = _mapper.Map<List<IngredientForListVm>>(ingredient);
+			var ingredientList = new ListIngredientsForRecipeVm()
+			{
+				Ingredients = ingredientVms,
+			};
+			return ingredientList;
+		}	
 
 		public Ingredient GetIngredient(int id)
 		{
 			throw new NotImplementedException();
-		}
-
-		public Unit GetUnit(int id)
-		{
-			throw new NotImplementedException();
-		}
+		}		
 	}
 }

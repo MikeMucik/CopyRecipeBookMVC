@@ -3,16 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using CopyRecipeBookMVC.Application.Interfaces;
+using CopyRecipeBookMVC.Application.ViewModels.Recipe;
+using CopyRecipeBookMVC.Application.ViewModels.Time;
+using CopyRecipeBookMVC.Domain.Interfaces;
 using CopyRecipeBookMVC.Domain.Model;
 
 namespace CopyRecipeBookMVC.Application.Services
 {
 	public class TimeService : ITimeService
 	{
-		public int AddTime(Time time)
+		private readonly ITimeRepositoy _timeRepo;
+		private readonly IMapper _mapper;
+        public TimeService(ITimeRepositoy timeRepo, IMapper mapper)
+        {
+            _timeRepo = timeRepo;
+			_mapper = mapper;
+        }
+        public int AddTime(NewRecipeVm time)
 		{
-			throw new NotImplementedException();
+			var timeNew = _mapper.Map<Time>(time);
+			var id = _timeRepo.AddTime(timeNew);
+			return id;
 		}
 
 		public Time GetTime(int id)
@@ -20,9 +33,15 @@ namespace CopyRecipeBookMVC.Application.Services
 			throw new NotImplementedException();
 		}
 
-		public List<Time> GetTimeList()
+		public ListTimeForListVm GetListTimeForList()
 		{
-			throw new NotImplementedException();
+            var times = _timeRepo.GetAllTimes();
+            var timeVms = _mapper.Map < List<TimeForListVm> >(times);
+			var timeList = new ListTimeForListVm()
+			{
+				Times = timeVms
+			};
+			return timeList;            
 		}
 	}
 }

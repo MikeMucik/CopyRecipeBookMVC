@@ -22,6 +22,13 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
             return ingredient.Id;
         }
 
+        public void AddCompleteIngredients(RecipeIngredient recipeingredient)
+        {
+            _context.RecipeIngredient.Add(recipeingredient);
+            _context.SaveChanges();
+            
+        }
+
         public IQueryable<Ingredient> GetAllIngredients ()
         {
             return _context.Ingredients;

@@ -1,13 +1,13 @@
 ﻿@model CopyRecipeBookMVC.Application.ViewModels.Recipe.ListRecipesByDifficultyVm
 
 @{
-    ViewData["Title"] = "ViewByDifficulty";
+	ViewData["Title"] = "ViewByDifficulty";
 }
 
-<h1>ViewByDifficulty</h1>
+<h1>Wybór przepisu po trudności</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+	<a asp-action="AddRecipe">Stwórz nowy przepis</a>
 </p>
 
 <form asp-action="ViewByDifficulty" asp-controller="Recipe" method="post">
@@ -21,85 +21,85 @@
 
 	<div class="row">
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.RecipesByDifficulty.First().Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RecipesByDifficulty.First().Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RecipesByDifficulty.First().Category)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RecipesByDifficulty.First().Difficulty)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RecipesByDifficulty.First().Time)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.RecipesByDifficulty) 
-{
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Difficulty)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Time)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
-    </div>
-    <div class="row-md4">
-        <table>
-            <tr>
-                @for (int i = 1; i <= Math.Ceiling(Model.Count / (double)Model.PageSize); i++)
-                {
-                    <td>
-                        @if (i != Model.CurrentPage)
-                        {
-                            <a href="javascript:PagerClick(@i)">@i</a>
-                        }
-                        else
-                        {
-                            <span>@i</span>
-                        }
-                    </td>
-                }
-            </tr>
-        </table>
-        <input type="hidden" name="pageNumber" id="pageNumber" />
-        <input type="hidden" name="pageSize" id="pageSize" value="2" />
-    </div>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>
+						@Html.DisplayNameFor(model => model.RecipesByDifficulty.First().Id)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.RecipesByDifficulty.First().Name)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.RecipesByDifficulty.First().Category)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.RecipesByDifficulty.First().Difficulty)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.RecipesByDifficulty.First().Time)
+					</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in Model.RecipesByDifficulty)
+				{
+					<tr>
+						<td>
+							@Html.DisplayFor(modelItem => item.Id)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.Name)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.Category)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.Difficulty)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.Time)
+						</td>
+						<td>
+							@Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+							@Html.ActionLink("Szczegóły przepisu", "ViewDetails", new { id = item.Id }) |
+							@Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+	<div class="row-md4">
+		<table>
+			<tr>
+				@for (int i = 1; i <= Math.Ceiling(Model.Count / (double)Model.PageSize); i++)
+				{
+					<td>
+						@if (i != Model.CurrentPage)
+						{
+							<a href="javascript:PagerClick(@i)">@i</a>
+						}
+						else
+						{
+							<span>@i</span>
+						}
+					</td>
+				}
+			</tr>
+		</table>
+		<input type="hidden" name="pageNumber" id="pageNumber" />
+		<input type="hidden" name="pageSize" id="pageSize" value="2" />
+	</div>
 </form>
 
 @section Scripts
 {
-    <script type="text/javascript">
-        function PagerClick(index) {
-            document.getElementById("pageNumber").value = index;
-            document.forms[0].submit();
-        }
-    </script>
+	<script type="text/javascript">
+		function PagerClick(index) {
+			document.getElementById("pageNumber").value = index;
+			document.forms[0].submit();
+		}
+	</script>
 }
