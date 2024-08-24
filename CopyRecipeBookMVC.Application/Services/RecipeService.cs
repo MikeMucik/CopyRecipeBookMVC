@@ -63,9 +63,6 @@ namespace CopyRecipeBookMVC.Application.Services
 				};
 				_ingredientService.AddCompleteIngredients(recipeIngredient);
 			}
-
-
-
 			return recipeId;
 		}
 
@@ -94,9 +91,8 @@ namespace CopyRecipeBookMVC.Application.Services
 			}
 			else
 			{
-				var ingredientId = _ingredientService.AddIngredient(new IngredientForNewRecipeVm { NewIngredientName = ingredient.NewIngredientName });
-				ingredient.Name = ingredientId;
-				return ingredient.Name;
+				return  _ingredientService.AddIngredient(new IngredientForNewRecipeVm { NewIngredientName = ingredient.NewIngredientName });
+				//chyba tu był błąd
 			}
 		}
 

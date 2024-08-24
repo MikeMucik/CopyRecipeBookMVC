@@ -204,16 +204,23 @@
 
 				// Generowanie HTML dla nowego składnika
 				var ingredientHtml = `
-											<div class="ingredient-item" style="display: inline-block;">
-										<p><strong>Nazwa Składnika:</strong> ${finalIngredientName}</p>
-										<p><strong>Ilość:</strong> ${ingredientQuantity}</p>
-										<p><strong>Miara:</strong> ${finalIngredientUnit}</p>
-										<input type="hidden" name="Ingredients[${index}].Name" value="${ingredientId || newIngredientName}" />
-										<input type="hidden" name="Ingredients[${index}].Quantity" value="${ingredientQuantity}" />
-										<input type="hidden" name="Ingredients[${index}].Unit" value="${unitId || newIngredientUnit}" />
-										<button type="button" id="EditIngredientBtn" class="btn btn-primary">Edytuj składnik</button>
-										<button type="button" id="DeleteIngredientBtn" class="btn btn-primary">Usuń składnik</button>
-									</div>`;
+													<div class="ingredient-item" style="display: inline-block;">
+												<p><strong>No: </strong> ${index + 1} </p>
+
+												<p><strong>Nazwa Składnika:</strong> ${finalIngredientName}</p>
+												<p><strong>Ilość:</strong> ${ingredientQuantity}</p>
+												<p><strong>Miara:</strong> ${finalIngredientUnit}</p>
+												<input type="hidden" name="Ingredients[${index}].Name" value="${ingredientId}" />
+												<input type="hidden" name="Ingredients[${index}].Quantity" value="${ingredientQuantity}" />
+												<input type="hidden" name="Ingredients[${index}].Unit" value="${unitId}" />
+												@*Chyba tu był błąd, raczej na pewno*@
+
+														<input type="hidden" name="Ingredients[${index}].NewIngredientName" value="${newIngredientName}" />
+														<input type="hidden" name="Ingredients[${index}].NewIngredientUnit" value="${newIngredientUnit}" />
+
+												<button type="button" id="EditIngredientBtn" class="btn btn-primary">Edytuj składnik</button>
+												<button type="button" id="DeleteIngredientBtn" class="btn btn-primary">Usuń składnik</button>
+											</div>`;
 
 				// Dodanie nowego składnika do listy
 				document.getElementById('ingredients-list').insertAdjacentHTML('beforeend', ingredientHtml);
