@@ -42,14 +42,14 @@ namespace CopyRecipeBookMVC.Application.Services
 		}
 		public int AddRecipe(NewRecipeVm recipe)
 		{
-
+			// tu musi być jakaś walidacja czy dodano składniki
 			var recipeNew = _mapper.Map<Recipe>(recipe);
-			recipeNew.TimeId = GetOrAddTime(recipe);
+			
+			//recipeNew.TimeId = recipe.TimeId.Value;
 			var recipeId = _recipeRepo.AddRecipe(recipeNew);
 
 			foreach (var ingredient in recipe.Ingredients)
 			{
-
 				int ingredientId = GetOrAddIngredient(ingredient);
 
 				int unitId = GetOrAddUnit(ingredient);
@@ -63,25 +63,30 @@ namespace CopyRecipeBookMVC.Application.Services
 				};
 				_ingredientService.AddCompleteIngredients(recipeIngredient);
 			}
+			
 			return recipeId;
 		}
 
-		private int GetOrAddTime(NewRecipeVm recipe)
-		{
-			if (recipe.TimeId == null )
-			{
-				var timeId = _timeService.AddTime(new NewRecipeVm
-				{
-					TimeAmount = recipe.TimeAmount,
-					TimeUnit = recipe.TimeUnit
-				});
-				return timeId;
-			}
-			else
-			{
-				return recipe.TimeId.Value;
-			}
-		}
+		//private int GetOrAddTime(NewRecipeVm recipe)
+		//{
+			
+		//	if (recipe.TimeId == null )
+		//	{
+		//		var timeId = _timeService.AddTime(new NewRecipeVm
+		//		{
+		//			TimeAmount = recipe.TimeAmount,
+		//			TimeUnit = recipe.TimeUnit
+		//		});
+		//		//recipe.TimeSelected = 1;//
+		//		return timeId;
+		//	}
+		//	else
+		//	{
+		//		//recipe.TimeSelected = 1;//
+		//		return recipe.TimeId.Value;
+		//	}
+			
+		//}
 
 		private int GetOrAddIngredient(IngredientForNewRecipeVm ingredient)
 		{
@@ -92,8 +97,7 @@ namespace CopyRecipeBookMVC.Application.Services
 			else
 			{
 				return  _ingredientService.AddIngredient(new IngredientForNewRecipeVm { NewIngredientName = ingredient.NewIngredientName });
-				//chyba tu był błąd
-			}
+						}
 		}
 
 		private int GetOrAddUnit(IngredientForNewRecipeVm ingredient)

@@ -32,14 +32,7 @@ namespace CopyRecipeBook.Web.Controllers
         }
         [HttpGet]
         public IActionResult Index()
-		{
-			//widok
-			//tabela przepisów
-			//filtrowanie 
-			//dane
-			//filtry do serwisu
-			//przyg
-			//dane w formie
+		{			
 			var model = _recipeService.GetAllRecipesForList(2, 1, "");
 			return View(model);
 		}
@@ -70,8 +63,7 @@ namespace CopyRecipeBook.Web.Controllers
 		public IActionResult ViewByCategory ()
 		{
 			FillViewBags();
-			var model = _recipeService.GetRecipesByCategory(1, 1, 0)
-				;
+			var model = _recipeService.GetRecipesByCategory(1, 1, 0);
 			return View(model);
 		}
 
@@ -110,21 +102,7 @@ namespace CopyRecipeBook.Web.Controllers
 			return View(model);
 		}
 
-		[HttpGet]
-		public IActionResult AddIngredient()
-		{
-			FillViewBags();
-			return View(new IngredientForNewRecipeVm());
-		}
-
-		[HttpPost]
-		public IActionResult AddIngredient(IngredientForNewRecipeVm model)
-		{
-			FillViewBags();
-			var id = _ingredientService.AddIngredient(model);
-			return RedirectToAction("AddRecipe");
-		}
-
+		
 		[HttpGet]
 		public IActionResult AddRecipe()
 		{
@@ -135,23 +113,42 @@ namespace CopyRecipeBook.Web.Controllers
 		[HttpPost]
 		public IActionResult AddRecipe(NewRecipeVm model)
 		{
-			FillViewBags();
-			var id = _recipeService.AddRecipe(model);
+			if (!ModelState.IsValid)
+			{
+				FillViewBags();
+				return View(model);
+			}
+			//var id =
+				_recipeService.AddRecipe(model);
 			return RedirectToAction("Index");
 		}
 
+		//Przyda się jeśli zmienię koncepcję dodawania składników
+		
+		//[HttpGet]
+		//public IActionResult AddIngredient()
+		//{
+		//	FillViewBags();
+		//	return View(new IngredientForNewRecipeVm());
+		//}
+
+		//[HttpPost]
+		//public IActionResult AddIngredient(IngredientForNewRecipeVm model)
+		//{
+		//	Console.WriteLine("Received Quantity: " + model.Quantity);
+		//	FillViewBags();
+		//	_ingredientService.AddIngredient(model);
+		//	return RedirectToAction("AddRecipe");
+		//}
+
 		[HttpPost]
 		public IActionResult AddTime(NewRecipeVm model)
-		{
-			
-
+		{	
 			var newTimeId = _timeService.AddTime(model);
-
-
-			return RedirectToAction("AddRecipe");
+			return Json(new { success = true, newTimeId = newTimeId });
 		}
 
-
+		//Czy to nie powinno być w innym miejscu ??
 
 		public void FillViewBags()
 		{

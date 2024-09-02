@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CopyRecipeBookMVC.Application.Mapping;
 using CopyRecipeBookMVC.Application.ViewModels.Ingredient;
+using FluentValidation;
 
 namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 {
@@ -20,6 +21,8 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 		public int CategoryId { get; set; }
 		[DisplayName("Wybierz poziom trudności")]
 		public int DifficultyId { get; set; }
+
+
 		[DisplayName("Lista czasów")]
 		public int? TimeId { get; set; }
 		[DisplayName("Ilość nowego czasu")]
@@ -29,6 +32,7 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 		public List<IngredientForNewRecipeVm> Ingredients { get; set; } = new List<IngredientForNewRecipeVm>();
 		[DisplayName("Wpisz recepturę przepisu")]
 		public string Description { get; set; }
+		public int NumberOfIngredients { get; set; }
 		public void Mapping(Profile profile)
 		{
 			profile.CreateMap<NewRecipeVm, Domain.Model.Recipe>()
@@ -37,13 +41,33 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 
 				.ForMember(r => r.TimeId, opt => opt.MapFrom(t => t.TimeId))
 				
-
-				.ForMember(r => r.RecipeIngredient, opt => opt.Ignore())
-				;
-			profile.CreateMap<NewRecipeVm, Domain.Model.Time>() 
-				.ForMember(r=>r.Id, opt => opt.Ignore())
+				.ForMember(r => r.RecipeIngredient, opt => opt.Ignore());
+			profile.CreateMap<NewRecipeVm, Domain.Model.Time>()
+				.ForMember(r => r.Id, opt => opt.Ignore())// to chyba zbędne ??
 				.ForMember(r => r.Amount, opt => opt.MapFrom(t => t.TimeAmount))
-				.ForMember(r=> r.Unit, opt => opt.MapFrom(t => t.TimeUnit));//
+				.ForMember(r => r.Unit, opt => opt.MapFrom(t => t.TimeUnit));
+		}
+	}
+	public class NewRecipeValidation : AbstractValidator<NewRecipeVm>
+	{
+		public NewRecipeValidation()
+		{
+			RuleFor(r => r.Id).NotNull();
+			RuleFor(r => r.Name)
+				.NotNull()
+				.WithMessage("Uzupełnij nazwę przepisu")
+				.MaximumLength(30)
+				.WithMessage("Nazwa przepisu może mieć maksymalnie 30 znaków");
+			RuleFor(r => r.TimeId).NotNull()
+				.WithMessage("Musisz wybrać czas przygotowania potrawy lub dodać nowy");
+			
+			RuleFor(r => r.Description).NotNull()
+				.WithMessage("Uzupełnij recepturę przepisu");
+			RuleFor(i => i.NumberOfIngredients)
+				.NotNull()
+				.WithMessage("Ilość składników nie może być pusta")
+				.GreaterThan(0)
+				.WithMessage("Ilość składników musi być większa od zera"); 
 		}
 	}
 }

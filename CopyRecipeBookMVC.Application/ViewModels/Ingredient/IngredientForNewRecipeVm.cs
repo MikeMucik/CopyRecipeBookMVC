@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using CopyRecipeBookMVC.Application.Mapping;
+using FluentValidation;
 
 namespace CopyRecipeBookMVC.Application.ViewModels.Ingredient
 {
@@ -12,7 +13,7 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Ingredient
 											IMapFrom<Domain.Model.Ingredient>,		
 											IMapFrom<Domain.Model.Unit>
 	{
-		public int NumberOfIngredients { get; set; }//
+		
 		public int Name { get; set; }
 		public decimal Quantity { get; set; }
 		public int Unit { get; set; }
@@ -36,4 +37,19 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Ingredient
 				.ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.NewIngredientUnit));		
 		}
 	}
+	
+	// Przyda się jeśli zmienię koncepcje dodawania składników
+	//public class IngredientForNewRecipeValidation : AbstractValidator<IngredientForNewRecipeVm>
+	//{
+ //       public IngredientForNewRecipeValidation()
+ //       {
+			
+	//		RuleFor(i => i.NewIngredientName).MaximumLength(20)
+	//			.WithMessage("Nazwa składnika może mieć maksymalnie 20 znaków");
+	//		RuleFor(i => i.NewIngredientUnit).MaximumLength(10)
+	//			.WithMessage("Miara składnika może mieć maksymalnie 10 znaków");
+	//		RuleFor(i => i.Quantity).GreaterThan(0)
+	//			.WithMessage("Ilość musi być większa od zera");
+ //       }
+ //   }
 }

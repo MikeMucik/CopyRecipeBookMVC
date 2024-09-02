@@ -4,6 +4,12 @@ using CopyRecipeBookMVC.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using CopyRecipeBookMVC.Application;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
+using FluentValidation.AspNetCore;
+using FluentValidation;
+using CopyRecipeBookMVC.Application.ViewModels.Recipe;
+using CopyRecipeBookMVC.Application.ViewModels.Ingredient;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,9 +25,24 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddAplication();
 builder.Services.AddInfrastructure();
 
-builder.Services.AddControllersWithViews();
-//builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddControllersWithViews().AddViewOptions(opt => { opt.ClientModelValidatorProviders.Clear(); });
+
+builder.Services.AddFluentValidationAutoValidation(fv => fv.DisableDataAnnotationsValidation = true).AddFluentValidationClientsideAdapters();
+
+builder.Services.AddTransient<IValidator<NewRecipeVm>, NewRecipeValidation>();
+//builder.Services.AddTransient<IValidator<IngredientForNewRecipeVm>, IngredientForNewRecipeValidation>();
+// usuniête bo mam tylko imitacjê fluent validation
 var app = builder.Build();
+
+var defaultCulture = new CultureInfo("en-US");
+var localizationOptions = new RequestLocalizationOptions
+{
+	DefaultRequestCulture = new RequestCulture(defaultCulture),
+	SupportedCultures = new List<CultureInfo> { defaultCulture },
+	SupportedUICultures = new List<CultureInfo> { defaultCulture }
+};
+
+app.UseRequestLocalization(localizationOptions);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
