@@ -14,5 +14,7 @@ namespace CopyRecipeBookMVC.Application.Interfaces
         ListUnitForListVm GetAllUnitsForList ();
         Unit GetUnit (int id);
         int AddUnit(IngredientForNewRecipeVm unit);
-    }
+        int GetOrAddUnit(IngredientForNewRecipeVm ingredient);
+
+	}
 }

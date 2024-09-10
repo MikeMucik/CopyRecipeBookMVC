@@ -42,34 +42,34 @@ namespace CopyRecipeBookMVC.Application.Services
 		}
 		public int AddRecipe(NewRecipeVm recipe)
 		{
-			// tu musi być jakaś walidacja czy dodano składniki
-			var recipeNew = _mapper.Map<Recipe>(recipe);
 			
+			var recipeNew = _mapper.Map<Recipe>(recipe);
+
 			//recipeNew.TimeId = recipe.TimeId.Value;
 			var recipeId = _recipeRepo.AddRecipe(recipeNew);
 
 			foreach (var ingredient in recipe.Ingredients)
 			{
-				int ingredientId = GetOrAddIngredient(ingredient);
+				//int ingredientId = GetOrAddIngredient(ingredient);
 
-				int unitId = GetOrAddUnit(ingredient);
+				//int unitId = GetOrAddUnit(ingredient);
 
 				var recipeIngredient = new RecipeIngredient
 				{
 					RecipeId = recipeId,
-					IngredientId = ingredientId,
-					UnitId = unitId,
+					IngredientId = ingredient.Name,
+					UnitId = ingredient.Unit,
 					Quantity = ingredient.Quantity
 				};
 				_ingredientService.AddCompleteIngredients(recipeIngredient);
 			}
-			
+
 			return recipeId;
 		}
 
 		//private int GetOrAddTime(NewRecipeVm recipe)
 		//{
-			
+
 		//	if (recipe.TimeId == null )
 		//	{
 		//		var timeId = _timeService.AddTime(new NewRecipeVm
@@ -85,24 +85,43 @@ namespace CopyRecipeBookMVC.Application.Services
 		//		//recipe.TimeSelected = 1;//
 		//		return recipe.TimeId.Value;
 		//	}
-			
+
 		//}
 
-		private int GetOrAddIngredient(IngredientForNewRecipeVm ingredient)
-		{
-			if (string.IsNullOrEmpty(ingredient.NewIngredientName))
-			{
-				return ingredient.Name; // Zakładając, że ingredient.Name to ID istniejącego składnika
-			}
-			else
-			{
-				return  _ingredientService.AddIngredient(new IngredientForNewRecipeVm { NewIngredientName = ingredient.NewIngredientName });
-						}
-		}
+		//public int GetOrAddIngredient(IngredientForNewRecipeVm ingredient)
+		//{
+		//	//sprawdzenie czy nazwa składnika istnieje w bazie
+		//	var listOfIngredient = _ingredientService.GetListIngredientForList();
+		//	foreach (var ing in listOfIngredient.Ingredients)
 
-		private int GetOrAddUnit(IngredientForNewRecipeVm ingredient)
+		//	{
+		//		if (ing.Name == ingredient.NewIngredientName)
+		//		{
+		//			return ing.Id;
+		//		}
+
+		//	}
+		//	if (string.IsNullOrEmpty(ingredient.NewIngredientName))
+		//	{
+		//		return ingredient.Name; // Zakładając, że ingredient.Name to ID istniejącego składnika
+		//	}
+		//	else
+		//	{
+		//		return _ingredientService.AddIngredient(new IngredientForNewRecipeVm { NewIngredientName = ingredient.NewIngredientName });
+		//	}
+		//}
+
+		public int GetOrAddUnit(IngredientForNewRecipeVm ingredient)
 		{
-			if (string.IsNullOrEmpty(ingredient.NewIngredientUnit))
+			var listOfUnit = _unitService.GetAllUnitsForList();
+            foreach (var unit in listOfUnit.Units)
+            {
+                if (unit.Name == ingredient.NewIngredientUnit)
+				{
+					return unit.Id;
+				}
+            }
+            if (string.IsNullOrEmpty(ingredient.NewIngredientUnit))
 			{
 				return ingredient.Unit; // Zakładając, że ingredient.Unit to ID istniejącej jednostki
 			}

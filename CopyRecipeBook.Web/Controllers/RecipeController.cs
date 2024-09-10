@@ -118,28 +118,29 @@ namespace CopyRecipeBook.Web.Controllers
 				FillViewBags();
 				return View(model);
 			}
-			//var id =
 				_recipeService.AddRecipe(model);
 			return RedirectToAction("Index");
 		}
 
 		//Przyda się jeśli zmienię koncepcję dodawania składników
-		
-		//[HttpGet]
-		//public IActionResult AddIngredient()
-		//{
-		//	FillViewBags();
-		//	return View(new IngredientForNewRecipeVm());
-		//}
 
-		//[HttpPost]
-		//public IActionResult AddIngredient(IngredientForNewRecipeVm model)
-		//{
-		//	Console.WriteLine("Received Quantity: " + model.Quantity);
-		//	FillViewBags();
-		//	_ingredientService.AddIngredient(model);
-		//	return RedirectToAction("AddRecipe");
-		//}
+		
+
+		[HttpPost]
+		public IActionResult AddIngredient(IngredientForNewRecipeVm model) //co to jtest to frombody
+		{
+			
+				// Sprawdź, czy składnik i jednostka już istnieją
+				var ingredientId = _ingredientService.GetOrAddIngredient(model);
+				var unitId = _unitService.GetOrAddUnit(model);
+
+				return Json(new
+				{
+					success = true,
+					ingredientId = ingredientId,
+					unitId = unitId
+				});
+		}
 
 		[HttpPost]
 		public IActionResult AddTime(NewRecipeVm model)

@@ -8,6 +8,7 @@ using AutoMapper;
 using CopyRecipeBookMVC.Application.Mapping;
 using CopyRecipeBookMVC.Application.ViewModels.Ingredient;
 using FluentValidation;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 {
@@ -29,6 +30,7 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 		public int? TimeAmount { get; set; }
 		[DisplayName("Jednostka nowego czasu")]
 		public string? TimeUnit { get; set; }
+		//[ValidateNever]
 		public List<IngredientForNewRecipeVm> Ingredients { get; set; } = new List<IngredientForNewRecipeVm>();
 		[DisplayName("Wpisz recepturę przepisu")]
 		public string Description { get; set; }

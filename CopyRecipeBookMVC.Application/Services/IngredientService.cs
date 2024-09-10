@@ -44,7 +44,30 @@ namespace CopyRecipeBookMVC.Application.Services
 				Ingredients = ingredientVms,
 			};
 			return ingredientList;
-		}	
+		}
+
+		public int GetOrAddIngredient(IngredientForNewRecipeVm ingredient)
+		{
+			//sprawdzenie czy nazwa składnika istnieje w bazie
+			var listOfIngredient = GetListIngredientForList();
+			foreach (var ing in listOfIngredient.Ingredients)
+
+			{
+				if (ing.Name == ingredient.NewIngredientName)
+				{
+					return ing.Id;
+				}
+
+			}
+			if (string.IsNullOrEmpty(ingredient.NewIngredientName))
+			{
+				return ingredient.Name; // Zakładając, że ingredient.Name to ID istniejącego składnika
+			}
+			else
+			{
+				return AddIngredient(new IngredientForNewRecipeVm { NewIngredientName = ingredient.NewIngredientName });
+			}
+		}
 
 		public Ingredient GetIngredient(int id)
 		{

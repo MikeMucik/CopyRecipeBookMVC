@@ -235,7 +235,10 @@
 			// Pobranie wartości pozostałych pól formularza
 			
 			var ingredientQuantity = parseFloat(document.getElementById('ingredientQuantity').value.replace(',', '.'));
-			
+			if (isNaN(ingredientQuantity)) {
+				$("span[data-valmsg-for='Quantity']").text("Prosze podać prawidłową ilość.");
+				isValid = false;
+			}
 			var newIngredientName = document.getElementById('newIngredientName').value;
 			var newIngredientUnit = document.getElementById('newIngredientUnit').value;
 
@@ -275,6 +278,41 @@
 
 			// Sprawdzenie, czy wszystkie wymagane pola są wypełnione
 			if (isValid) {
+				if (newIngredientName || newIngredientUnit) {
+					$.ajax({
+						url: '/Recipe/AddIngredient',
+						type: 'POST',
+						data: {
+							newIngredientName : newIngredientName,
+							newIngredientUnit : newIngredientUnit
+						},
+						success: function (response) {
+							if (response.success) {
+								ingredientId = response.ingredientId;
+								unitId = response.unitId;
+
+								addIngredientToList(ingredientId, finalIngredientName, ingredientQuantity, unitId, finalIngredientUnit);
+
+							} else {
+								alert("Błąd podczas dodawania składnika.");
+							}
+						},
+						error: function () {
+							alert('Wystąpił błąd.');
+						}
+					});
+				} else {
+					//Jeśli są stare nazwy i miary
+					addIngredientToList(ingredientId, finalIngredientName, ingredientQuantity, unitId, finalIngredientUnit);
+				}
+			}
+		});
+			
+			
+			
+			
+			//Funkcja dodawania do listy
+		function addIngredientToList(ingredientId, finalIngredientName, ingredientQuantity, unitId, finalIngredientUnit) {
 				var index = document.querySelectorAll('.ingredient-item').length;
 
 				// Generowanie HTML dla nowego składnika
@@ -289,8 +327,7 @@
 					<input type="hidden" name="Ingredients[${index}].Quantity" value="${ingredientQuantity}" />
 					<input type="hidden" name="Ingredients[${index}].Unit" value="${unitId}" />
 		
-					<input type="hidden" name="Ingredients[${index}].NewIngredientName" value="${newIngredientName}" />
-					<input type="hidden" name="Ingredients[${index}].NewIngredientUnit" value="${newIngredientUnit}" />
+					
 
 					<button type="button" id="EditIngredientBtn" class="btn btn-primary">Edytuj składnik</button>
 					<button type="button" id="DeleteIngredientBtn" class="btn btn-primary">Usuń składnik</button>
@@ -309,7 +346,7 @@
 				document.getElementById('newIngredientName').value = '';
 				document.getElementById('newIngredientUnit').value = '';
 			}
-		});
+		
 	</script>
 	@{
 		await Html.RenderPartialAsync("_ValidationScriptsPartial");

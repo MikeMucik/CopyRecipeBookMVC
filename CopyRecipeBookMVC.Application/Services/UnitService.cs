@@ -43,5 +43,24 @@ namespace CopyRecipeBookMVC.Application.Services
         {
             throw new NotImplementedException();
         }
-    }
+		public int GetOrAddUnit(IngredientForNewRecipeVm ingredient)
+		{
+			var listOfUnit = GetAllUnitsForList();
+			foreach (var unit in listOfUnit.Units)
+			{
+				if (unit.Name == ingredient.NewIngredientUnit)
+				{
+					return unit.Id;
+				}
+			}
+			if (string.IsNullOrEmpty(ingredient.NewIngredientUnit))
+			{
+				return ingredient.Unit; // Zakładając, że ingredient.Unit to ID istniejącej jednostki
+			}
+			else
+			{
+				return AddUnit(new IngredientForNewRecipeVm { NewIngredientUnit = ingredient.NewIngredientUnit });
+			}
+		}
+	}
 }
