@@ -42,18 +42,26 @@ namespace CopyRecipeBookMVC.Application.Services
 		}
 		public int AddRecipe(NewRecipeVm recipe)
 		{
-			
-			var recipeNew = _mapper.Map<Recipe>(recipe);
+			//sprawdzenie czy nazwa jeat już w bazie, musi być jakiś powrót do formularza
+			// i komunikat że już jest taki przepis
+			//var listOfRecipesBase = _recipeRepo.GetAllRecipes();
+   //         foreach (var item in listOfRecipesBase)
+   //         {
+   //             if (item.Name == recipe.Name)
+			//	{
+			//		recipe.Id = item.Id;
+			//		int idv = recipe.Id;
+			//		var editModel = GetRecipeToEdit(idv);
+			//		return idv;
+					
+			//	}
+   //         }
+            var recipeNew = _mapper.Map<Recipe>(recipe);
 
-			//recipeNew.TimeId = recipe.TimeId.Value;
 			var recipeId = _recipeRepo.AddRecipe(recipeNew);
 
 			foreach (var ingredient in recipe.Ingredients)
 			{
-				//int ingredientId = GetOrAddIngredient(ingredient);
-
-				//int unitId = GetOrAddUnit(ingredient);
-
 				var recipeIngredient = new RecipeIngredient
 				{
 					RecipeId = recipeId,
@@ -66,69 +74,12 @@ namespace CopyRecipeBookMVC.Application.Services
 
 			return recipeId;
 		}
-
-		//private int GetOrAddTime(NewRecipeVm recipe)
-		//{
-
-		//	if (recipe.TimeId == null )
-		//	{
-		//		var timeId = _timeService.AddTime(new NewRecipeVm
-		//		{
-		//			TimeAmount = recipe.TimeAmount,
-		//			TimeUnit = recipe.TimeUnit
-		//		});
-		//		//recipe.TimeSelected = 1;//
-		//		return timeId;
-		//	}
-		//	else
-		//	{
-		//		//recipe.TimeSelected = 1;//
-		//		return recipe.TimeId.Value;
-		//	}
-
-		//}
-
-		//public int GetOrAddIngredient(IngredientForNewRecipeVm ingredient)
-		//{
-		//	//sprawdzenie czy nazwa składnika istnieje w bazie
-		//	var listOfIngredient = _ingredientService.GetListIngredientForList();
-		//	foreach (var ing in listOfIngredient.Ingredients)
-
-		//	{
-		//		if (ing.Name == ingredient.NewIngredientName)
-		//		{
-		//			return ing.Id;
-		//		}
-
-		//	}
-		//	if (string.IsNullOrEmpty(ingredient.NewIngredientName))
-		//	{
-		//		return ingredient.Name; // Zakładając, że ingredient.Name to ID istniejącego składnika
-		//	}
-		//	else
-		//	{
-		//		return _ingredientService.AddIngredient(new IngredientForNewRecipeVm { NewIngredientName = ingredient.NewIngredientName });
-		//	}
-		//}
-
-		public int GetOrAddUnit(IngredientForNewRecipeVm ingredient)
+		public int? CheckIfRecipeExists(string recipeName)
 		{
-			var listOfUnit = _unitService.GetAllUnitsForList();
-            foreach (var unit in listOfUnit.Units)
-            {
-                if (unit.Name == ingredient.NewIngredientUnit)
-				{
-					return unit.Id;
-				}
-            }
-            if (string.IsNullOrEmpty(ingredient.NewIngredientUnit))
-			{
-				return ingredient.Unit; // Zakładając, że ingredient.Unit to ID istniejącej jednostki
-			}
-			else
-			{
-				return _unitService.AddUnit(new IngredientForNewRecipeVm { NewIngredientUnit = ingredient.NewIngredientUnit });
-			}
+			var existingRecipe = _recipeRepo.GetAllRecipes()
+											.FirstOrDefault(r => r.Name == recipeName);
+
+			return existingRecipe?.Id; // Zwróć Id przepisu, jeśli istnieje, w przeciwnym razie null
 		}
 
 		public void DeleteRecipe(int id)
@@ -214,6 +165,14 @@ namespace CopyRecipeBookMVC.Application.Services
 			};
 
 			return recipeList;
+		}
+
+		public NewRecipeVm GetRecipeToEdit(int id)
+		{
+			var recipe = _recipeRepo.GetRecipeById(id);
+			var recipeVm = _mapper.Map<NewRecipeVm>(recipe);
+			return recipeVm;
+			
 		}
 
 		public int UpdaterRecipe(Recipe recipe)

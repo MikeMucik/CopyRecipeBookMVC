@@ -32,6 +32,10 @@ namespace CopyRecipeBookMVC.Infrastructure
 				.Property(ri => ri.Quantity)
 				.HasColumnType("decimal(4,1)");
 
+			builder.Entity<Time>()
+				.Property(t => t.Amount)
+				.HasColumnType("decimal(3,1)");
+
 			builder.Entity<RecipeIngredient>()
 				.HasOne<Recipe>(r => r.Recipe)
 				.WithMany(ri => ri.RecipeIngredient)

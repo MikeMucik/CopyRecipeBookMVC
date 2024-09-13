@@ -22,9 +22,9 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
             return ingredient.Id;
         }
 
-        public void AddCompleteIngredients(RecipeIngredient recipeingredient)
+        public void AddCompleteIngredients(RecipeIngredient recipeIngredient)
         {
-            _context.RecipeIngredient.Add(recipeingredient);
+            _context.RecipeIngredient.Add(recipeIngredient);
             _context.SaveChanges();
             
         }

@@ -37,6 +37,7 @@ namespace CopyRecipeBook.Web.Controllers
 			return View(model);
 		}
 		[HttpPost]
+		[AutoValidateAntiforgeryToken]
 		public IActionResult Index(int pageSize, int? pageNumber, string searchString)
 		{
 			if (!pageNumber.HasValue)
@@ -67,7 +68,8 @@ namespace CopyRecipeBook.Web.Controllers
 			return View(model);
 		}
 
-		[HttpPost] 
+		[HttpPost]
+		[AutoValidateAntiforgeryToken]
 		public IActionResult ViewByCategory (int pageSize, int? pageNumber, int categoryId)
 		{
             if (!pageNumber.HasValue)
@@ -90,6 +92,7 @@ namespace CopyRecipeBook.Web.Controllers
 		}
 
 		[HttpPost]
+		[AutoValidateAntiforgeryToken]
 		public IActionResult ViewByDifficulty(int pageSize, int? pageNumber, int difficultyId)
 		{
 			if (!pageNumber.HasValue)
@@ -101,7 +104,6 @@ namespace CopyRecipeBook.Web.Controllers
 			FillViewBags();
 			return View(model);
 		}
-
 		
 		[HttpGet]
 		public IActionResult AddRecipe()
@@ -111,6 +113,7 @@ namespace CopyRecipeBook.Web.Controllers
 		}
 
 		[HttpPost]
+		[AutoValidateAntiforgeryToken]
 		public IActionResult AddRecipe(NewRecipeVm model)
 		{
 			if (!ModelState.IsValid)
@@ -118,27 +121,54 @@ namespace CopyRecipeBook.Web.Controllers
 				FillViewBags();
 				return View(model);
 			}
-				_recipeService.AddRecipe(model);
+			var existingRecipeId = _recipeService.CheckIfRecipeExists(model.Name);
+
+			if (existingRecipeId != null)
+			{
+				// Jeśli przepis istnieje, przekierowujemy do edycji
+				Console.WriteLine("Przepis już istnieje");
+				//tymczasowo do index
+				return RedirectToAction("Index");
+				//return RedirectToAction("EditRecipe", new { id = existingRecipeId });
+			}
+			_recipeService.AddRecipe(model);
 			return RedirectToAction("Index");
 		}
 
-		//Przyda się jeśli zmienię koncepcję dodawania składników
+		//Edycja - do zrobienia
 
-		
+		[HttpGet]
+		public IActionResult EditRecipe(int id)
+		{
+			var recipe = _recipeService.GetRecipeToEdit(id);
+			FillViewBags();
+			return View(recipe);
+		}
 
 		[HttpPost]
-		public IActionResult AddIngredient(IngredientForNewRecipeVm model) //co to jtest to frombody
+		[AutoValidateAntiforgeryToken]
+		public IActionResult EditRecipe(NewRecipeVm model)
 		{
-			
-				// Sprawdź, czy składnik i jednostka już istnieją
+			if (!ModelState.IsValid)
+			{
+				FillViewBags();
+				return View(model);
+			}
+			_recipeService.AddRecipe(model);
+			return RedirectToAction("Index");
+		}
+
+		[HttpPost]
+		public IActionResult AddIngredient(IngredientForNewRecipeVm model) 
+		{			
 				var ingredientId = _ingredientService.GetOrAddIngredient(model);
 				var unitId = _unitService.GetOrAddUnit(model);
 
 				return Json(new
 				{
 					success = true,
-					ingredientId = ingredientId,
-					unitId = unitId
+					ingredientId,
+					unitId
 				});
 		}
 
@@ -146,7 +176,7 @@ namespace CopyRecipeBook.Web.Controllers
 		public IActionResult AddTime(NewRecipeVm model)
 		{	
 			var newTimeId = _timeService.AddTime(model);
-			return Json(new { success = true, newTimeId = newTimeId });
+			return Json(new { success = true, newTimeId });
 		}
 
 		//Czy to nie powinno być w innym miejscu ??

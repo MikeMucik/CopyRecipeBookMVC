@@ -36,16 +36,18 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Ingredient
 			// Mapowanie do Unit
 			profile.CreateMap<IngredientForNewRecipeVm, Domain.Model.Unit>()
 				.ForMember(dest => dest.Id, opt => opt.Ignore())
-				.ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.NewIngredientUnit));		
+				.ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.NewIngredientUnit));	
+			
+			//Mapowanie w drugą stronę do zrobienia problem Id.Ignore
+			//profile.CreateMap<Domain.Model.RecipeIngredient, IngredientForNewRecipeValidation>()
+			//	.ForMember(ri => ri.)
 		}
 	}
 
-	// Przyda się jeśli zmienię koncepcje dodawania składników tylko nie wiem jak zrobić bez recipe.id
 	public class IngredientForNewRecipeValidation : AbstractValidator<IngredientForNewRecipeVm>
 	{
 		public IngredientForNewRecipeValidation()
 		{
-
 			RuleFor(i => i.NewIngredientName).MaximumLength(20)
 				.WithMessage("Nazwa składnika może mieć maksymalnie 20 znaków");
 			RuleFor(i => i.NewIngredientUnit).MaximumLength(10)

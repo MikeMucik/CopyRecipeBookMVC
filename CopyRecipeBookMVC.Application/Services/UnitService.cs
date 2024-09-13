@@ -39,12 +39,13 @@ namespace CopyRecipeBookMVC.Application.Services
             return unitList;
         }
 
-        public Unit GetUnit(int id)
-        {
-            throw new NotImplementedException();
-        }
+       
 		public int GetOrAddUnit(IngredientForNewRecipeVm ingredient)
 		{
+            if (ingredient.Unit > 0)
+            {
+                return ingredient.Unit;// Zakładając, że ingredient.Unit to ID istniejącej jednostki
+            }
 			var listOfUnit = GetAllUnitsForList();
 			foreach (var unit in listOfUnit.Units)
 			{
@@ -53,14 +54,19 @@ namespace CopyRecipeBookMVC.Application.Services
 					return unit.Id;
 				}
 			}
-			if (string.IsNullOrEmpty(ingredient.NewIngredientUnit))
-			{
-				return ingredient.Unit; // Zakładając, że ingredient.Unit to ID istniejącej jednostki
-			}
-			else
+			if (!string.IsNullOrEmpty(ingredient.NewIngredientUnit))
 			{
 				return AddUnit(new IngredientForNewRecipeVm { NewIngredientUnit = ingredient.NewIngredientUnit });
 			}
+			else
+			{
+                Console.WriteLine("Błąd");
+                return -1;
+			}
+		}
+		public Unit GetUnit(int id)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

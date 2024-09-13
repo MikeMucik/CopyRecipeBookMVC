@@ -16,15 +16,25 @@ namespace CopyRecipeBookMVC.Application.Services
 	{
 		private readonly ITimeRepositoy _timeRepo;
 		private readonly IMapper _mapper;
-        public TimeService(ITimeRepositoy timeRepo, IMapper mapper)
-        {
-            _timeRepo = timeRepo;
-			_mapper = mapper;
-        }
-        public int AddTime(NewRecipeVm time)
+		public TimeService(ITimeRepositoy timeRepo, IMapper mapper)
 		{
+			_timeRepo = timeRepo;
+			_mapper = mapper;
+		}
+		public int AddTime(NewRecipeVm time)
+		{
+			//sprawdzenie czy taki czas już jest
+			var listOfTimes = GetListTimeForList();
+			foreach (var item in listOfTimes.Times)
+			{
+				if ((time.TimeAmount == item.Amount) && (time.TimeUnit == item.Unit))
+				{
+					return item.Id;
+				}
+			}
 			var timeNew = _mapper.Map<Time>(time);
 			var id = _timeRepo.AddTime(timeNew);
+
 			return id;
 		}
 
@@ -35,13 +45,13 @@ namespace CopyRecipeBookMVC.Application.Services
 
 		public ListTimeForListVm GetListTimeForList()
 		{
-            var times = _timeRepo.GetAllTimes();
-            var timeVms = _mapper.Map < List<TimeForListVm> >(times);
+			var times = _timeRepo.GetAllTimes();
+			var timeVms = _mapper.Map<List<TimeForListVm>>(times);
 			var timeList = new ListTimeForListVm()
 			{
 				Times = timeVms
 			};
-			return timeList;            
+			return timeList;
 		}
 	}
 }

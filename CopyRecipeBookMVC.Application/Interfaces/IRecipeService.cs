@@ -11,12 +11,13 @@ namespace CopyRecipeBookMVC.Application.Interfaces
 	public interface IRecipeService
 	{
 		int AddRecipe(NewRecipeVm recipe);
+		int? CheckIfRecipeExists(string recipeName);
 		void DeleteRecipe(int id);
 		ListRecipeForListVm GetAllRecipesForList(int pageSize, int pageNumber, string searchString);
 		RecipeDetailsVm GetRecipe(int id);
 		int UpdaterRecipe(Recipe recipe);
 		ListRecipesByCategoryVm GetRecipesByCategory(int pageSize, int pageNumber, int categoryId);
 		ListRecipesByDifficultyVm GetRecipesByDifficulty(int pageSize, int pageNumber, int difficultyId);
-
+		NewRecipeVm GetRecipeToEdit(int id);
 	}
 }

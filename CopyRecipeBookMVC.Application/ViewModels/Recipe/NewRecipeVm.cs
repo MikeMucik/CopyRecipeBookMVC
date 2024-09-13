@@ -27,7 +27,7 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 		[DisplayName("Lista czasów")]
 		public int? TimeId { get; set; }
 		[DisplayName("Ilość nowego czasu")]
-		public int? TimeAmount { get; set; }
+		public decimal? TimeAmount { get; set; } //tu mała zmiana z int na decimal
 		[DisplayName("Jednostka nowego czasu")]
 		public string? TimeUnit { get; set; }
 		//[ValidateNever]
@@ -38,16 +38,24 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 		public void Mapping(Profile profile)
 		{
 			profile.CreateMap<NewRecipeVm, Domain.Model.Recipe>()
+				
 				.ForMember(r => r.CategoryId, opt => opt.MapFrom(i => i.CategoryId))
 				.ForMember(r => r.DifficultyId, opt => opt.MapFrom(i => i.DifficultyId))
 
 				.ForMember(r => r.TimeId, opt => opt.MapFrom(t => t.TimeId))
 				
-				.ForMember(r => r.RecipeIngredient, opt => opt.Ignore());
+				.ForMember(r => r.RecipeIngredient, opt => opt.Ignore())
+				.ReverseMap();
 			profile.CreateMap<NewRecipeVm, Domain.Model.Time>()
 				.ForMember(r => r.Id, opt => opt.Ignore())// to chyba zbędne ??
 				.ForMember(r => r.Amount, opt => opt.MapFrom(t => t.TimeAmount))
 				.ForMember(r => r.Unit, opt => opt.MapFrom(t => t.TimeUnit));
+
+
+			profile.CreateMap<Domain.Model.Time, NewRecipeVm>()
+				.ForMember(t => t.TimeId, opt => opt.MapFrom(i => i.Id))
+				.ForMember(t => t.TimeAmount, opt => opt.MapFrom(i => i.Amount))
+				.ForMember(t => t.TimeUnit, opt => opt.MapFrom(i => i.Unit));
 		}
 	}
 	public class NewRecipeValidation : AbstractValidator<NewRecipeVm>

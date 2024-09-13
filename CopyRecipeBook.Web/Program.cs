@@ -30,7 +30,7 @@ builder.Services.AddControllersWithViews().AddViewOptions(opt => { opt.ClientMod
 builder.Services.AddFluentValidationAutoValidation(fv => fv.DisableDataAnnotationsValidation = true).AddFluentValidationClientsideAdapters();
 
 builder.Services.AddTransient<IValidator<NewRecipeVm>, NewRecipeValidation>();
-//builder.Services.AddTransient<IValidator<IngredientForNewRecipeVm>, IngredientForNewRecipeValidation>();
+builder.Services.AddTransient<IValidator<IngredientForNewRecipeVm>, IngredientForNewRecipeValidation>();
 // usuniête bo mam tylko imitacjê fluent validation
 var app = builder.Build();
 

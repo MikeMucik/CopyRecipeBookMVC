@@ -15,25 +15,25 @@ namespace CopyRecipeBookMVC.Application.Services
 	{
 		private readonly IIngredientRepository _ingredientRepo;
 		private readonly IMapper _mapper;
-        public IngredientService(IIngredientRepository ingredientRepo, IMapper mapper)
-		{ 
+		public IngredientService(IIngredientRepository ingredientRepo, IMapper mapper)
+		{
 			_ingredientRepo = ingredientRepo;
 			_mapper = mapper;
 		}
 
-		public void AddCompleteIngredients (RecipeIngredient recipeIngredient)
+		public void AddCompleteIngredients(RecipeIngredient recipeIngredient)
 		{
 			var completeIngredient = _mapper.Map<RecipeIngredient>(recipeIngredient);
 			_ingredientRepo.AddCompleteIngredients(completeIngredient);
 
 		}
-        
-        public int AddIngredient(IngredientForNewRecipeVm ingredient)
+
+		public int AddIngredient(IngredientForNewRecipeVm ingredient)
 		{
 			var ingredientNew = _mapper.Map<Ingredient>(ingredient);
 			var id = _ingredientRepo.AddIngredient(ingredientNew);
 			return id;
-		}		
+		}
 
 		public ListIngredientsForRecipeVm GetListIngredientForList()
 		{
@@ -48,30 +48,33 @@ namespace CopyRecipeBookMVC.Application.Services
 
 		public int GetOrAddIngredient(IngredientForNewRecipeVm ingredient)
 		{
+			if (ingredient.Name > 0)
+			{
+				return ingredient.Name; // Zakładając, że ingredient.Name to ID istniejącego składnika
+			}
 			//sprawdzenie czy nazwa składnika istnieje w bazie
 			var listOfIngredient = GetListIngredientForList();
 			foreach (var ing in listOfIngredient.Ingredients)
-
 			{
 				if (ing.Name == ingredient.NewIngredientName)
 				{
 					return ing.Id;
 				}
-
 			}
-			if (string.IsNullOrEmpty(ingredient.NewIngredientName))
+			if (!string.IsNullOrEmpty(ingredient.NewIngredientName))
 			{
-				return ingredient.Name; // Zakładając, że ingredient.Name to ID istniejącego składnika
+				return AddIngredient(new IngredientForNewRecipeVm { NewIngredientName = ingredient.NewIngredientName });
 			}
 			else
 			{
-				return AddIngredient(new IngredientForNewRecipeVm { NewIngredientName = ingredient.NewIngredientName });
+				Console.WriteLine("Błąd");
+				return -1;
 			}
 		}
 
 		public Ingredient GetIngredient(int id)
 		{
 			throw new NotImplementedException();
-		}		
+		}
 	}
 }

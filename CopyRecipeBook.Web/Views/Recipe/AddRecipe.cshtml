@@ -33,8 +33,8 @@
 
 			<div class="row">
 				<p> Wybierz z listy lub stwórz nowy czas </p>
-				<div class="col-md-4">								
-					
+				<div class="col-md-4">
+
 					<div class="form-group">
 						<label asp-for="TimeId" class="control-label"></label>
 						<select asp-for="TimeId" id="TimeId" class="form-control" asp-items="ViewBag.Times">
@@ -44,7 +44,7 @@
 						<span asp-validation-for="TimeId" class="text-danger"></span>
 					</div>
 				</div>
-								
+
 				<div class="col-md-4">
 					<div class="form-group">
 						<label asp-for="TimeAmount" class="control-label"></label>
@@ -61,10 +61,12 @@
 				</div>
 				<input type="hidden" id="NewTimeId" name="NewTimeId" />
 			</div>
-			<div class="form-group" style="text-align: right;">
-				<button type="button" id="addTimeBtn" class="btn btn-primary">Dodaj Czas</button>
+			<div class="form-group">
+				<button type="button" id="editTimeBtn" class="btn-dark">Edytuj Czas</button>
+			 
+				<button type="button" style="text-align: right;" id="addTimeBtn" class="btn btn-primary">Dodaj Czas</button>
 			</div>
-			
+
 			<!-- Sekcja dodawania składników -->
 			<h4>Dodaj Składniki</h4>
 			<div id="ingredients-container">
@@ -89,7 +91,7 @@
 						<div class="form-group">
 							<label for="newIngredientName">Nazwa Nowego Składnika</label>
 							<input type="text" id="newIngredientName" name="newIngredientName" class="form-control" placeholder="Dodaj nowy składnik (jeśli brak na liście)" />
-							<span data-valmsg-for="NewIngredientName" class="text-danger"></span>							
+							<span data-valmsg-for="NewIngredientName" class="text-danger"></span>
 						</div>
 
 						<!-- Ilość składnika -->
@@ -128,16 +130,18 @@
 				@for (int i = 0; i < Model.Ingredients?.Count; i++)
 				{
 					<div class="ingredient-item">
-						<p><strong>Nazwa Składnika:</strong>
+						<p>
+							<strong>Nazwa Składnika:</strong>
 							@Model.Ingredients[i].NewIngredientName ??
 							ViewBag.Ingredients.FirstOrDefault(x => x.Value == Model.Ingredients[i].Name.ToString())?.Text)
 						</p>
 						<p><strong>Ilość:</strong> @Model.Ingredients[i].Quantity</p>
-						<p><strong>Miara:</strong> 
+						<p>
+							<strong>Miara:</strong>
 							@Model.Ingredients[i].NewIngredientUnit ??
-							ViewBag.Units.FirstOrDefault(x => x.Value == Model.ingredients[i].Unit.ToString())?.Text)	
+							ViewBag.Units.FirstOrDefault(x => x.Value == Model.ingredients[i].Unit.ToString())?.Text)
 						</p>
-					
+
 						<input type="hidden" name="Ingredients[@i].Name" value="@Model.Ingredients[i].Name" />
 						<input type="hidden" name="Ingredients[@i].Quantity" value="@Model.Ingredients[i].Quantity" />
 						<input type="hidden" name="Ingredients[@i].Unit" value="@Model.Ingredients[i].Unit" />
@@ -166,58 +170,59 @@
 @section Scripts {
 	<script>
 		document.getElementById('addTimeBtn').addEventListener('click', function () {
-			var timeAmount = document.getElementById('TimeAmount').value
-			var timeUnit = document.getElementById('TimeUnit').value
-			 var timeId = document.getElementById('TimeId').value;
 			
-			if (timeId === "") {
+			var timeAmount = parseFloat(document.getElementById('TimeAmount').value.replace(',', '.'));
+			if (isNaN(timeAmount)) {
+				$("span[data-valmsg-for='TimeAmount']").text("Prosze podać prawidłową ilość.");
+			}
 
+			var timeUnit = document.getElementById('TimeUnit').value
+			var timeId = document.getElementById('TimeId').value;
+
+			if (timeId === "") {
 				if (timeAmount != 0 && timeUnit != "") {
 					if (timeUnit.length > 10) {
 						$("span[data-valmsg-for='TimeUnit']").text("Pole jednostka czasu może mieć maksymalnie 9 znaków");
 						return;
 					}
-					if (timeAmount % 1 != 0) {
-						$("span[data-valmsg-for='TimeAmount']").text("Wartość czasu musi być liczbą całkowitą.");
-						return;
-					}
-						$.ajax({
-							url: '/Recipe/AddTime',  // Adres akcji, która zapisuje czas
-							method: 'POST',
-							data: {
-								timeAmount: timeAmount,
-								timeUnit: timeUnit
-							},
-							success: function (response) {
-								if (response.success) {
-									var timeIdSelect = document.querySelector('select[name="TimeId"]');
-									var newOption = document.createElement('option');
-									newOption.text = timeAmount + " " + timeUnit;
-									newOption.value = response.newTimeId; // Otrzymane ID z serwera
+					
+					$.ajax({
+						url: '/Recipe/AddTime',  // Adres akcji, która zapisuje czas
+						method: 'POST',
+						data: {
+							timeAmount: timeAmount,
+							timeUnit: timeUnit
+						},
+						success: function (response) {
+							if (response.success) {
+								var timeIdSelect = document.querySelector('select[name="TimeId"]');
+								var newOption = document.createElement('option');
+								newOption.text = timeAmount + " " + timeUnit;
+								newOption.value = response.newTimeId; // Otrzymane ID z serwera
 
-									timeIdSelect.add(newOption);
-									timeIdSelect.value = newOption.value;
+								timeIdSelect.add(newOption);
+								timeIdSelect.value = newOption.value;
 
-									$("span[data-valmsg-for='TimeId']").text("");
-									$("span[data-valmsg-for='TimeAmount']").text("");
-									$("span[data-valmsg-for='TimeUnit']").text("");
-								} else {
-									$("span[data-valmsg-for='TimeId']").text(response.errorMessage);
-								}
-							},
-							error: function () {
-								$("span[data-valmsg-for='TimeId']").text('Wystąpił błąd podczas dodawania czasu.');
+								$("span[data-valmsg-for='TimeId']").text("");
+								$("span[data-valmsg-for='TimeAmount']").text("");
+								$("span[data-valmsg-for='TimeUnit']").text("");
+							} else {
+								$("span[data-valmsg-for='TimeId']").text(response.errorMessage);
 							}
-						});
+						},
+						error: function () {
+							$("span[data-valmsg-for='TimeId']").text('Wystąpił błąd podczas dodawania czasu.');
+						}
+					});
 				}
-				else {					
+				else {
 					$("span[data-valmsg-for='TimeId']").text("Uzupełnij pola jednostka czasu i ilość czasu");
 				}
 			}
 			else {
 				$("span[data-valmsg-for='TimeId']").text("Musisz wybrać czas przygotowania potrawy lub dodać nowy")
-			}					
-			});
+			}
+		});
 
 
 		document.getElementById('addIngredientBtn').addEventListener('click', function () {
@@ -233,7 +238,7 @@
 			var unitName = unitSelect.options[unitSelect.selectedIndex].text; // Nazwa jednostki miary
 
 			// Pobranie wartości pozostałych pól formularza
-			
+
 			var ingredientQuantity = parseFloat(document.getElementById('ingredientQuantity').value.replace(',', '.'));
 			if (isNaN(ingredientQuantity)) {
 				$("span[data-valmsg-for='Quantity']").text("Prosze podać prawidłową ilość.");
@@ -275,78 +280,67 @@
 			} else {
 				$("span[data-valmsg-for='NewIngredientUnit']").text('');
 			}
-
-			// Sprawdzenie, czy wszystkie wymagane pola są wypełnione
-			if (isValid) {
-				if (newIngredientName || newIngredientUnit) {
-					$.ajax({
-						url: '/Recipe/AddIngredient',
-						type: 'POST',
-						data: {
-							newIngredientName : newIngredientName,
-							newIngredientUnit : newIngredientUnit
-						},
-						success: function (response) {
-							if (response.success) {
-								ingredientId = response.ingredientId;
-								unitId = response.unitId;
-
-								addIngredientToList(ingredientId, finalIngredientName, ingredientQuantity, unitId, finalIngredientUnit);
-
-							} else {
-								alert("Błąd podczas dodawania składnika.");
-							}
-						},
-						error: function () {
-							alert('Wystąpił błąd.');
+			
+			if (isValid) {				
+				$.ajax({
+					url: '/Recipe/AddIngredient',
+					type: 'POST',
+					data: {
+						newIngredientName: newIngredientName || null,
+						newIngredientUnit: newIngredientUnit || null,
+						Name: ingredientId || 0,//Co przychodzi a co idzie do backendu
+						Unit: unitId || 0
+					},
+					success: function (response) {
+						if (response.success) {//a może tu
+							ingredientId = response.ingredientId;
+							unitId = response.unitId;
+							addIngredientToList(ingredientId, finalIngredientName, ingredientQuantity, unitId, finalIngredientUnit);
+						} else {
+							alert("Błąd podczas dodawania składnika.");
 						}
-					});
-				} else {
-					//Jeśli są stare nazwy i miary
-					addIngredientToList(ingredientId, finalIngredientName, ingredientQuantity, unitId, finalIngredientUnit);
-				}
-			}
+					},
+					error: function () {
+						alert('Wystąpił błąd.');
+					}
+				});
+			} else {				
+				alert("BIG Problem");
+			}			
 		});
-			
-			
-			
-			
-			//Funkcja dodawania do listy
+
+		//Funkcja dodawania do listy
 		function addIngredientToList(ingredientId, finalIngredientName, ingredientQuantity, unitId, finalIngredientUnit) {
-				var index = document.querySelectorAll('.ingredient-item').length;
+			var index = document.querySelectorAll('.ingredient-item').length;
+			// Generowanie HTML dla nowego składnika
+			var ingredientHtml = `
+											<div class="ingredient-item" style="display: inline-block;">
+											<p><strong>No: </strong> ${index + 1} </p>
+											<p><strong>Nazwa Składnika:</strong> ${finalIngredientName}</p>
+											<p><strong>Ilość:</strong> ${ingredientQuantity}</p>
+											<p><strong>Miara:</strong> ${finalIngredientUnit}</p>
 
-				// Generowanie HTML dla nowego składnika
-				var ingredientHtml = `
-					<div class="ingredient-item" style="display: inline-block;">
-					<p><strong>No: </strong> ${index + 1} </p>
-					<p><strong>Nazwa Składnika:</strong> ${finalIngredientName}</p>
-					<p><strong>Ilość:</strong> ${ingredientQuantity}</p>
-					<p><strong>Miara:</strong> ${finalIngredientUnit}</p>
+											<input type="hidden" name="Ingredients[${index}].Name" value="${ingredientId}" />
+											<input type="hidden" name="Ingredients[${index}].Quantity" value="${ingredientQuantity}" />
+											<input type="hidden" name="Ingredients[${index}].Unit" value="${unitId}" />
 
-					<input type="hidden" name="Ingredients[${index}].Name" value="${ingredientId}" />
-					<input type="hidden" name="Ingredients[${index}].Quantity" value="${ingredientQuantity}" />
-					<input type="hidden" name="Ingredients[${index}].Unit" value="${unitId}" />
-		
-					
+											<button type="button" id="EditIngredientBtn" class="btn-dark">Edytuj składnik</button>
+											<button type="button" id="DeleteIngredientBtn" class="btn-dark">Usuń składnik</button>
+											</div>`;
 
-					<button type="button" id="EditIngredientBtn" class="btn btn-primary">Edytuj składnik</button>
-					<button type="button" id="DeleteIngredientBtn" class="btn btn-primary">Usuń składnik</button>
-					</div>`;
+			// Dodanie nowego składnika do listy
+			document.getElementById('ingredients-list').insertAdjacentHTML('beforeend', ingredientHtml);
+			document.getElementById('numberOfIngredients').value = index + 1;
 
-				// Dodanie nowego składnika do listy
-				document.getElementById('ingredients-list').insertAdjacentHTML('beforeend', ingredientHtml);
-				document.getElementById('numberOfIngredients').value = index + 1;
+			$("span[data-valmsg-for='NumberOfIngredients']").text('');
 
-				$("span[data-valmsg-for='NumberOfIngredients']").text('');
-
-				// Resetowanie pól formularza
-				document.getElementById('ingredientName').value = '';
-				document.getElementById('ingredientQuantity').value = '';
-				document.getElementById('ingredientUnit').value = '';
-				document.getElementById('newIngredientName').value = '';
-				document.getElementById('newIngredientUnit').value = '';
-			}
-		
+			// Resetowanie pól formularza
+			document.getElementById('ingredientName').value = '';
+			document.getElementById('ingredientQuantity').value = '';
+			document.getElementById('ingredientUnit').value = '';
+			document.getElementById('newIngredientName').value = '';
+			document.getElementById('newIngredientUnit').value = '';
+		}
 	</script>
 	@{
 		await Html.RenderPartialAsync("_ValidationScriptsPartial");
