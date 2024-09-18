@@ -22,7 +22,6 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
 			_context.SaveChanges();
 			return recipe.Id;
 		}
-
 		public void DeleteRecipe(int id)
 		{
 			var recipe = _context.Recipes.Find(id);
@@ -32,7 +31,6 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
 				_context.SaveChanges();
 			}
 		}
-
 		public Recipe GetRecipeById(int id)
 		{
 			var recipe = _context.Recipes
@@ -43,51 +41,46 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
 					.ThenInclude(i => i.Ingredient)
 				.Include(r=> r.RecipeIngredient)
 					.ThenInclude(i => i.Unit)
-				.FirstOrDefault(r => r.Id == id);
-			
-				
+				.FirstOrDefault(r => r.Id == id);			
 			if (recipe == null)
 			{
 				Console.WriteLine("Not Found");
 			}
 			return recipe;
-		}
-
-		public int UpdateRecipe(Recipe recipe)
+		}		
+		public void UpdateRecipe(Recipe recipe)
 		{
-			throw new NotImplementedException();
+			_context.Attach(recipe);
+			_context.Entry(recipe).Property(nameof(recipe.Name)).IsModified =true;
+			_context.Entry(recipe).Property(nameof(recipe.CategoryId)).IsModified =true;
+			_context.Entry(recipe).Property(nameof(recipe.DifficultyId)).IsModified =true;
+			_context.Entry(recipe).Property(nameof(recipe.TimeId)).IsModified =true;
+			_context.Entry(recipe).Property(nameof(recipe.Description)).IsModified =true;						
+			_context.SaveChanges();
 		}
-
 		public IQueryable<Recipe> GetAllRecipes()
 		{
 			return _context.Recipes;
 		}
-
 		public IQueryable<Recipe> GetRecipesByCategory(int categoryId)
 		{
 			return _context.Recipes.Where(r => r.CategoryId == categoryId);
 		}
-
 		public IQueryable<Recipe> GetRecipesByDifficulty(int difficultyId)
 		{
 			return _context.Recipes.Where(r => r.DifficultyId == difficultyId);
 		}
-
 		public IQueryable<Recipe> GetRecipesByTime(int timeId)
 		{
 			return _context.Recipes.Where(r=> r.TimeId == timeId);
 		}
-
 		public IEnumerable<Category> GetAllCategories()	
 		{
 			return _context.Categories.ToList();
 		}
-
 		public IEnumerable<Difficulty> GetAllDifficulties()
 		{
 			return _context.Difficulties.ToList();
-		}
-
-		
+		}		
 	}
 }

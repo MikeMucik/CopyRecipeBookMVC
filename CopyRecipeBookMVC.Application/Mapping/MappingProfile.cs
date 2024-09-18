@@ -14,7 +14,6 @@ namespace CopyRecipeBookMVC.Application.Mapping
 		{
 			ApplyMappingsFromAssembly(Assembly.GetExecutingAssembly());
 		}
-
 		private void ApplyMappingsFromAssembly(Assembly assembly)
 		{
 			var types = assembly.GetExportedTypes()

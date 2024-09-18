@@ -62,9 +62,9 @@
 							@Html.DisplayFor(modelItem => item.Time)
 						</td>
 						<td>
-							@Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+							@Html.ActionLink("Edytuj przepis", "EditRecipe", new {  id=item.Id  }) |
 							@Html.ActionLink("Szczegóły przepisu", "ViewDetails", new { id = item.Id }) |
-							@Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+							@Html.ActionLink("Usuń przepis", "DeleteRecipe", new { id = item.Id })
 						</td>
 					</tr>
 				}
@@ -90,7 +90,7 @@
 			</tr>
 		</table>
 		<input type="hidden" name="pageNumber" id="pageNumber" />
-		<input type="hidden" name="pageSize" id="pageSize" value="2" />
+		<input type="hidden" name="pageSize" id="pageSize" value="12" />
 	</div>
 </form>
 

@@ -25,7 +25,6 @@ namespace CopyRecipeBookMVC.Application.Services
 		{
 			var completeIngredient = _mapper.Map<RecipeIngredient>(recipeIngredient);
 			_ingredientRepo.AddCompleteIngredients(completeIngredient);
-
 		}
 
 		public int AddIngredient(IngredientForNewRecipeVm ingredient)
@@ -76,5 +75,15 @@ namespace CopyRecipeBookMVC.Application.Services
 		{
 			throw new NotImplementedException();
 		}
-	}
+
+        public void DeleteCompleteIngredients(int recipeId)
+        {
+			var ingredientsToDelete = _ingredientRepo.GetAllIngredientsById(recipeId);
+            foreach (var item in ingredientsToDelete)
+            {
+				_ingredientRepo.DeleteCompleteIngredient(item);
+            }
+            
+        }
+    }
 }

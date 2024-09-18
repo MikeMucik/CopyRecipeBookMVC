@@ -169,23 +169,19 @@
 
 @section Scripts {
 	<script>
-		document.getElementById('addTimeBtn').addEventListener('click', function () {
-			
+		document.getElementById('addTimeBtn').addEventListener('click', function () {			
 			var timeAmount = parseFloat(document.getElementById('TimeAmount').value.replace(',', '.'));
 			if (isNaN(timeAmount)) {
 				$("span[data-valmsg-for='TimeAmount']").text("Prosze podać prawidłową ilość.");
 			}
-
 			var timeUnit = document.getElementById('TimeUnit').value
 			var timeId = document.getElementById('TimeId').value;
-
 			if (timeId === "") {
 				if (timeAmount != 0 && timeUnit != "") {
 					if (timeUnit.length > 10) {
 						$("span[data-valmsg-for='TimeUnit']").text("Pole jednostka czasu może mieć maksymalnie 9 znaków");
 						return;
-					}
-					
+					}					
 					$.ajax({
 						url: '/Recipe/AddTime',  // Adres akcji, która zapisuje czas
 						method: 'POST',
@@ -199,10 +195,8 @@
 								var newOption = document.createElement('option');
 								newOption.text = timeAmount + " " + timeUnit;
 								newOption.value = response.newTimeId; // Otrzymane ID z serwera
-
 								timeIdSelect.add(newOption);
 								timeIdSelect.value = newOption.value;
-
 								$("span[data-valmsg-for='TimeId']").text("");
 								$("span[data-valmsg-for='TimeAmount']").text("");
 								$("span[data-valmsg-for='TimeUnit']").text("");
@@ -224,6 +218,21 @@
 			}
 		});
 
+		$(document).on('click', '#DeleteIngredientBtn', function () {
+			var ingredientItem = $(this).closest('.ingredient-item');
+			ingredientItem.remove();
+			// Zaktualizowanie indeksów dla pozostałych składników
+			$('.ingredient-item').each(function (index) {
+				$(this).find('input[name^="Ingredients["]').each(function () {
+					var name = $(this).attr('name');
+					var newName = name.replace(/\[\d+\]/, '[' + index + ']');
+					$(this).attr('name', newName);
+				});
+			});
+			// Zaktualizowanie liczby składników
+			var numberOfIngredients = document.querySelectorAll('.ingredient-item').length;
+			document.getElementById('numberOfIngredients').value = numberOfIngredients;
+		});
 
 		document.getElementById('addIngredientBtn').addEventListener('click', function () {
 
@@ -324,7 +333,7 @@
 											<input type="hidden" name="Ingredients[${index}].Quantity" value="${ingredientQuantity}" />
 											<input type="hidden" name="Ingredients[${index}].Unit" value="${unitId}" />
 
-											<button type="button" id="EditIngredientBtn" class="btn-dark">Edytuj składnik</button>
+											@*<button type="button" id="EditIngredientBtn" class="btn-dark">Edytuj składnik</button>*@
 											<button type="button" id="DeleteIngredientBtn" class="btn-dark">Usuń składnik</button>
 											</div>`;
 

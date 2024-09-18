@@ -13,22 +13,19 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Ingredient
 	public class IngredientForNewRecipeVm:	IMapFrom<Domain.Model.RecipeIngredient>,
 											IMapFrom<Domain.Model.Ingredient>,		
 											IMapFrom<Domain.Model.Unit>
-	{
-		
+	{		
 		public int Name { get; set; }
-		public decimal Quantity { get; set; }
-		
+		public decimal Quantity { get; set; }		
 		public int Unit { get; set; }
-
-		public string NewIngredientName { get; set; }
-		
+		public string NewIngredientName { get; set; }		
 		public string NewIngredientUnit { get; set; }
 		public void Mapping(Profile profile)
 		{
 			profile.CreateMap<IngredientForNewRecipeVm, Domain.Model.RecipeIngredient>()
 				.ForMember(ri => ri.IngredientId, opt => opt.MapFrom(i => i.Name))
 				.ForMember(ri => ri.UnitId, opt => opt.MapFrom(i => i.Unit))
-				.ForMember(ri => ri.Quantity, opt => opt.MapFrom(i => i.Quantity));
+				.ForMember(ri => ri.Quantity, opt => opt.MapFrom(i => i.Quantity))
+				.ReverseMap();
 			// Mapowanie do Ingredient
 			profile.CreateMap<IngredientForNewRecipeVm, Domain.Model.Ingredient>()
 				.ForMember(dest => dest.Id, opt => opt.Ignore())
@@ -36,14 +33,9 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Ingredient
 			// Mapowanie do Unit
 			profile.CreateMap<IngredientForNewRecipeVm, Domain.Model.Unit>()
 				.ForMember(dest => dest.Id, opt => opt.Ignore())
-				.ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.NewIngredientUnit));	
-			
-			//Mapowanie w drugą stronę do zrobienia problem Id.Ignore
-			//profile.CreateMap<Domain.Model.RecipeIngredient, IngredientForNewRecipeValidation>()
-			//	.ForMember(ri => ri.)
+				.ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.NewIngredientUnit));					
 		}
 	}
-
 	public class IngredientForNewRecipeValidation : AbstractValidator<IngredientForNewRecipeVm>
 	{
 		public IngredientForNewRecipeValidation()

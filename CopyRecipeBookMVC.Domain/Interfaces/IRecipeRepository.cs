@@ -12,7 +12,7 @@ namespace CopyRecipeBookMVC.Domain.Interfaces
 		int AddRecipe(Recipe recipe);
 		void DeleteRecipe(int id);
 		Recipe GetRecipeById(int id);
-		int UpdateRecipe(Recipe recipe);
+		void UpdateRecipe(Recipe recipe);
 		IQueryable<Recipe> GetAllRecipes();
 		IQueryable<Recipe> GetRecipesByCategory(int categoryId);
 		IQueryable<Recipe> GetRecipesByDifficulty(int difficultyId);

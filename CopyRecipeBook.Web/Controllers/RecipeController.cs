@@ -33,7 +33,7 @@ namespace CopyRecipeBook.Web.Controllers
         [HttpGet]
         public IActionResult Index()
 		{			
-			var model = _recipeService.GetAllRecipesForList(2, 1, "");
+			var model = _recipeService.GetAllRecipesForList(12, 1, "");
 			return View(model);
 		}
 		[HttpPost]
@@ -50,24 +50,20 @@ namespace CopyRecipeBook.Web.Controllers
 			}
 			var model = _recipeService.GetAllRecipesForList(pageSize, pageNumber.Value, searchString);
 			return View(model);
-		}
-		
+		}		
 		[HttpGet]
 		public IActionResult ViewDetails(int id)
 		{
 			var model = _recipeService.GetRecipe(id);
 			return View(model);
 		}
-
-
 		[HttpGet]
 		public IActionResult ViewByCategory ()
 		{
 			FillViewBags();
-			var model = _recipeService.GetRecipesByCategory(1, 1, 0);
+			var model = _recipeService.GetRecipesByCategory(12, 1, 0);
 			return View(model);
 		}
-
 		[HttpPost]
 		[AutoValidateAntiforgeryToken]
 		public IActionResult ViewByCategory (int pageSize, int? pageNumber, int categoryId)
@@ -75,22 +71,19 @@ namespace CopyRecipeBook.Web.Controllers
             if (!pageNumber.HasValue)
             {
                 pageNumber = 1;
-            }
-			
+            }			
 			var model = _recipeService.GetRecipesByCategory(pageSize, pageNumber.Value, categoryId);
 			FillViewBags();
             return View(model);
         }
-
 		[HttpGet]
 		public IActionResult ViewByDifficulty()
 		{
 			FillViewBags();
-			var model = _recipeService.GetRecipesByDifficulty(1, 1, 0)
+			var model = _recipeService.GetRecipesByDifficulty(12, 1, 0)
 				;
 			return View(model);
 		}
-
 		[HttpPost]
 		[AutoValidateAntiforgeryToken]
 		public IActionResult ViewByDifficulty(int pageSize, int? pageNumber, int difficultyId)
@@ -103,15 +96,13 @@ namespace CopyRecipeBook.Web.Controllers
 			var model = _recipeService.GetRecipesByDifficulty(pageSize, pageNumber.Value, difficultyId);
 			FillViewBags();
 			return View(model);
-		}
-		
+		}		
 		[HttpGet]
 		public IActionResult AddRecipe()
 		{
 			FillViewBags();
 			return View(new NewRecipeVm());
 		}
-
 		[HttpPost]
 		[AutoValidateAntiforgeryToken]
 		public IActionResult AddRecipe(NewRecipeVm model)
@@ -126,17 +117,14 @@ namespace CopyRecipeBook.Web.Controllers
 			if (existingRecipeId != null)
 			{
 				// Jeśli przepis istnieje, przekierowujemy do edycji
-				Console.WriteLine("Przepis już istnieje");
+				//Console.WriteLine("Przepis już istnieje");
 				//tymczasowo do index
-				return RedirectToAction("Index");
-				//return RedirectToAction("EditRecipe", new { id = existingRecipeId });
+				//return RedirectToAction("Index");
+				return RedirectToAction("EditRecipe", new { id = existingRecipeId });
 			}
 			_recipeService.AddRecipe(model);
 			return RedirectToAction("Index");
-		}
-
-		//Edycja - do zrobienia
-
+		}		
 		[HttpGet]
 		public IActionResult EditRecipe(int id)
 		{
@@ -144,7 +132,6 @@ namespace CopyRecipeBook.Web.Controllers
 			FillViewBags();
 			return View(recipe);
 		}
-
 		[HttpPost]
 		[AutoValidateAntiforgeryToken]
 		public IActionResult EditRecipe(NewRecipeVm model)
@@ -154,16 +141,20 @@ namespace CopyRecipeBook.Web.Controllers
 				FillViewBags();
 				return View(model);
 			}
-			_recipeService.AddRecipe(model);
+			_recipeService.UpdateRecipe(model);
 			return RedirectToAction("Index");
 		}
-
+		[HttpGet]
+		public IActionResult DeleteRecipe(int id)
+		{
+			_recipeService.DeleteRecipe(id);
+			return RedirectToAction("Index");
+		}
 		[HttpPost]
 		public IActionResult AddIngredient(IngredientForNewRecipeVm model) 
 		{			
 				var ingredientId = _ingredientService.GetOrAddIngredient(model);
 				var unitId = _unitService.GetOrAddUnit(model);
-
 				return Json(new
 				{
 					success = true,
@@ -171,7 +162,6 @@ namespace CopyRecipeBook.Web.Controllers
 					unitId
 				});
 		}
-
 		[HttpPost]
 		public IActionResult AddTime(NewRecipeVm model)
 		{	
@@ -180,7 +170,6 @@ namespace CopyRecipeBook.Web.Controllers
 		}
 
 		//Czy to nie powinno być w innym miejscu ??
-
 		public void FillViewBags()
 		{
 			var categoryListVm = _categoryService.GetListCategoryForList();
@@ -202,21 +191,21 @@ namespace CopyRecipeBook.Web.Controllers
             {
                 Value = tim.Id.ToString(),
                 Text = tim.Amount.ToString() + " " + tim.Unit
-            });
+            }).ToList();
 
             var ingredientListVm = _ingredientService.GetListIngredientForList();
             ViewBag.Ingredients = ingredientListVm.Ingredients.Select(ing => new SelectListItem
             {
                 Value = ing.Id.ToString(),
                 Text = ing.Name, 
-            });
+            }).ToList();
 
 			var unitListVm = _unitService.GetAllUnitsForList();
 			ViewBag.Units = unitListVm.Units.Select(uni => new SelectListItem
 			{
 				Value = uni.Id.ToString(),
 				Text = uni.Name,
-			});
+			}).ToList();
 		}
 	}
 }

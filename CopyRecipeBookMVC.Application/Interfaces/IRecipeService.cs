@@ -15,7 +15,7 @@ namespace CopyRecipeBookMVC.Application.Interfaces
 		void DeleteRecipe(int id);
 		ListRecipeForListVm GetAllRecipesForList(int pageSize, int pageNumber, string searchString);
 		RecipeDetailsVm GetRecipe(int id);
-		int UpdaterRecipe(Recipe recipe);
+		void UpdateRecipe(NewRecipeVm recipe);
 		ListRecipesByCategoryVm GetRecipesByCategory(int pageSize, int pageNumber, int categoryId);
 		ListRecipesByDifficultyVm GetRecipesByDifficulty(int pageSize, int pageNumber, int difficultyId);
 		NewRecipeVm GetRecipeToEdit(int id);

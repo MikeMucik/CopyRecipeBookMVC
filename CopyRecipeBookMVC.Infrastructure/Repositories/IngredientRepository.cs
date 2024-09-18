@@ -56,5 +56,17 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
             var unit = _context.Units.FirstOrDefault(x => x.Id == id);
             return unit;
         }
+
+        public IEnumerable<RecipeIngredient> GetAllIngredientsById(int recipeId)
+        {
+            return _context.RecipeIngredient.Where(ri => ri.RecipeId == recipeId)
+                                            .ToList();
+        }
+
+        public void DeleteCompleteIngredient(RecipeIngredient item)
+        {
+            _context.RecipeIngredient.Remove(item);
+            _context.SaveChanges ();
+        }
     }
 }

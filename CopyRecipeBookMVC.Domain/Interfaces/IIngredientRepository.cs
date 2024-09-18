@@ -16,5 +16,7 @@ namespace CopyRecipeBookMVC.Domain.Interfaces
 		int AddUnit (Unit unit);
 		IQueryable<Unit> GetAllUnits ();
 		Unit GetUnitById (int id);
-	}
+        IEnumerable<RecipeIngredient> GetAllIngredientsById(int recipeId);
+        void DeleteCompleteIngredient(RecipeIngredient item);
+    }
 }

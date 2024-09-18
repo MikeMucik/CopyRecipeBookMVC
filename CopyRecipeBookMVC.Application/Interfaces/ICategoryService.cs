@@ -10,6 +10,5 @@ namespace CopyRecipeBookMVC.Application.Interfaces
 	public interface ICategoryService
 	{
 		ListCategoryForListVm GetListCategoryForList();
-
 	}
 }
