@@ -1,7 +1,7 @@
 ﻿@model CopyRecipeBookMVC.Application.ViewModels.Recipe.NewRecipeVm
 
 @{
-    ViewData["Title"] = "EditRecipe";
+	ViewData["Title"] = "EditRecipe";
 }
 
 <h1>Edycja przepisu</h1>
@@ -9,448 +9,394 @@
 <h4>Formularz do edycji przepisu</h4>
 <hr />
 <div class="row">
-    <div class="col-md-6">
-        <form asp-action="EditRecipe">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                          
-                <input type="hidden" asp-for="Id" />
-                           
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CategoryId" class="control-label"></label>
-                <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories"></select>
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DifficultyId" class="control-label"></label>
-                <select asp-for="DifficultyId" class="form-control" asp-items="ViewBag.Difficulties"></select>                
-                <span asp-validation-for="DifficultyId" class="text-danger"></span>
-            </div>
+	<div class="col-md-6">
+		<form asp-action="EditRecipe">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="form-group">
-                <label asp-for="TimeId" class="control-label"></label>
-                <select asp-for="TimeId" id="TimeId" class="form-control" asp-items="ViewBag.Times"></select>
-              
-                <span asp-validation-for="TimeId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TimeAmount" class="control-label"></label>
-                <input asp-for="TimeAmount" id="TimeAmount" class="form-control" />
-                <span asp-validation-for="TimeAmount" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TimeUnit" class="control-label"></label>
-                <input asp-for="TimeUnit" id="TimeUnit" class="form-control" />
-                <span asp-validation-for="TimeUnit" class="text-danger"></span>
-            </div>
-            <input type="hidden" id="NewTimeId" name="NewTimeId"/>
-            <div class="form-group">
-                @*<button type="button" id="editTimeBtn" class="btn-dark">Edytuj Czas</button>*@
+			<input type="hidden" asp-for="Id" />
 
-                <button type="button" style="text-align: right;" id="addTimeBtn" class="btn btn-primary">Dodaj Czas</button>
-            </div>
+			<div class="form-group">
+				<label asp-for="Name" class="control-label"></label>
+				<input asp-for="Name" class="form-control" />
+				<span asp-validation-for="Name" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="CategoryId" class="control-label"></label>
+				<select asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories"></select>
+				<span asp-validation-for="CategoryId" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="DifficultyId" class="control-label"></label>
+				<select asp-for="DifficultyId" class="form-control" asp-items="ViewBag.Difficulties"></select>
+				<span asp-validation-for="DifficultyId" class="text-danger"></span>
+			</div>
 
-            <!-- Sekcja  składników -->
-            <h4>Dodaj Składniki</h4>
-            <div id="ingredients-container">
-                <div class="row">
-                    <input type="hidden" id="numberOfIngredients" name="NumberOfIngredients" value="@(Model.Ingredients?.Count ?? 0)" />
+			<div class="form-group">
+				<label asp-for="TimeId" class="control-label"></label>
+				<select asp-for="TimeId" id="TimeId" class="form-control" asp-items="ViewBag.Times"></select>
 
-                    <span asp-validation-for="NumberOfIngredients" class="text-danger"></span>
-                    <div class="col-md-12">
-                        <!-- Wybór składnika z listy -->
-                        <div class="form-group">
-                            <label for="ingredientName">Wybierz Składnik</label>
-                            <select id="ingredientName" class="form-control">
-                                <option value="">-- Wybierz składnik --</option>
-                                @foreach (var ingredient in ViewBag.Ingredients)
-                                {
-                                    <option value="@ingredient.Value">@ingredient.Text</option>
-                                }
-                            </select>
-                        </div>
+				<span asp-validation-for="TimeId" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="TimeAmount" class="control-label"></label>
+				<input asp-for="TimeAmount" id="TimeAmount" class="form-control" />
+				<span asp-validation-for="TimeAmount" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="TimeUnit" class="control-label"></label>
+				<input asp-for="TimeUnit" id="TimeUnit" class="form-control" />
+				<span asp-validation-for="TimeUnit" class="text-danger"></span>
+			</div>
+			<input type="hidden" id="NewTimeId" name="NewTimeId" />
+			<div class="form-group">
+				
+				<button type="button" style="display:block; text-align: right;" id="addTimeBtn" class="btn btn-primary">Dodaj Czas</button>
+			</div>
 
-                        <!-- Dodanie nowego składnika -->
-                        <div class="form-group">
-                            <label for="newIngredientName">Nazwa Nowego Składnika</label>
-                            <input type="text" id="newIngredientName" name="newIngredientName" class="form-control" placeholder="Dodaj nowy składnik (jeśli brak na liście)" />
-                            <span data-valmsg-for="NewIngredientName" class="text-danger"></span>
-                        </div>
+			<!-- Sekcja  składników -->
+			<h4>Dodaj Składniki</h4>
+			<div id="ingredients-container">
+				<div class="row">
+					<input type="hidden" id="numberOfIngredients" name="NumberOfIngredients" value="@(Model.Ingredients?.Count ?? 0)" />
 
-                        <!-- Ilość składnika -->
-                        <div class="form-group">
-                            <label for="ingredientQuantity">Ilość</label>
-                            <input type="number" id="ingredientQuantity" class="form-control" step="1" />
-                            <span data-valmsg-for="Quantity" class="text-danger"></span>
-                        </div>
+					<span asp-validation-for="NumberOfIngredients" class="text-danger"></span>
+					<div class="col-md-12">
+						<!-- Wybór składnika z listy -->
+						<div class="form-group">
+							<label for="ingredientName">Wybierz Składnik</label>
+							<select id="ingredientName" class="form-control">
+								<option value="">-- Wybierz składnik --</option>
+								@foreach (var ingredient in ViewBag.Ingredients)
+								{
+									<option value="@ingredient.Value">@ingredient.Text</option>
+								}
+							</select>
+						</div>
 
-                        <!-- Wybór jednostki z listy -->
-                        <div class="form-group">
-                            <label for="ingredientUnit">Wybierz Miara</label>
-                            <select id="ingredientUnit" class="form-control">
-                                <option value="">-- Wybierz miara --</option>
-                                @foreach (var unit in ViewBag.Units)
-                                {
-                                    <option value="@unit.Value">@unit.Text</option>
-                                }
-                            </select>
-                        </div>
+						<!-- Dodanie nowego składnika -->
+						<div class="form-group">
+							<label for="newIngredientName">Nazwa Nowego Składnika</label>
+							<input type="text" id="newIngredientName" name="newIngredientName" class="form-control" placeholder="Dodaj nowy składnik (jeśli brak na liście)" />
+							<span data-valmsg-for="NewIngredientName" class="text-danger"></span>
+						</div>
 
-                        <!-- Dodanie nowej jednostki miary -->
-                        <div class="form-group">
-                            <label for="newIngredientUnit">Nazwa Nowej Miary</label>
-                            <input type="text" id="newIngredientUnit" class="form-control" placeholder="Dodaj nową miarę (jeśli brak na liście)" />
-                            <span data-valmsg-for="NewIngredientUnit" class="text-danger"></span>
-                        </div>
+						<!-- Ilość składnika -->
+						<div class="form-group">
+							<label for="ingredientQuantity">Ilość</label>
+							<input type="number" id="ingredientQuantity" class="form-control" step="1" />
+							<span data-valmsg-for="Quantity" class="text-danger"></span>
+						</div>
 
-                        <button type="button" id="addIngredientBtn" class="btn btn-primary">Dodaj składnik</button>
-                    </div>
-                </div>
-            </div>
+						<!-- Wybór jednostki z listy -->
+						<div class="form-group">
+							<label for="ingredientUnit">Wybierz Miara</label>
+							<select id="ingredientUnit" class="form-control">
+								<option value="">-- Wybierz miara --</option>
+								@foreach (var unit in ViewBag.Units)
+								{
+									<option value="@unit.Value">@unit.Text</option>
+								}
+							</select>
+						</div>
+
+						<!-- Dodanie nowej jednostki miary -->
+						<div class="form-group">
+							<label for="newIngredientUnit">Nazwa Nowej Miary</label>
+							<input type="text" id="newIngredientUnit" class="form-control" placeholder="Dodaj nową miarę (jeśli brak na liście)" />
+							<span data-valmsg-for="NewIngredientUnit" class="text-danger"></span>
+						</div>
+
+						<button type="button" id="addIngredientBtn" class="btn btn-primary">Dodaj składnik</button>
+					</div>
+				</div>
+			</div>
 
 
-            <div id="ingredients-list">
-                <!-- Miejsce na listę składników -->
-                @{
-                    var ingredientsList = ViewBag.Ingredients as List<SelectListItem>;
-                    var unitList = ViewBag.Units as List<SelectListItem>;
-                }
-                @for (int i = 0; i < Model.Ingredients?.Count; i++)
-                {
-                    var ingredientId = Model.Ingredients[i].Name; 
-                    var ingredientName = ingredientsList
-                    .FirstOrDefault(x => x.Value == ingredientId.ToString())?.Text;
+			<div id="ingredients-list">
+				<!-- Miejsce na listę składników -->
+				@{
+					var ingredientsList = ViewBag.Ingredients as List<SelectListItem>;
+					var unitList = ViewBag.Units as List<SelectListItem>;
+				}
+				@for (int i = 0; i < Model.Ingredients?.Count; i++)
+				{
+					var ingredientId = Model.Ingredients[i].Name;
+					var ingredientName = ingredientsList
+					.FirstOrDefault(x => x.Value == ingredientId.ToString())?.Text;
 
-                    var unitId = Model.Ingredients[i].Unit;
-                    var unitName = unitList
-                    .FirstOrDefault(x => x.Value == unitId.ToString())?.Text;
+					var unitId = Model.Ingredients[i].Unit;
+					var unitName = unitList
+					.FirstOrDefault(x => x.Value == unitId.ToString())?.Text;
 
-                    <div class="ingredient-item">
-                        <p>
-                            <strong>Nazwa Składnika:</strong>
-                            
-                            @ingredientName
-                            
-                        </p>
-                        <p><strong>Ilość:</strong> @Model.Ingredients[i].Quantity</p>
-                        <p>
-                            <strong>Miara:</strong>
-                            @unitName
-                        </p>
+					<div class="ingredient-item">
+						<p>
+							<strong>Nazwa Składnika:</strong>
 
-                        <input type="hidden" name="Ingredients[@i].Name" value="@Model.Ingredients[i].Name" />
-                        <input type="hidden" name="Ingredients[@i].Quantity" value="@Model.Ingredients[i].Quantity" />
-                        <input type="hidden" name="Ingredients[@i].Unit" value="@Model.Ingredients[i].Unit" />
-                        <input type="hidden" name="Ingredients[@i].NewIngredientName" value="@Model.Ingredients[i].NewIngredientName" />
-                        <input type="hidden" name="Ingredients[@i].NewIngredientUnit" value="@Model.Ingredients[i].NewIngredientUnit" />
+							@ingredientName
 
-                        <button type="button" id="EditIngredientBtn" class="btn-dark"
-                            data-numberOfIngredients-id ="@Model.NumberOfIngredients"
-                            data-ingredient-id="@Model.Ingredients[i].Name"
-                            data-recipe-id ="@Model.Id"
-                            data-unit-id="@Model.Ingredients[i].Unit"
-                        >Edytuj składnik</button>
-                        <button type="button" id="DeleteIngredientBtn" class="btn-dark"
-                            data-ingredient-id="@Model.Ingredients[i].Name"
-                            data-recipe-id="@Model.Id"
-                            data-unit-id="@Model.Ingredients[i].Unit"
-                        >Usuń składnik</button>
-                    </div>
-                }
-            </div>
+						</p>
+						<p><strong>Ilość:</strong> @Model.Ingredients[i].Quantity</p>
+						<p>
+							<strong>Miara:</strong>
+							@unitName
+						</p>
 
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            
-            <div class="form-group">
-                <input type="submit" value="Zapisz przepis" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+						<input type="hidden" name="Ingredients[@i].Name" value="@Model.Ingredients[i].Name" />
+						<input type="hidden" name="Ingredients[@i].Quantity" value="@Model.Ingredients[i].Quantity" />
+						<input type="hidden" name="Ingredients[@i].Unit" value="@Model.Ingredients[i].Unit" />
+						<input type="hidden" name="Ingredients[@i].NewIngredientName" value="@Model.Ingredients[i].NewIngredientName" />
+						<input type="hidden" name="Ingredients[@i].NewIngredientUnit" value="@Model.Ingredients[i].NewIngredientUnit" />
+
+						<button type="button" id="EditIngredientBtn" class="btn-dark"
+								data-numberOfIngredients-id="@Model.NumberOfIngredients"
+								data-ingredient-id="@Model.Ingredients[i].Name"
+								data-recipe-id="@Model.Id"
+								data-unit-id="@Model.Ingredients[i].Unit">
+							Edytuj składnik
+						</button>
+						<button type="button" id="DeleteIngredientBtn" class="btn-dark"
+								data-ingredient-id="@Model.Ingredients[i].Name"
+								data-recipe-id="@Model.Id"
+								data-unit-id="@Model.Ingredients[i].Unit">
+							Usuń składnik
+						</button>
+					</div>
+				}
+			</div>
+
+			<div class="form-group">
+				<label asp-for="Description" class="control-label"></label>
+				<input asp-for="Description" class="form-control" />
+				<span asp-validation-for="Description" class="text-danger"></span>
+			</div>
+
+			<div class="form-group">
+				<input type="submit" value="Zapisz przepis" class="btn btn-primary" />
+			</div>
+		</form>
+	</div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+	<a asp-action="Index">Wróć do listy przepisów</a>
 </div>
 
 @section Scripts {
-    <script>
-        document.getElementById('addTimeBtn').addEventListener('click', function () {
-            var timeAmount = parseFloat(document.getElementById('TimeAmount').value.replace(',', '.'));
-            if (isNaN(timeAmount)) {
-                $("span[data-valmsg-for='TimeAmount']").text("Prosze podać prawidłową ilość.");
-            }
-            var timeUnit = document.getElementById('TimeUnit').value
-            var timeId = document.getElementById('TimeId').value;
-            //tu coś trzeba zmienić
-            if (timeId === "") {
-                if (timeAmount != 0 && timeUnit != "") {
-                    if (timeUnit.length > 10) {
-                        $("span[data-valmsg-for='TimeUnit']").text("Pole jednostka czasu może mieć maksymalnie 9 znaków");
-                        return;
-                    }
-                    $.ajax({
-                        url: '/Recipe/AddTime',  
-                        method: 'POST',
-                        data: {
-                            timeAmount: timeAmount,
-                            timeUnit: timeUnit
-                        },
-                        success: function (response) {
-                            if (response.success) {
-                                var timeIdSelect = document.querySelector('select[name="TimeId"]');
-                                var newOption = document.createElement('option');
-                                newOption.text = timeAmount + " " + timeUnit;
-                                newOption.value = response.newTimeId; // Otrzymane ID z serwera
+	<script>
+		document.getElementById('addTimeBtn').addEventListener('click', function () {
+			var timeAmount = parseFloat(document.getElementById('TimeAmount').value.replace(',', '.'));
+			if (isNaN(timeAmount)) {
+				$("span[data-valmsg-for='TimeAmount']").text("Prosze podać prawidłową ilość.");
+			}
+			var timeUnit = document.getElementById('TimeUnit').value
+			var timeId = document.getElementById('TimeId').value;
+			//tu coś trzeba zmienić
+			//if (timeId === "") {
+				if (timeAmount != 0 && timeUnit != "") {
+					if (timeUnit.length > 10) {
+						$("span[data-valmsg-for='TimeUnit']").text("Pole jednostka czasu może mieć maksymalnie 9 znaków");
+						return;
+					}
+					$.ajax({
+						url: '/Recipe/AddTime',
+						method: 'POST',
+						data: {
+							timeAmount: timeAmount,
+							timeUnit: timeUnit
+						},
+						success: function (response) {
+							if (response.success) {
+								var timeIdSelect = document.querySelector('select[name="TimeId"]');
+								var newOption = document.createElement('option');
+								newOption.text = timeAmount + " " + timeUnit;
+								newOption.value = response.newTimeId; // Otrzymane ID z serwera
 
-                                timeIdSelect.add(newOption);
-                                timeIdSelect.value = newOption.value;
+								timeIdSelect.add(newOption);
+								timeIdSelect.value = newOption.value;
 
-                                $("span[data-valmsg-for='TimeId']").text("");
-                                $("span[data-valmsg-for='TimeAmount']").text("");
-                                $("span[data-valmsg-for='TimeUnit']").text("");
-                            } else {
-                                $("span[data-valmsg-for='TimeId']").text(response.errorMessage);
-                            }
-                        },
-                        error: function () {
-                            $("span[data-valmsg-for='TimeId']").text('Wystąpił błąd podczas dodawania czasu.');
-                        }
-                    });
-                }
-                else {
-                    $("span[data-valmsg-for='TimeId']").text("Uzupełnij pola jednostka czasu i ilość czasu");
-                }
-            }
-            else {
-                $("span[data-valmsg-for='TimeId']").text("Musisz wybrać czas przygotowania potrawy lub dodać nowy")
-            }
-        });
+								$("span[data-valmsg-for='TimeId']").text("");
+								$("span[data-valmsg-for='TimeAmount']").text("");
+								$("span[data-valmsg-for='TimeUnit']").text("");
+							} else {
+								$("span[data-valmsg-for='TimeId']").text(response.errorMessage);
+							}
+						},
+						error: function () {
+							$("span[data-valmsg-for='TimeId']").text('Wystąpił błąd podczas dodawania czasu.');
+						}
+					});
+				}
+				else {
+					$("span[data-valmsg-for='TimeId']").text("Uzupełnij pola jednostka czasu i ilość czasu");
+				}
+			//}
+			//else {
+			//	$("span[data-valmsg-for='TimeId']").text("Musisz wybrać czas przygotowania potrawy lub dodać nowy")
+			//}
+		});
 
-        
+		$(document).on('click', '#DeleteIngredientBtn', function () {
+			var ingredientItem = $(this).closest('.ingredient-item');
+			ingredientItem.remove();
+			// Zaktualizowanie indeksów dla pozostałych składników
+			$('.ingredient-item').each(function (index) {
+				$(this).find('input[name^="Ingredients["]').each(function () {
+					var name = $(this).attr('name');
+					var newName = name.replace(/\[\d+\]/, '[' + index + ']');
+					$(this).attr('name', newName);
+				});
+			});
+			// Zaktualizowanie liczby składników
+			var numberOfIngredients = document.querySelectorAll('.ingredient-item').length;
+			document.getElementById('numberOfIngredients').value = numberOfIngredients;
+		});
 
-        $(document).on('click', '#DeleteIngredientBtn', function () {
-            var ingredientItem = $(this).closest('.ingredient-item');
-            ingredientItem.remove();
-            // Zaktualizowanie indeksów dla pozostałych składników
-            $('.ingredient-item').each(function (index) {
-                $(this).find('input[name^="Ingredients["]').each(function () {
-                    var name = $(this).attr('name');
-                    var newName = name.replace(/\[\d+\]/, '[' + index + ']');
-                    $(this).attr('name', newName);
-                });
-            });
-            // Zaktualizowanie liczby składników
-            var numberOfIngredients = document.querySelectorAll('.ingredient-item').length;
-            document.getElementById('numberOfIngredients').value = numberOfIngredients;
-        });
+		$(document).on('click', '#EditIngredientBtn', function () {
+			var ingredientItem = $(this).closest('.ingredient-item'); // Znalezienie elementu składnika w widoku
+			// Pobranie danych składnika z widoku
+			var ingredientId = ingredientItem.find('input[name$=".Name"]').val();
+			var ingredientQuantity = ingredientItem.find('p:contains("Ilość")').text().split(": ")[1];
+			var unitId = ingredientItem.find('input[name$=".Unit"]').val();
 
-        $(document).on('click', '#EditIngredientBtn', function () {
-            var ingredientItem = $(this).closest('.ingredient-item'); // Znalezienie elementu składnika w widoku
+			// Wypełnienie formularza tymi danymi
+			$('#ingredientName').val(ingredientId);
+			$('#ingredientQuantity').val(ingredientQuantity);
+			$('#ingredientUnit').val(unitId);
 
-            // Pobranie danych składnika z widoku
-            var ingredientId = ingredientItem.find('input[name$=".Name"]').val();
-            //var ingredientName = ingredientItem.find('p:contains("Nazwa Składnika")').text().split(": ")[1];
-            var ingredientQuantity = ingredientItem.find('p:contains("Ilość")').text().split(": ")[1];
-            var unitId = ingredientItem.find('input[name$=".Unit"]').val();
-            //var unitName = ingredientItem.find('p:contains("Miara")').text().split(": ")[1];
+			ingredientItem.remove();
+			// Zaktualizowanie indeksów dla pozostałych składników
+			$('.ingredient-item').each(function (index) {
+				$(this).find('input[name^="Ingredients["]').each(function () {
+					var name = $(this).attr('name');
+					var newName = name.replace(/\[\d+\]/, '[' + index + ']');
+					$(this).attr('name', newName);
+				});
+			});
+			// Zaktualizowanie liczby składników
+			var numberOfIngredients = document.querySelectorAll('.ingredient-item').length;
+			document.getElementById('numberOfIngredients').value = numberOfIngredients;
+		});
 
-            // Wypełnienie formularza tymi danymi
-            $('#ingredientName').val(ingredientId);
-            $('#ingredientQuantity').val(ingredientQuantity);
-            $('#ingredientUnit').val(unitId);
+		document.getElementById('addIngredientBtn').addEventListener('click', function () {
 
-            // Opcjonalnie, wyświetl także nazwę i jednostkę (jeśli korzystasz z dodatkowych pól tekstowych)
-            //$('#newIngredientName').val(ingredientName);
-            //$('#newIngredientUnit').val(unitName);
+			// Pobranie wartości z listy rozwijanej dla składnika (ID i nazwa)
+			var ingredientSelect = document.getElementById('ingredientName');
+			var ingredientId = ingredientSelect.value; // ID składnika
+			var ingredientName = ingredientSelect.options[ingredientSelect.selectedIndex].text; // Nazwa składnika
 
-            // Usunięcie składnika z listy w widoku
-            ingredientItem.remove();
-            // Zaktualizowanie indeksów dla pozostałych składników
-            $('.ingredient-item').each(function (index) {
-                $(this).find('input[name^="Ingredients["]').each(function () {
-                    var name = $(this).attr('name');
-                    var newName = name.replace(/\[\d+\]/, '[' + index + ']');
-                    $(this).attr('name', newName);
-                });
-            });
-            // Zaktualizowanie liczby składników
-            var numberOfIngredients = document.querySelectorAll('.ingredient-item').length;
-            document.getElementById('numberOfIngredients').value = numberOfIngredients;
-        });
+			// Pobranie wartości z listy rozwijanej dla jednostki miary (ID i nazwa)
+			var unitSelect = document.getElementById('ingredientUnit');
+			var unitId = unitSelect.value; // ID jednostki miary
+			var unitName = unitSelect.options[unitSelect.selectedIndex].text; // Nazwa jednostki miary
 
+			// Pobranie wartości pozostałych pól formularza
 
+			var ingredientQuantity = parseFloat(document.getElementById('ingredientQuantity').value.replace(',', '.'));
+			if (isNaN(ingredientQuantity)) {
+				$("span[data-valmsg-for='Quantity']").text("Prosze podać prawidłową ilość.");
+				isValid = false;
+			}
+			var newIngredientName = document.getElementById('newIngredientName').value;
+			var newIngredientUnit = document.getElementById('newIngredientUnit').value;
 
-        // $(document).on('click', '#EditIngredientBtn', function () {
-        //     var ingredientId = $(this).data('ingredient-id');
-        //     var recipeId = $(this).data('recipe-id');
-        //     var unitId = $(this).data('unit-id');
-        //     var isSaved = $(this).closest('.ingredient-item').data('is-saved');
-        //     //isSaved = false;
-        //    // if (isSaved === "true") {
-        //         // Składnik zapisany w bazie danych - pobierz dane z serwera i uzupełnij formularz
-        //         $.ajax({
-        //             url: '/Recipe/EditIngredient',
-        //             type: 'POST',
-        //             data: { ingredientId: ingredientId, recipeId: recipeId, unitId: unitId },
-        //             success: function (response) {
-        //                 // Wypełnij formularz danymi zwróconymi z kontrolera
-        //                 $('#ingredientName').val(response.name);
-        //                 $('#ingredientUnit').val(response.unit);
-        //                 $('#ingredientQuantity').val(response.quantity);
+			var finalIngredientName = newIngredientName || ingredientName;
+			var finalIngredientUnit = newIngredientUnit || unitName;
 
-        //                 // Usuń składnik z listy, zarówno w widoku, jak i w modelu
-        //                 $(`.ingredient-item[data-ingredient-id="${ingredientId}"][data-recipe-id="${recipeId}"][data-unit-id="${unitId}"]`).remove();
-        //             },
-        //             error: function () {
-        //                 alert('Wystąpił błąd podczas edycji składnika.');
-        //             }
-        //         });
-            // } else {
-            //     // Składnik tylko w modelu - uzupełnij formularz bez zapytań do serwera
-            //     var ingredientElement = $(this).closest('.ingredient-item');
-            //     var ingredientName = ingredientElement.find('.ingredient-name').text(); // Zakładam, że masz .ingredient-name w HTML-u
-            //     var ingredientUnit = ingredientElement.find('.ingredient-unit').text(); // Zakładam, że masz .ingredient-unit w HTML-u
-            //     var ingredientQuantity = ingredientElement.find('.ingredient-quantity').text(); // Zakładam, że masz .ingredient-quantity w HTML-u
+			var isValid = true;
 
-            //     // Uzupełnij formularz składnika danymi z widoku
-            //     $('#ingredientName').val(ingredientName);
-            //     $('#ingredientUnit').val(ingredientUnit);
-            //     $('#ingredientQuantity').val(ingredientQuantity);
+			if (newIngredientName.length > 20) {
+				$("span[data-valmsg-for='NewIngredientName']").text("Nazwa składnika może mieć maksymalnie 20 znaków");
+				isValid = false;
+			} else if (!ingredientId && !newIngredientName) {
+				$("span[data-valmsg-for='NewIngredientName']").text("Proszę wybrać składnik lub wpisać nowy");
+				isValid = false;
+			} else {
+				$("span[data-valmsg-for='NewIngredientName']").text('');
+			}
 
-            //     // Usuń składnik z listy, zarówno w widoku, jak i w modelu
-            //     ingredientElement.remove();
-            // }
-        // });
+			// Walidacja dla ilości składnika
+			if (!ingredientQuantity || ingredientQuantity <= 0) {
+				$("span[data-valmsg-for='Quantity']").text("Ilość musi być większa od zera");
+				isValid = false;
+			} else {
+				$("span[data-valmsg-for='Quantity']").text('');
+			}
 
+			// Walidacja dla nowej jednostki miary
+			if (newIngredientUnit.length > 10) {
+				$("span[data-valmsg-for='NewIngredientUnit']").text("Miara składnika może mieć maksymalnie 10 znaków");
+				isValid = false;
+			} else if (!unitId && !newIngredientUnit) {
+				$("span[data-valmsg-for='NewIngredientUnit']").text("Proszę wybrać jednostkę miary lub wpisać nową");
+				isValid = false;
+			} else {
+				$("span[data-valmsg-for='NewIngredientUnit']").text('');
+			}
 
+			if (isValid) {
+				$.ajax({
+					url: '/Recipe/AddIngredient',
+					type: 'POST',
+					data: {
+						newIngredientName: newIngredientName || null,
+						newIngredientUnit: newIngredientUnit || null,
+						Name: ingredientId || 0,
+						Unit: unitId || 0
+					},
+					success: function (response) {
+						if (response.success) {//a może tu
+							ingredientId = response.ingredientId;
+							unitId = response.unitId;
+							addIngredientToList(ingredientId, finalIngredientName, ingredientQuantity, unitId, finalIngredientUnit);
+						} else {
+							alert("Błąd podczas dodawania składnika.");
+						}
+					},
+					error: function () {
+						alert('Wystąpił błąd.');
+					}
+				});
+			}
+			else {
+				alert("BIG Problem");
+			}
+		});
 
+		//Funkcja dodawania do listy
+		function addIngredientToList(ingredientId, finalIngredientName, ingredientQuantity, unitId, finalIngredientUnit) {
+			var index = document.querySelectorAll('.ingredient-item').length;
+			// Generowanie HTML dla nowego składnika
+			var ingredientHtml = `
+							<div class="ingredient-item" style="display: inline-block;">
+								<p><strong>No: </strong> ${index + 1} </p>
+								<p><strong>Nazwa Składnika:</strong> ${finalIngredientName}</p>
+								<p><strong>Ilość:</strong> ${ingredientQuantity}</p>
+								<p><strong>Miara:</strong> ${finalIngredientUnit}</p>
 
-        document.getElementById('addIngredientBtn').addEventListener('click', function () {
+								<input type="hidden" name="Ingredients[${index}].Name" value="${ingredientId}" />
+								<input type="hidden" name="Ingredients[${index}].Quantity" value="${ingredientQuantity}" />
+								<input type="hidden" name="Ingredients[${index}].Unit" value="${unitId}" />
 
-            // Pobranie wartości z listy rozwijanej dla składnika (ID i nazwa)
-            var ingredientSelect = document.getElementById('ingredientName');
-            var ingredientId = ingredientSelect.value; // ID składnika
-            var ingredientName = ingredientSelect.options[ingredientSelect.selectedIndex].text; // Nazwa składnika
+								<button type="button" id="EditIngredientBtn" class="btn-dark">Edytuj składnik</button>
+								<button type="button" id="DeleteIngredientBtn" class="btn-dark">Usuń składnik</button>
+							</div>`;
 
-            // Pobranie wartości z listy rozwijanej dla jednostki miary (ID i nazwa)
-            var unitSelect = document.getElementById('ingredientUnit');
-            var unitId = unitSelect.value; // ID jednostki miary
-            var unitName = unitSelect.options[unitSelect.selectedIndex].text; // Nazwa jednostki miary
+			// Dodanie nowego składnika do listy
+			document.getElementById('ingredients-list').insertAdjacentHTML('beforeend', ingredientHtml);
+			document.getElementById('numberOfIngredients').value = index + 1;
 
-            // Pobranie wartości pozostałych pól formularza
+			$("span[data-valmsg-for='NumberOfIngredients']").text('');
 
-            var ingredientQuantity = parseFloat(document.getElementById('ingredientQuantity').value.replace(',', '.'));
-            if (isNaN(ingredientQuantity)) {
-                $("span[data-valmsg-for='Quantity']").text("Prosze podać prawidłową ilość.");
-                isValid = false;
-            }
-            var newIngredientName = document.getElementById('newIngredientName').value;
-            var newIngredientUnit = document.getElementById('newIngredientUnit').value;
+			// Resetowanie pól formularza
+			document.getElementById('ingredientName').value = '';
+			document.getElementById('ingredientQuantity').value = '';
+			document.getElementById('ingredientUnit').value = '';
+			document.getElementById('newIngredientName').value = '';
+			document.getElementById('newIngredientUnit').value = '';
+		}
 
-            var finalIngredientName = newIngredientName || ingredientName;
-            var finalIngredientUnit = newIngredientUnit || unitName;
-
-            var isValid = true;
-
-            if (newIngredientName.length > 20) {
-                $("span[data-valmsg-for='NewIngredientName']").text("Nazwa składnika może mieć maksymalnie 20 znaków");
-                isValid = false;
-            } else if (!ingredientId && !newIngredientName) {
-                $("span[data-valmsg-for='NewIngredientName']").text("Proszę wybrać składnik lub wpisać nowy");
-                isValid = false;
-            } else {
-                $("span[data-valmsg-for='NewIngredientName']").text('');
-            }
-
-            // Walidacja dla ilości składnika
-            if (!ingredientQuantity || ingredientQuantity <= 0) {
-                $("span[data-valmsg-for='Quantity']").text("Ilość musi być większa od zera");
-                isValid = false;
-            } else {
-                $("span[data-valmsg-for='Quantity']").text('');
-            }
-
-            // Walidacja dla nowej jednostki miary
-            if (newIngredientUnit.length > 10) {
-                $("span[data-valmsg-for='NewIngredientUnit']").text("Miara składnika może mieć maksymalnie 10 znaków");
-                isValid = false;
-            } else if (!unitId && !newIngredientUnit) {
-                $("span[data-valmsg-for='NewIngredientUnit']").text("Proszę wybrać jednostkę miary lub wpisać nową");
-                isValid = false;
-            } else {
-                $("span[data-valmsg-for='NewIngredientUnit']").text('');
-            }
-
-            if (isValid) {
-                $.ajax({
-                    url: '/Recipe/AddIngredient',
-                    type: 'POST',
-                    data: {
-                        newIngredientName: newIngredientName || null,
-                        newIngredientUnit: newIngredientUnit || null,
-                        Name: ingredientId || 0,
-                        Unit: unitId || 0
-                    },
-                    success: function (response) {
-                        if (response.success) {//a może tu
-                            ingredientId = response.ingredientId;
-                            unitId = response.unitId;
-                            addIngredientToList(ingredientId, finalIngredientName, ingredientQuantity, unitId, finalIngredientUnit);
-                        } else {
-                            alert("Błąd podczas dodawania składnika.");
-                        }
-                    },
-                    error: function () {
-                        alert('Wystąpił błąd.');
-                    }
-                });
-            } else {
-                alert("BIG Problem");
-            }
-        });
-
-        //Funkcja dodawania do listy
-        function addIngredientToList(ingredientId, finalIngredientName, ingredientQuantity, unitId, finalIngredientUnit) {
-            var index = document.querySelectorAll('.ingredient-item').length;
-            // Generowanie HTML dla nowego składnika
-            var ingredientHtml = `
-                    <div class="ingredient-item" style="display: inline-block;">
-                        <p><strong>No: </strong> ${index + 1} </p>
-                        <p><strong>Nazwa Składnika:</strong> ${finalIngredientName}</p>
-                        <p><strong>Ilość:</strong> ${ingredientQuantity}</p>
-                        <p><strong>Miara:</strong> ${finalIngredientUnit}</p>
-
-                        <input type="hidden" name="Ingredients[${index}].Name" value="${ingredientId}" />
-                        <input type="hidden" name="Ingredients[${index}].Quantity" value="${ingredientQuantity}" />
-                        <input type="hidden" name="Ingredients[${index}].Unit" value="${unitId}" />
-
-                        <button type="button" id="EditIngredientBtn" class="btn-dark">Edytuj składnik</button>
-                        <button type="button" id="DeleteIngredientBtn" class="btn-dark">Usuń składnik</button>
-                    </div>`;
-
-            // Dodanie nowego składnika do listy
-            document.getElementById('ingredients-list').insertAdjacentHTML('beforeend', ingredientHtml);
-            document.getElementById('numberOfIngredients').value = index + 1;
-
-            $("span[data-valmsg-for='NumberOfIngredients']").text('');
-
-            // Resetowanie pól formularza
-            document.getElementById('ingredientName').value = '';
-            document.getElementById('ingredientQuantity').value = '';
-            document.getElementById('ingredientUnit').value = '';
-            document.getElementById('newIngredientName').value = '';
-            document.getElementById('newIngredientUnit').value = '';
-        }
-
-
-    </script>
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+	</script>
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
 }

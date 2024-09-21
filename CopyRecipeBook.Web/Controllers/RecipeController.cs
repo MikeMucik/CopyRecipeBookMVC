@@ -16,12 +16,14 @@ namespace CopyRecipeBook.Web.Controllers
 		private readonly ITimeService _timeService;
 		private readonly IIngredientService _ingredientService;
 		private readonly IUnitService _unitService;
+		private readonly ILogger<RecipeController> _logger;
         public RecipeController(IRecipeService recipeService,
 			ICategoryService categoryService,
             IDifficultyService difficultyService,
             ITimeService timeService,
             IIngredientService ingredientService,
-			IUnitService unitService)
+			IUnitService unitService,
+			ILogger<RecipeController> logger/*, ..*/)
         {
             _recipeService = recipeService;
             _categoryService = categoryService;
@@ -29,6 +31,7 @@ namespace CopyRecipeBook.Web.Controllers
             _timeService = timeService;
             _ingredientService = ingredientService;
 			_unitService = unitService;
+			_logger = logger;
         }
         [HttpGet]
         public IActionResult Index()
@@ -91,8 +94,7 @@ namespace CopyRecipeBook.Web.Controllers
 			if (!pageNumber.HasValue)
 			{
 				pageNumber = 1;
-			}
-			
+			}			
 			var model = _recipeService.GetRecipesByDifficulty(pageSize, pageNumber.Value, difficultyId);
 			FillViewBags();
 			return View(model);
@@ -113,13 +115,10 @@ namespace CopyRecipeBook.Web.Controllers
 				return View(model);
 			}
 			var existingRecipeId = _recipeService.CheckIfRecipeExists(model.Name);
-
+			_logger.LogInformation("Jesteś po sprawdzeniu nazwy przepisu");
 			if (existingRecipeId != null)
-			{
-				// Jeśli przepis istnieje, przekierowujemy do edycji
-				//Console.WriteLine("Przepis już istnieje");
-				//tymczasowo do index
-				//return RedirectToAction("Index");
+			{				
+				// Jeśli przepis istnieje, przekierowujemy do edycji				
 				return RedirectToAction("EditRecipe", new { id = existingRecipeId });
 			}
 			_recipeService.AddRecipe(model);
@@ -144,7 +143,9 @@ namespace CopyRecipeBook.Web.Controllers
 			_recipeService.UpdateRecipe(model);
 			return RedirectToAction("Index");
 		}
-		[HttpGet]
+		//[HttpPost]
+		//[AutoValidateAntiforgeryToken]
+		//To trzeba zmienić usuwanie nie powinno być GET
 		public IActionResult DeleteRecipe(int id)
 		{
 			_recipeService.DeleteRecipe(id);

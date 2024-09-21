@@ -62,9 +62,8 @@
 				<input type="hidden" id="NewTimeId" name="NewTimeId" />
 			</div>
 			<div class="form-group">
-				<button type="button" id="editTimeBtn" class="btn-dark">Edytuj Czas</button>
-			 
-				<button type="button" style="text-align: right;" id="addTimeBtn" class="btn btn-primary">Dodaj Czas</button>
+							 
+				<button type="button" style="display:flex; justify-content: flex-end;" id="addTimeBtn" class="btn btn-primary">Dodaj Czas</button>
 			</div>
 
 			<!-- Sekcja dodawania składników -->
@@ -234,20 +233,42 @@
 			document.getElementById('numberOfIngredients').value = numberOfIngredients;
 		});
 
-		document.getElementById('addIngredientBtn').addEventListener('click', function () {
+		$(document).on('click', '#EditIngredientBtn', function () {
+			var ingredientItem = $(this).closest('.ingredient-item'); // Znalezienie elementu składnika w widoku
+			// Pobranie danych składnika z widoku
+			var ingredientId = ingredientItem.find('input[name$=".Name"]').val();
+			var ingredientQuantity = ingredientItem.find('p:contains("Ilość")').text().split(": ")[1];
+			var unitId = ingredientItem.find('input[name$=".Unit"]').val();
 
+			// Wypełnienie formularza tymi danymi
+			$('#ingredientName').val(ingredientId);
+			$('#ingredientQuantity').val(ingredientQuantity);
+			$('#ingredientUnit').val(unitId);
+
+			ingredientItem.remove();
+			// Zaktualizowanie indeksów dla pozostałych składników
+			$('.ingredient-item').each(function (index) {
+				$(this).find('input[name^="Ingredients["]').each(function () {
+					var name = $(this).attr('name');
+					var newName = name.replace(/\[\d+\]/, '[' + index + ']');
+					$(this).attr('name', newName);
+				});
+			});
+			// Zaktualizowanie liczby składników
+			var numberOfIngredients = document.querySelectorAll('.ingredient-item').length;
+			document.getElementById('numberOfIngredients').value = numberOfIngredients;
+		});
+
+		document.getElementById('addIngredientBtn').addEventListener('click', function () {
 			// Pobranie wartości z listy rozwijanej dla składnika (ID i nazwa)
 			var ingredientSelect = document.getElementById('ingredientName');
 			var ingredientId = ingredientSelect.value; // ID składnika
 			var ingredientName = ingredientSelect.options[ingredientSelect.selectedIndex].text; // Nazwa składnika
-
 			// Pobranie wartości z listy rozwijanej dla jednostki miary (ID i nazwa)
 			var unitSelect = document.getElementById('ingredientUnit');
 			var unitId = unitSelect.value; // ID jednostki miary
 			var unitName = unitSelect.options[unitSelect.selectedIndex].text; // Nazwa jednostki miary
-
 			// Pobranie wartości pozostałych pól formularza
-
 			var ingredientQuantity = parseFloat(document.getElementById('ingredientQuantity').value.replace(',', '.'));
 			if (isNaN(ingredientQuantity)) {
 				$("span[data-valmsg-for='Quantity']").text("Prosze podać prawidłową ilość.");
@@ -270,7 +291,6 @@
 			} else {
 				$("span[data-valmsg-for='NewIngredientName']").text('');
 			}
-
 			// Walidacja dla ilości składnika
 			if (!ingredientQuantity || ingredientQuantity <= 0) {
 				$("span[data-valmsg-for='Quantity']").text("Ilość musi być większa od zera");
@@ -278,7 +298,6 @@
 			} else {
 				$("span[data-valmsg-for='Quantity']").text('');
 			}
-
 			// Walidacja dla nowej jednostki miary
 			if (newIngredientUnit.length > 10) {
 				$("span[data-valmsg-for='NewIngredientUnit']").text("Miara składnika może mieć maksymalnie 10 znaków");
@@ -301,7 +320,7 @@
 						Unit: unitId || 0
 					},
 					success: function (response) {
-						if (response.success) {//a może tu
+						if (response.success) {
 							ingredientId = response.ingredientId;
 							unitId = response.unitId;
 							addIngredientToList(ingredientId, finalIngredientName, ingredientQuantity, unitId, finalIngredientUnit);
@@ -313,11 +332,11 @@
 						alert('Wystąpił błąd.');
 					}
 				});
-			} else {				
-				alert("BIG Problem");
-			}			
+			} 
+			// else {				
+			// 	alert("BIG Problem");
+			// }			
 		});
-
 		//Funkcja dodawania do listy
 		function addIngredientToList(ingredientId, finalIngredientName, ingredientQuantity, unitId, finalIngredientUnit) {
 			var index = document.querySelectorAll('.ingredient-item').length;
@@ -333,16 +352,13 @@
 											<input type="hidden" name="Ingredients[${index}].Quantity" value="${ingredientQuantity}" />
 											<input type="hidden" name="Ingredients[${index}].Unit" value="${unitId}" />
 
-											@*<button type="button" id="EditIngredientBtn" class="btn-dark">Edytuj składnik</button>*@
+											<button type="button" id="EditIngredientBtn" class="btn-dark">Edytuj składnik</button>
 											<button type="button" id="DeleteIngredientBtn" class="btn-dark">Usuń składnik</button>
 											</div>`;
-
 			// Dodanie nowego składnika do listy
 			document.getElementById('ingredients-list').insertAdjacentHTML('beforeend', ingredientHtml);
 			document.getElementById('numberOfIngredients').value = index + 1;
-
 			$("span[data-valmsg-for='NumberOfIngredients']").text('');
-
 			// Resetowanie pól formularza
 			document.getElementById('ingredientName').value = '';
 			document.getElementById('ingredientQuantity').value = '';

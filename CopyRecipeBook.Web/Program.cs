@@ -10,6 +10,7 @@ using FluentValidation.AspNetCore;
 using FluentValidation;
 using CopyRecipeBookMVC.Application.ViewModels.Recipe;
 using CopyRecipeBookMVC.Application.ViewModels.Ingredient;
+using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,7 +32,10 @@ builder.Services.AddFluentValidationAutoValidation(fv => fv.DisableDataAnnotatio
 
 builder.Services.AddTransient<IValidator<NewRecipeVm>, NewRecipeValidation>();
 builder.Services.AddTransient<IValidator<IngredientForNewRecipeVm>, IngredientForNewRecipeValidation>();
-// usuniête bo mam tylko imitacjê fluent validation
+
+builder.Logging.AddFile("Logs/myLog-{Date}.txt");
+
+
 var app = builder.Build();
 
 var defaultCulture = new CultureInfo("en-US");

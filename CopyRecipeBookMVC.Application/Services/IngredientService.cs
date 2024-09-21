@@ -20,20 +20,17 @@ namespace CopyRecipeBookMVC.Application.Services
 			_ingredientRepo = ingredientRepo;
 			_mapper = mapper;
 		}
-
 		public void AddCompleteIngredients(RecipeIngredient recipeIngredient)
 		{
 			var completeIngredient = _mapper.Map<RecipeIngredient>(recipeIngredient);
 			_ingredientRepo.AddCompleteIngredients(completeIngredient);
 		}
-
 		public int AddIngredient(IngredientForNewRecipeVm ingredient)
 		{
 			var ingredientNew = _mapper.Map<Ingredient>(ingredient);
 			var id = _ingredientRepo.AddIngredient(ingredientNew);
 			return id;
 		}
-
 		public ListIngredientsForRecipeVm GetListIngredientForList()
 		{
 			var ingredient = _ingredientRepo.GetAllIngredients();
@@ -44,7 +41,6 @@ namespace CopyRecipeBookMVC.Application.Services
 			};
 			return ingredientList;
 		}
-
 		public int GetOrAddIngredient(IngredientForNewRecipeVm ingredient)
 		{
 			if (ingredient.Name > 0)
@@ -55,7 +51,7 @@ namespace CopyRecipeBookMVC.Application.Services
 			var listOfIngredient = GetListIngredientForList();
 			foreach (var ing in listOfIngredient.Ingredients)
 			{
-				if (ing.Name == ingredient.NewIngredientName)
+				if (ing.Name.ToLower() == ingredient.NewIngredientName.ToLower())
 				{
 					return ing.Id;
 				}
@@ -70,20 +66,17 @@ namespace CopyRecipeBookMVC.Application.Services
 				return -1;
 			}
 		}
-
 		public Ingredient GetIngredient(int id)
 		{
 			throw new NotImplementedException();
 		}
-
         public void DeleteCompleteIngredients(int recipeId)
         {
 			var ingredientsToDelete = _ingredientRepo.GetAllIngredientsById(recipeId);
             foreach (var item in ingredientsToDelete)
             {
 				_ingredientRepo.DeleteCompleteIngredient(item);
-            }
-            
+            }            
         }
     }
 }

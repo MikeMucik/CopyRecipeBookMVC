@@ -49,13 +49,14 @@ namespace CopyRecipeBookMVC.Application.Services
 			var listOfUnit = GetAllUnitsForList();
 			foreach (var unit in listOfUnit.Units)
 			{
-				if (unit.Name == ingredient.NewIngredientUnit)
+				if (unit.Name.ToLower() == ingredient.NewIngredientUnit.ToLower())
 				{
 					return unit.Id;
 				}
 			}
 			if (!string.IsNullOrEmpty(ingredient.NewIngredientUnit))
 			{
+                //dodaj wielkość liter - sprawdzenie
 				return AddUnit(new IngredientForNewRecipeVm { NewIngredientUnit = ingredient.NewIngredientUnit });
 			}
 			else

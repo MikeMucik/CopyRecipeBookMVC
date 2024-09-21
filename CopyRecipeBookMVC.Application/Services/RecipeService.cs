@@ -58,8 +58,9 @@ namespace CopyRecipeBookMVC.Application.Services
 		}
 		public int? CheckIfRecipeExists(string recipeName)
 		{
-			var existingRecipe = _recipeRepo.GetAllRecipes()
-											.FirstOrDefault(r => r.Name == recipeName);
+			var existingRecipe = _recipeRepo.GetAllRecipes().FirstOrDefault
+				//(r => string.Equals(r.Name, recipeName, StringComparison.OrdinalIgnoreCase));
+				(r => r.Name.ToLower() == recipeName.ToLower());			
 			return existingRecipe?.Id; // Zwróć Id przepisu, jeśli istnieje, w przeciwnym razie null
 		}
 		public void DeleteRecipe(int id)

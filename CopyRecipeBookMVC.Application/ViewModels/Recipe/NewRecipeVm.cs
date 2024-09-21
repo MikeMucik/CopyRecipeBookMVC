@@ -44,7 +44,7 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 				.ForMember(r => r.RecipeIngredient, opt => opt.Ignore());
 			profile.CreateMap<Domain.Model.Recipe, NewRecipeVm>()
 				.ForMember(r=> r.TimeAmount, opt => opt.Ignore())
-				.ForMember(r=> r.TimeAmount, opt => opt.Ignore())
+				.ForMember(r=> r.TimeUnit, opt => opt.Ignore())
 				.ForMember(r => r.Ingredients, opt => opt.MapFrom(i => i.RecipeIngredient));
 			profile.CreateMap<NewRecipeVm, Domain.Model.Time>()
 				.ForMember(r => r.Id, opt => opt.Ignore())// to chyba zbędne ??
