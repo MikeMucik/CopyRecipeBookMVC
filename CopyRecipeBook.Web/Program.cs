@@ -21,10 +21,15 @@ builder.Services.AddDbContext<Context>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-	.AddEntityFrameworkStores<Context>();
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<CopyRecipeBookMVC.Infrastructure.Context>();
 
 builder.Services.AddAplication();
 builder.Services.AddInfrastructure();
+
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+
 
 builder.Services.AddControllersWithViews().AddViewOptions(opt => { opt.ClientModelValidatorProviders.Clear(); });
 

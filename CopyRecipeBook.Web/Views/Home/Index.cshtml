@@ -17,6 +17,12 @@
     <p>
         <a href="@Url.Action("AddRecipe", "Recipe")">Dodaj przepis</a>
     </p>
+    @if(User.IsInRole("Admin"))
+    {
+    <p>
+        <a href="@Url.Action("ManageUsers","Home")">Zarządzaj użytkownikami</a>
+    </p>
+    }
     <p>Tu będą dalsze opcje(funkcjonalności) .....</p>
     <p>
         Wróć
