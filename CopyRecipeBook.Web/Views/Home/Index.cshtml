@@ -23,6 +23,15 @@
         <a href="@Url.Action("ManageUsers","Home")">Zarządzaj użytkownikami</a>
     </p>
     }
+    @if (User.Identity.IsAuthenticated)
+    {
+        <p>Witaj, @User.Identity.Name</p>
+    }
+    else
+    {
+        <p>Niezalogowany użytkownik</p>
+    }
+
     <p>Tu będą dalsze opcje(funkcjonalności) .....</p>
     <p>
         Wróć

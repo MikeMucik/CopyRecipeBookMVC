@@ -11,29 +11,55 @@ using FluentValidation;
 using CopyRecipeBookMVC.Application.ViewModels.Recipe;
 using CopyRecipeBookMVC.Application.ViewModels.Ingredient;
 using Microsoft.Extensions.Logging;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var connectionString = builder.Configuration
+    .GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<Context>(options =>
 	options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<IdentityUser>(options => 
+options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<CopyRecipeBookMVC.Infrastructure.Context>();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.HttpOnly = true; // Ciasteczko nie dostêpne przez JavaScript
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(60); // Czas ¿ycia ciasteczka
+    options.SlidingExpiration = true; // Przed³u¿enie sesji przy ka¿dej aktywnoœci
+    options.Cookie.SameSite = SameSiteMode.Lax; // Zapewnia prawid³ow¹ obs³ugê przy ¿¹daniach AJAX
+});
+
+builder.Services.AddSession(options =>
+{
+	options.IdleTimeout = TimeSpan.FromMinutes(30); // Czas trwania sesji  
+	options.Cookie.HttpOnly = true; // Zwiêksza bezpieczeñstwo  
+	options.Cookie.IsEssential = true; // Wymaga ciasteczka do dzia³ania  
+});
+
 
 builder.Services.AddAplication();
 builder.Services.AddInfrastructure();
 
-builder.Services.AddAuthorizationBuilder()
-    .AddPolicy("Admin", policy => policy.RequireRole("Admin"));
-
-
 builder.Services.AddControllersWithViews().AddViewOptions(opt => { opt.ClientModelValidatorProviders.Clear(); });
 
-builder.Services.AddFluentValidationAutoValidation(fv => fv.DisableDataAnnotationsValidation = true).AddFluentValidationClientsideAdapters();
+builder.Services.AddAuthentication()
+	//.AddCookie()
+    .AddGoogle(options =>
+    {
+        var googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
+        options.ClientId = googleAuthNSection["ClientId"];
+        options.ClientSecret = googleAuthNSection["ClientSecret"];
+    });
+
+builder.Services.AddFluentValidationAutoValidation(fv => 
+fv.DisableDataAnnotationsValidation = true).AddFluentValidationClientsideAdapters();
 
 builder.Services.AddTransient<IValidator<NewRecipeVm>, NewRecipeValidation>();
 builder.Services.AddTransient<IValidator<IngredientForNewRecipeVm>, IngredientForNewRecipeValidation>();
@@ -70,7 +96,9 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
+app.UseSession();
 
 app.MapControllerRoute(
 	name: "default",

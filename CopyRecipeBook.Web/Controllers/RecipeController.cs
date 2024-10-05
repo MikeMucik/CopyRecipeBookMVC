@@ -3,6 +3,7 @@ using CopyRecipeBookMVC.Application.Services;
 using CopyRecipeBookMVC.Application.ViewModels.Ingredient;
 using CopyRecipeBookMVC.Application.ViewModels.Recipe;
 using CopyRecipeBookMVC.Domain.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -34,15 +35,17 @@ namespace CopyRecipeBook.Web.Controllers
 			_logger = logger;
         }
         [HttpGet]
-        public IActionResult Index()
+		[Authorize]
+        public IActionResult Index(int pageSize=12, int pageNumber=1, string searchString ="")
 		{			
-			var model = _recipeService.GetAllRecipesForList(12, 1, "");
+			
+			var model = _recipeService.GetAllRecipesForList(pageSize, pageNumber, searchString);
 			return View(model);
 		}
 		[HttpPost]
 		[AutoValidateAntiforgeryToken]
 		public IActionResult Index(int pageSize, int? pageNumber, string searchString)
-		{
+		{			
 			if (!pageNumber.HasValue)
 			{
 				pageNumber = 1;
@@ -55,16 +58,18 @@ namespace CopyRecipeBook.Web.Controllers
 			return View(model);
 		}		
 		[HttpGet]
+		[Authorize]
 		public IActionResult ViewDetails(int id)
 		{
 			var model = _recipeService.GetRecipe(id);
 			return View(model);
 		}
 		[HttpGet]
-		public IActionResult ViewByCategory ()
+		[Authorize]
+		public IActionResult ViewByCategory (int pageSize = 12, int pageNumber = 1, int categoryId=0)
 		{
 			FillViewBags();
-			var model = _recipeService.GetRecipesByCategory(12, 1, 0);
+			var model = _recipeService.GetRecipesByCategory(pageSize, pageNumber, categoryId);
 			return View(model);
 		}
 		[HttpPost]
@@ -80,10 +85,11 @@ namespace CopyRecipeBook.Web.Controllers
             return View(model);
         }
 		[HttpGet]
-		public IActionResult ViewByDifficulty()
+		[Authorize]
+		public IActionResult ViewByDifficulty(int pageSize=12, int pageNumber=1, int difficultyId=0)
 		{
 			FillViewBags();
-			var model = _recipeService.GetRecipesByDifficulty(12, 1, 0)
+			var model = _recipeService.GetRecipesByDifficulty(pageSize, pageNumber, difficultyId)
 				;
 			return View(model);
 		}
@@ -100,6 +106,7 @@ namespace CopyRecipeBook.Web.Controllers
 			return View(model);
 		}		
 		[HttpGet]
+		[Authorize(Roles = "Admin, SuperUser, User")]
 		public IActionResult AddRecipe()
 		{
 			FillViewBags();
@@ -107,6 +114,7 @@ namespace CopyRecipeBook.Web.Controllers
 		}
 		[HttpPost]
 		[AutoValidateAntiforgeryToken]
+		[Authorize(Roles = "Admin, SuperUser, User")]
 		public IActionResult AddRecipe(NewRecipeVm model)
 		{
 			if (!ModelState.IsValid)
@@ -117,14 +125,14 @@ namespace CopyRecipeBook.Web.Controllers
 			var existingRecipeId = _recipeService.CheckIfRecipeExists(model.Name);
 			_logger.LogInformation("Jesteś po sprawdzeniu nazwy przepisu");
 			if (existingRecipeId != null)
-			{				
-				// Jeśli przepis istnieje, przekierowujemy do edycji				
+			{						
 				return RedirectToAction("EditRecipe", new { id = existingRecipeId });
 			}
 			_recipeService.AddRecipe(model);
 			return RedirectToAction("Index");
 		}		
 		[HttpGet]
+		[Authorize(Roles ="Admin, SuperUser")]
 		public IActionResult EditRecipe(int id)
 		{
 			var recipe = _recipeService.GetRecipeToEdit(id);
@@ -133,6 +141,7 @@ namespace CopyRecipeBook.Web.Controllers
 		}
 		[HttpPost]
 		[AutoValidateAntiforgeryToken]
+		[Authorize(Roles = "Admin, SuperUser")]
 		public IActionResult EditRecipe(NewRecipeVm model)
 		{
 			if (!ModelState.IsValid)
@@ -144,7 +153,8 @@ namespace CopyRecipeBook.Web.Controllers
 			return RedirectToAction("Index");
 		}
 		//[HttpPost]
-		//[AutoValidateAntiforgeryToken]
+		[AutoValidateAntiforgeryToken]
+		[Authorize(Roles = "Admin, SuperUser")]
 		//To trzeba zmienić usuwanie nie powinno być GET
 		public IActionResult DeleteRecipe(int id)
 		{

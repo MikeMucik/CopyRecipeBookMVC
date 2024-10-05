@@ -23,7 +23,7 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Ingredient
 				.ForMember(i => i.Name, opt => opt.MapFrom(o => o.Ingredient.Name))
 				.ForMember(i => i.Quantity, opt => opt.MapFrom(o => o.Quantity))
 				.ForMember(i => i.Unit, opt => opt.MapFrom(o => o.Unit.Name))
-				;//
+				;
 				
 		}
 	}

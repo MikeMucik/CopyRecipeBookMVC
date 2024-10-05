@@ -128,7 +128,7 @@ namespace CopyRecipeBook.Web.Areas.Identity.Pages.Account
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, "Nieudana próba logowania.");
                     return Page();
                 }
             }

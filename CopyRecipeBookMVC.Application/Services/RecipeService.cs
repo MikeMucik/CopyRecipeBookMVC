@@ -16,28 +16,18 @@ namespace CopyRecipeBookMVC.Application.Services
 {
 	public class RecipeService : IRecipeService
 	{
-		private readonly IRecipeRepository _recipeRepo;
-		private readonly IIngredientRepository _ingredientRepo;
-		private readonly IMapper _mapper;
-		private readonly ICategoryRepository _categoryRepo;
-		private readonly IIngredientService _ingredientService;
-		private readonly IUnitService _unitService;
-		private readonly ITimeService _timeService;
-		public RecipeService(IRecipeRepository recipeRepo,
-			IIngredientRepository ingredientRepo,
-			ICategoryRepository categoryRepo,
+		private readonly IRecipeRepository _recipeRepo;		
+		private readonly IMapper _mapper;		
+		private readonly IIngredientService _ingredientService;	
+		
+		public RecipeService(
+			IRecipeRepository recipeRepo,			
 			IMapper mapper,
-			IIngredientService ingredientService,
-			IUnitService unitService,
-			ITimeService timeService)
+			IIngredientService ingredientService)
 		{
-			_recipeRepo = recipeRepo;
-			_ingredientRepo = ingredientRepo;
-			_mapper = mapper;
-			_categoryRepo = categoryRepo;
-			_ingredientService = ingredientService;
-			_unitService = unitService;
-			_timeService = timeService;
+			_recipeRepo = recipeRepo;			
+			_mapper = mapper;			
+			_ingredientService = ingredientService;			
 		}
 		public int AddRecipe(NewRecipeVm recipe)
 		{			
@@ -58,10 +48,9 @@ namespace CopyRecipeBookMVC.Application.Services
 		}
 		public int? CheckIfRecipeExists(string recipeName)
 		{
-			var existingRecipe = _recipeRepo.GetAllRecipes().FirstOrDefault
-				//(r => string.Equals(r.Name, recipeName, StringComparison.OrdinalIgnoreCase));
+			var existingRecipe = _recipeRepo.GetAllRecipes().FirstOrDefault			
 				(r => r.Name.ToLower() == recipeName.ToLower());			
-			return existingRecipe?.Id; // Zwróć Id przepisu, jeśli istnieje, w przeciwnym razie null
+			return existingRecipe?.Id; 
 		}
 		public void DeleteRecipe(int id)
 		{

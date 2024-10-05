@@ -1,69 +1,50 @@
 ﻿@model CopyRecipeBookMVC.Application.ViewModels.ManageUsers.ListManageUsersVm
 @{
-    ViewData["Title"] = "ManageUsers";
+	ViewData["Title"] = "ManageUsers";
 }
 <h2>Zarządzanie użytkownikami</h2>
 
 <form asp-action="ManageUsers" method="post">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Nazwa użytkownika</th>
-                <th>Administrator</th>
-                <th>Superużytkownik</th>
-                <th>Użytkownik</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (var i = 0; i < Model.ListUsers.Count; i++)
-            {
-                <tr>
-                    <td>@Model.ListUsers[i].UserName</td>
-                    <td>
-                        <input type="hidden" name="ListUsers[@i].UserId" value="@Model.ListUsers[i].UserId" />
-                        <input type="checkbox" name="ListUsers[@i].IsAdmin" value="true"
-                               class="role-checkbox"
-                               data-group="@i"
-                         @(Model.ListUsers[i].IsAdmin ? "checked" : "") />                        
-                    </td>
-                    <td>
-                        <input type="checkbox" name="ListUsers[@i].IsSuperUser" value="true"
-                               class="role-checkbox"
-                               data-group="@i"                               
-                        @(Model.ListUsers[i].IsSuperUser ? "checked" : "") />                        
-                    </td>
-                    <td>
-                        <input type="checkbox" name="ListUsers[@i].IsUser" value="true"
-                               class="role-checkbox"
-                               data-group="@i"                               
-                        @(Model.ListUsers[i].IsUser ? "checked" : "") />                        
-                    </td>                   
-                </tr>
-            }           
-        </tbody>
-    </table>
-    <div class="=form-group">
-    <button type="submit" class="btn btn-primary">Zaktualizuj role</button>
-    </div>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Nazwa użytkownika</th>
+				<th>Administrator</th>
+				<th>Superużytkownik</th>
+				<th>Użytkownik</th>
+			</tr>
+		</thead>
+		<tbody>
+			@for (var i = 0; i < Model.ListUsers.Count; i++)
+			{
+				<div>
+				<tr>
+					<td>@Model.ListUsers[i].UserName</td>
+					<td>
+						<input type="hidden" name="ListUsers[@i].UserId" value="@Model.ListUsers[i].UserId" />
+						<input type="checkbox" name="ListUsers[@i].IsAdmin" value="true"
+							@(Model.ListUsers[i].IsAdmin ? "checked" : "")
+							   onclick="document.querySelectorAll('input[name^=\'ListUsers[@i]\']').forEach(c => c.checked = false); this.checked = true;" />
+					</td>
+					<td>
+						<input type="checkbox" name="ListUsers[@i].IsSuperUser" value="true"
+							   
+							@(Model.ListUsers[i].IsSuperUser ? "checked" : "")
+							   onclick="document.querySelectorAll('input[name^=\'ListUsers[@i]\']').forEach(c => c.checked = false); this.checked = true;" />
+					</td>
+					<td>
+						<input type="checkbox" name="ListUsers[@i].IsUser" value="true"
+							   class="role-checkbox"
+							   data-group="@i"
+							@(Model.ListUsers[i].IsUser ? "checked" : "")
+							   onclick="document.querySelectorAll('input[name^=\'ListUsers[@i]\']').forEach(c => c.checked = false); this.checked = true;" />
+					</td>
+				</tr>
+				</div>
+			}
+		</tbody>
+	</table>
+	<div class="=form-group">
+		<button type="submit" class="btn btn-primary">Zaktualizuj role</button>
+	</div>
 </form>
-@section Scripts{
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {         
-            const checkboxes = document.querySelectorAll('.role-checkbox');
-            checkboxes.forEach(function(checkbox) {
-                checkbox.addEventListener('change', function() {
-                    const group = this.getAttribute('data-group');
-                    const groupCheckboxes = document.querySelectorAll(`.role-checkbox[data-group='${group}']`);
-                    if (this.checked) {
-                        groupCheckboxes.forEach(function(cb) {
-                            if (cb !== checkbox) {
-                                cb.checked = false;
-                            }
-                        });
-                    }
-                });
-            });
-        });
-    </script>
-
-}

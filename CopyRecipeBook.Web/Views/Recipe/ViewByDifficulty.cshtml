@@ -10,7 +10,7 @@
 	<a asp-action="AddRecipe">Stwórz nowy przepis</a>
 </p>
 
-<form asp-action="ViewByDifficulty" asp-controller="Recipe" method="post">
+<form asp-action="ViewByDifficulty" asp-controller="Recipe" method="post" id="difficultyrecipes">
 	<div class="row-md6">
 		<label for="difficultyId">Wybierz trudność:</label>
 		<select asp-for="DifficultyId" asp-items="ViewBag.Difficulties">
@@ -62,12 +62,19 @@
 							@Html.DisplayFor(modelItem => item.Time)
 						</td>
 						<td>
-							@Html.ActionLink("Edytuj przepis", "EditRecipe", new {  id=item.Id  }) |
+							@if (User.IsInRole("Admin") || User.IsInRole("SuperUser"))
+							{
+								@Html.ActionLink("Edytuj przepis", "EditRecipe", new { id = item.Id })
+							}|
 							@Html.ActionLink("Szczegóły przepisu", "ViewDetails", new { id = item.Id }) |
-							@Html.ActionLink("Usuń przepis", "DeleteRecipe", new { id = item.Id })
+							@if (User.IsInRole("Admin") || User.IsInRole("SuperUser"))
+							{
+								@Html.ActionLink("Usuń przepis", "DeleteRecipe", new { id = item.Id })
+							}
 						</td>
 					</tr>
 				}
+				<input type="hidden" name="pageSize" value="12" />
 			</tbody>
 		</table>
 	</div>
@@ -99,7 +106,7 @@
 	<script type="text/javascript">
 		function PagerClick(index) {
 			document.getElementById("pageNumber").value = index;
-			document.forms[0].submit();
+			document.getElementById("difficultyrecipes").submit();
 		}
 	</script>
 }

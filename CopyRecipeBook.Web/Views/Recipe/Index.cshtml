@@ -10,7 +10,7 @@
 	<a asp-action="AddRecipe">Stwórz nowy przepis</a>
 </p>
 
-<form asp-action="Index" asp-controller="Recipe" method="post">
+<form asp-action="Index" asp-controller="Recipe" method="post" id="indexrecipes">
 	<div class="row-md4">
 		<input type="text" asp-for="SearchString" name="searchString" id="searchString" />
 		<input type="submit" value="Wyszukaj" />
@@ -58,42 +58,50 @@
 							@Html.DisplayFor(modelItem => item.Time)
 						</td>
 						<td>
-							@Html.ActionLink("Edytuj przepis", "EditRecipe", new {  id=item.Id  }) |
-							@Html.ActionLink("Szczegóły przepisu", "ViewDetails", new { id=item.Id }) |
-							@Html.ActionLink("Usuń przepis", "DeleteRecipe", new {id=item.Id})
+							@if (User.IsInRole("Admin") || User.IsInRole("SuperUser"))
+							{
+								@Html.ActionLink("Edytuj przepis", "EditRecipe", new { id = item.Id })
+							}|
+							@Html.ActionLink("Szczegóły przepisu", "ViewDetails", new { id = item.Id }) |
+							@if (User.IsInRole("Admin") || User.IsInRole("SuperUser"))
+							{
+								@Html.ActionLink("Usuń przepis", "DeleteRecipe", new { id = item.Id })
+							}
 							@*<form asp-action="DeleteRecipe" method="post" onsubmit="return confirm('Czy na pewno chcesz usunąć ten przepis?');">
-								<input type="hidden" name="id" value="@item.Id" />
-								<button type="submit" class="btn btn-danger">Usuń przepis</button>
-								trzeba przerobić na POST 
+						<input type="hidden" name="id" value="@item.Id" />
+						<button type="submit" class="btn btn-danger">Usuń przepis</button>
+						trzeba przerobić na POST
 						</form>*@
-
-							
 						</td>
 					</tr>
 				}
+				<input type="hidden" name="pageSize" value="12" />
 			</tbody>
 		</table>
 	</div>
+
 	<div class="row-md4">
-		<table>
-			<tr>
-				@for (int i = 1; i <= Math.Ceiling(Model.Count / (double)Model.PageSize); i++)
-				{
-					<td>
-						@if (i != Model.CurrentPage)
-						{
-							<a href="javascript:PagerClick(@i)">@i</a>
-						}
-						else
-						{
-							<span>@i</span>
-						}
-					</td>
-				}
-			</tr>
-		</table>
-		<input type="hidden" name="pageNumber" id="pageNumber" />
-		<input type="hidden" name="pageSize" id="pageSize" value="12" />
+		<div class="pagination">
+			<table>
+				<tr>
+					@for (int i = 1; i <= Math.Ceiling(Model.Count / (double)Model.PageSize); i++)
+					{
+						<td>
+							@if (i == Model.CurrentPage)
+							{
+								<span>@i</span>
+							}
+							else
+							{
+								<a href="javascript:PagerClick(@i)">@i</a>
+							}
+						</td>
+					}
+				</tr>
+			</table>	
+			<input type="hidden" name="pageNumber" id="pageNumber" />
+			<input type="hidden" name="pageSize" id="pageSize" value="12" />
+		</div>
 	</div>
 </form>
 
@@ -102,7 +110,7 @@
 	<script type="text/javascript">
 		function PagerClick(index) {
 			document.getElementById("pageNumber").value = index;
-			document.forms[0].submit();
+			document.getElementById("indexrecipes").submit();
 		}
 	</script>
 }

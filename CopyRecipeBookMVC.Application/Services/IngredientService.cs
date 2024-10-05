@@ -22,8 +22,9 @@ namespace CopyRecipeBookMVC.Application.Services
 		}
 		public void AddCompleteIngredients(RecipeIngredient recipeIngredient)
 		{
-			var completeIngredient = _mapper.Map<RecipeIngredient>(recipeIngredient);
-			_ingredientRepo.AddCompleteIngredients(completeIngredient);
+			//var completeIngredient = _mapper.Map<RecipeIngredient>(recipeIngredient);
+			//_ingredientRepo.AddCompleteIngredients(completeIngredient);
+			_ingredientRepo.AddCompleteIngredients(recipeIngredient);
 		}
 		public int AddIngredient(IngredientForNewRecipeVm ingredient)
 		{
