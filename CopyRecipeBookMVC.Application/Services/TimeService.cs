@@ -24,13 +24,10 @@ namespace CopyRecipeBookMVC.Application.Services
 		public int AddTime(NewRecipeVm time)
 		{
 			//sprawdzenie czy taki czas już jest
-			var listOfTimes = GetListTimeForList();
-			foreach (var item in listOfTimes.Times)
+			var existingTime = _timeRepo.ExistingTime(time.TimeAmount, time.TimeUnit);
+			if (existingTime != null)
 			{
-				if ((time.TimeAmount == item.Amount) && (time.TimeUnit == item.Unit))
-				{
-					return item.Id;
-				}
+				return existingTime.Id;
 			}
 			var timeNew = _mapper.Map<Time>(time);
 			var id = _timeRepo.AddTime(timeNew);
@@ -38,10 +35,10 @@ namespace CopyRecipeBookMVC.Application.Services
 			return id;
 		}
 
-		public Time GetTime(int id)
-		{
-			throw new NotImplementedException();
-		}
+		//public Time GetTime(int id)
+		//{
+		//	throw new NotImplementedException();
+		//}
 
 		public ListTimeForListVm GetListTimeForList()
 		{

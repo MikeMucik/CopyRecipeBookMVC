@@ -10,7 +10,8 @@ namespace CopyRecipeBookMVC.Domain.Interfaces
 	public interface ITimeRepositoy
 	{
 		int AddTime(Time time);
-		Time GetTimeById(int id);
+		//Time GetTimeById(int id);
 		IQueryable<Time> GetAllTimes();
+		Time ExistingTime(decimal? timeAmount, string TimeUnit);
 	}
 }

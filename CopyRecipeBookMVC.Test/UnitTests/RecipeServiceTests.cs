@@ -15,7 +15,7 @@ using Moq;
 using Moq.EntityFrameworkCore;
 
 
-namespace CopyRecipeBookMVC.Test
+namespace CopyRecipeBookMVC.Test.UnitTests
 {
 	public class RecipeServiceTests
 	{
@@ -36,7 +36,6 @@ namespace CopyRecipeBookMVC.Test
 					},
 				Description = ""
 			};
-
 			var recipe = new Recipe
 			{
 				Id = 1,
@@ -45,7 +44,6 @@ namespace CopyRecipeBookMVC.Test
 				DifficultyId = 1,
 				TimeId = 1,
 			};
-
 			var mockRecipeRepository = new Mock<IRecipeRepository>();
 			mockRecipeRepository
 				.Setup(repo => repo.AddRecipe(It.IsAny<Recipe>()))
@@ -55,25 +53,242 @@ namespace CopyRecipeBookMVC.Test
 			mockMapper
 				.Setup(mapper => mapper.Map<Recipe>(It.IsAny<NewRecipeVm>()));
 			var mockService = new RecipeService(mockRecipeRepository.Object, mockMapper.Object, mockIngredientService.Object);
-
 			//Act
 			var result = mockService.AddRecipe(newRecipeVm);
-
 			// Assert
-
+			Assert.Equal(1, result);
 			mockRecipeRepository.Verify(repo => repo.AddRecipe(It.IsAny<Recipe>()), Times.Once);
 			mockIngredientService.Verify(service => service.AddCompleteIngredients(It.IsAny<RecipeIngredient>()), Times.Exactly(2));
-
-
 			mockIngredientService.Verify(service => service.AddCompleteIngredients(It.Is<RecipeIngredient>(ri =>
 			   ri.RecipeId == 1 && ri.IngredientId == 1 && ri.UnitId == 1 && ri.Quantity == 100)), Times.Once);
-
 			mockIngredientService.Verify(service => service.AddCompleteIngredients(It.Is<RecipeIngredient>(ri =>
 				ri.RecipeId == 1 && ri.IngredientId == 2 && ri.UnitId == 2 && ri.Quantity == 200)), Times.Once);
-
+		}
+		[Fact]
+		public void Take_CheckIfRecipeExist_ShouldTakebackThatRecipeExistsTheSameLetterCase()
+		{
+			//Arrange
+			var newRecipe = new NewRecipeVm
+			{
+				Name = "Test"
+			};
+			var existingRecipe = new Recipe
+			{
+				Id = 1,
+				Name = "Test"
+			};
+			var mockRepo = new Mock<IRecipeRepository>();
+			mockRepo
+				.Setup(repo => repo.GetAllRecipes())
+				.Returns(new List<Recipe> { existingRecipe }.AsQueryable());
+			var mockMapper = new Mock<IMapper>();
+			var mockIngredientService = new Mock<IIngredientService>();
+			var mockService = new RecipeService(mockRepo.Object, mockMapper.Object, mockIngredientService.Object);
+			//Act
+			var result = mockService.CheckIfRecipeExists(newRecipe.Name);
+			//Assert
+			Assert.NotNull(result);
 			Assert.Equal(1, result);
 		}
-		
+		[Fact]
+		public void Take_CheckIfRecipeExist_ShouldTakebackThatRecipeExistsDiffrentLetterCase()
+		{
+			//Arrange
+			var newRecipe = new NewRecipeVm
+			{
+				Name = "test"
+			};
+			var existingRecipe = new Recipe
+			{
+				Id = 1,
+				Name = "Test"
+			};
+			var mockRepo = new Mock<IRecipeRepository>();
+			mockRepo
+				.Setup(repo => repo.GetAllRecipes())
+				.Returns(new List<Recipe> { existingRecipe }.AsQueryable());
+			var mockMapper = new Mock<IMapper>();
+			var mockIngredientService = new Mock<IIngredientService>();
+			var mockService = new RecipeService(mockRepo.Object, mockMapper.Object, mockIngredientService.Object);
+			//Act
+			var result = mockService.CheckIfRecipeExists(newRecipe.Name);
+			//Assert
+			Assert.NotNull(result);
+			Assert.Equal(1, result);
+		}
+		[Fact]
+		public void Take_CheckIfRecipeExist_ShouldReturnNullWhenRecipeDoNotExist()
+		{
+			//Arrange
+			var newRecipe = new NewRecipeVm
+			{
+				Name = "Test"
+			};
+			var mockRepo = new Mock<IRecipeRepository>();
+			mockRepo
+				.Setup(repo => repo.GetAllRecipes())
+				.Returns(new List<Recipe>().AsQueryable());
+			var mockMapper = new Mock<IMapper>();
+			var mockIngredientService = new Mock<IIngredientService>();
+			var mockService = new RecipeService(mockRepo.Object, mockMapper.Object, mockIngredientService.Object);
+			//Act
+			var result = mockService.CheckIfRecipeExists(newRecipe.Name);
+			//Assert
+			Assert.Null(result);
+		}
+		[Fact]
+		public void Return_GetAllRecipesForList_ShouldReturnAllList()
+		{
+			//Arrange
+			var recipeList = new List<Recipe>
+			{
+				new Recipe {Id = 1, Name= "Test1", Category = new Category{Name = "Śniadanie" }, Difficulty=new Difficulty{Name="Łatwy" }, Time = new Time{Amount = 5, Unit = "m" } },
+				new Recipe {Id = 2, Name= "Test2", Category = new Category{Name = "Obiad" }, Difficulty=new Difficulty{Name="Trudny" }, Time = new Time{Amount = 1, Unit = "h" } }
+			};
+			var mockRepo = new Mock<IRecipeRepository>();
+			mockRepo
+				.Setup(repo => repo.GetAllRecipes())
+				.Returns(recipeList.AsQueryable());
+			var mockMapper = new Mock<IMapper>();
+			mockMapper
+				.Setup(mapper => mapper.ConfigurationProvider)
+				.Returns(new MapperConfiguration(mc =>
+				{
+					mc.CreateMap<Recipe, RecipeListForVm>()
+					.ForMember(r => r.Category, opt => opt.MapFrom(s => s.Category.Name))
+					.ForMember(r => r.Difficulty, opt => opt.MapFrom(s => s.Difficulty.Name))
+					.ForMember(r => r.Time, opt => opt.MapFrom(s => s.Time.Amount + " " + s.Time.Unit));
+				}));
+			var mockIngredientService = new Mock<IIngredientService>();
+			var mockService = new RecipeService(mockRepo.Object, mockMapper.Object, mockIngredientService.Object);
+			int pageSize = 3;
+			int pageNumber = 1;
+			string searchString = "";
+			//Act
+			var result = mockService.GetAllRecipesForList(pageSize, pageNumber, searchString);
+			//Assert
+			Assert.NotNull(result);
+			Assert.Equal(2, result.Count);
+		}
+		[Fact]
+		public void Return_GetAllRecipesForList_ShouldReturnFilteredRecipes()
+		{
+			//Arrange
+			var recipeList = new List<Recipe>
+			{
+				new Recipe {Id = 1, Name= "Test1", Category = new Category{Name = "Śniadanie" }, Difficulty=new Difficulty{Name="Łatwy" }, Time = new Time{Amount = 5, Unit = "m" } },
+				new Recipe {Id = 2, Name= "Test2", Category = new Category{Name = "Obiad" }, Difficulty=new Difficulty{Name="Trudny" }, Time = new Time{Amount = 1, Unit = "h" } }
+			};
+			var mockRepo = new Mock<IRecipeRepository>();
+			mockRepo
+				.Setup(repo => repo.GetAllRecipes())
+				.Returns(recipeList.AsQueryable());
+			var mockMapper = new Mock<IMapper>();
+			mockMapper
+			.Setup(mapper => mapper.ConfigurationProvider)
+			.Returns(new MapperConfiguration(mc =>
+			{
+				mc.CreateMap<Recipe, RecipeListForVm>()
+				.ForMember(r => r.Category, opt => opt.MapFrom(s => s.Category.Name))
+				.ForMember(r => r.Difficulty, opt => opt.MapFrom(s => s.Difficulty.Name))
+				.ForMember(r => r.Time, opt => opt.MapFrom(s => s.Time.Amount + " " + s.Time.Unit));
+
+			}));
+			var mockIngredientService = new Mock<IIngredientService>();
+			var mockService = new RecipeService(mockRepo.Object, mockMapper.Object, mockIngredientService.Object);
+			int pageSize = 3;
+			int pageNumber = 1;
+			string searchString = "Test1";
+			//Act
+			var result = mockService.GetAllRecipesForList(pageSize, pageNumber, searchString);
+			//Assert
+			Assert.NotNull(result);
+			Assert.Equal(1, result.Count);
+			Assert.Equal("Test1", result.Recipes.First().Name);
+			Assert.Equal(pageSize, result.PageSize);
+			Assert.Equal(pageNumber, result.CurrentPage);
+			Assert.Equal(searchString, result.SearchString);
+		}
+		[Fact]
+		public void Return_GetRecipesByCategory_ShouldReturnFilteredRecipes()
+		{
+			//Arrange
+			var recipeList = new List<Recipe>
+			{
+				new Recipe {Id = 1, Name= "Test1", Category = new Category{Id = 1 , Name ="Śniadanie" }, Difficulty=new Difficulty{Name="Łatwy" }, Time = new Time{Amount = 5, Unit = "m" } },
+				new Recipe {Id = 2, Name= "Test2", Category = new Category{Id = 2,  Name = "Obiad" }, Difficulty=new Difficulty{Name="Trudny" }, Time = new Time{Amount = 1, Unit = "h" } }
+			};
+
+			var mockRepo = new Mock<IRecipeRepository>();
+			mockRepo
+				.Setup(repo => repo.GetAllRecipes())
+				.Returns(recipeList.AsQueryable());
+			var mockMapper = new Mock<IMapper>();
+			mockMapper
+			.Setup(mapper => mapper.ConfigurationProvider)
+			.Returns(new MapperConfiguration(mc =>
+			{
+				mc.CreateMap<Recipe, RecipeListForVm>()
+				.ForMember(r => r.Category, opt => opt.MapFrom(s => s.Category.Name))
+				.ForMember(r => r.Difficulty, opt => opt.MapFrom(s => s.Difficulty.Name))
+				.ForMember(r => r.Time, opt => opt.MapFrom(s => s.Time.Amount + " " + s.Time.Unit));
+
+			}));
+			var mockIngredientService = new Mock<IIngredientService>();
+			var mockService = new RecipeService(mockRepo.Object, mockMapper.Object, mockIngredientService.Object);
+			int pageSize = 3;
+			int pageNumber = 1;
+			int categoryId = 1;
+			//Act
+			var result = mockService.GetRecipesByCategory(pageSize, pageNumber, categoryId);
+			//Assert
+			Assert.NotNull(result);
+			//Assert.Equal(1, result.Count);
+			Assert.Equal("Test1", result.RecipesByCategory.First().Name);
+			Assert.Equal(pageSize, result.PageSize);
+			Assert.Equal(pageNumber, result.CurrentPage);
+			Assert.Equal(categoryId, result.CategoryId);
+		}
+		[Fact]
+		public void Return_GetRecipesByDifficulty_ShouldReturnFilteredRecipes()
+		{
+			//Arrange
+			var recipeList = new List<Recipe>
+			{
+				new Recipe {Id = 1, Name= "Test1", Category = new Category{ Name ="Śniadanie" }, Difficulty=new Difficulty{Id = 1 ,Name="Łatwy" }, Time = new Time{Amount = 5, Unit = "m" } },
+				new Recipe {Id = 2, Name= "Test2", Category = new Category{ Name = "Obiad" }, Difficulty=new Difficulty{Id = 2, Name="Trudny" }, Time = new Time{Amount = 1, Unit = "h" } }
+			};
+
+			var mockRepo = new Mock<IRecipeRepository>();
+			mockRepo
+				.Setup(repo => repo.GetAllRecipes())
+				.Returns(recipeList.AsQueryable());
+			var mockMapper = new Mock<IMapper>();
+			mockMapper
+			.Setup(mapper => mapper.ConfigurationProvider)
+			.Returns(new MapperConfiguration(mc =>
+			{
+				mc.CreateMap<Recipe, RecipeListForVm>()
+				.ForMember(r => r.Category, opt => opt.MapFrom(s => s.Category.Name))
+				.ForMember(r => r.Difficulty, opt => opt.MapFrom(s => s.Difficulty.Name))
+				.ForMember(r => r.Time, opt => opt.MapFrom(s => s.Time.Amount + " " + s.Time.Unit));
+
+			}));
+			var mockIngredientService = new Mock<IIngredientService>();
+			var mockService = new RecipeService(mockRepo.Object, mockMapper.Object, mockIngredientService.Object);
+			int pageSize = 3;
+			int pageNumber = 1;
+			int difficultyId = 1;
+			//Act
+			var result = mockService.GetRecipesByDifficulty(pageSize, pageNumber, difficultyId);
+			//Assert
+			Assert.NotNull(result);
+			//Assert.Equal(1, result.Count);
+			Assert.Equal("Test1", result.RecipesByDifficulty.First().Name);
+			Assert.Equal(pageSize, result.PageSize);
+			Assert.Equal(pageNumber, result.CurrentPage);
+			Assert.Equal(difficultyId, result.DifficultyId);
+		}
 		[Fact]
 		public void Take_GetRecipe_ShouldTakeReacipeByIdAndReturnInRecipeDetailsVm()
 		{
@@ -84,8 +299,8 @@ namespace CopyRecipeBookMVC.Test
 				Name = "Test Recipe Vm",
 				Category = "Śniadanie",
 				Difficulty = "Bardzo łatwy",
-				Time = "10"+" "+"minut",
-				
+				Time = "10" + " " + "minut",
+
 				Ingredients = new List<IngredientForRecipeVm> {
 						new IngredientForRecipeVm {Name = "Jajko", Unit = "Sztuka", Quantity = 100 },
 						new IngredientForRecipeVm {Name = "Boczek", Unit = "Gram", Quantity = 200 }
@@ -137,10 +352,8 @@ namespace CopyRecipeBookMVC.Test
 				Assert.Equal(recipeDetailsVm.Ingredients[i].Quantity, result.Ingredients[i].Quantity);
 			}
 		}
-
-
 		[Fact]
-		public void Take_GetRecipeEdit_ShouldTakeRecipeByIdAndReturnInNewRecipeVm()
+		public void Take_GetRecipeToEdit_ShouldTakeRecipeByIdAndReturnInNewRecipeVm()
 		{
 			//Arrange
 			var newRecipeVm = new NewRecipeVm
@@ -201,50 +414,33 @@ namespace CopyRecipeBookMVC.Test
 				Assert.Equal(newRecipeVm.Ingredients[i].Quantity, result.Ingredients[i].Quantity);
 			}
 		}
-
-
 		[Fact]
 		public void Edit_UpdateRecipe_ShouldEditRecipeInCollection()
 		{
 			//Arrange
 			var recipeId = 1;
-
-			var updatedRecipeVm = new NewRecipeVm
+			var recipeVm = new NewRecipeVm
 			{
 				Id = recipeId,
-				Name = "Updated Recipe Vm",
+				Name = "Recipe",
 				CategoryId = 1,
 				DifficultyId = 1,
 				TimeId = 1,
 				Ingredients = new List<IngredientForNewRecipeVm> {
 						new IngredientForNewRecipeVm {Name = 1, Unit = 1, Quantity = 100 },
-						new IngredientForNewRecipeVm {Name = 2, Unit = 2, Quantity = 200 }
+						new IngredientForNewRecipeVm {Name = 3, Unit = 2, Quantity = 200 }
 					},
 				Description = ""
 			};
-
-			var existRecipeVm = new NewRecipeVm
-			{
-				Id = recipeId,
-				Name = "Exist Recipe Vm",
-				CategoryId = 1,
-				DifficultyId = 1,
-				TimeId = 1,
-				Ingredients = new List<IngredientForNewRecipeVm> {
-						new IngredientForNewRecipeVm {Name = 1, Unit = 1, Quantity = 100 },
-						new IngredientForNewRecipeVm {Name = 2, Unit = 2, Quantity = 200 }
-					},
-				Description = ""
-			};
-
+			
 			var existingRecipe = new Recipe
 			{
 				Id = recipeId,
-				Name = "Original Recipe Vm",
+				Name = "Recipe",
 				CategoryId = 1,
 				DifficultyId = 1,
 				TimeId = 1,
-				RecipeIngredient =				
+				RecipeIngredient =
 				new List<RecipeIngredient>
 				{
 					new RecipeIngredient { RecipeId = recipeId, IngredientId = 1, UnitId = 1, Quantity = 100 },
@@ -252,39 +448,31 @@ namespace CopyRecipeBookMVC.Test
 				},
 				Description = ""
 			};
-
-			var mockRecipeRepository = new Mock<IRecipeRepository>();
-			var mockIngredientService = new Mock<IIngredientService>();
 			var mockMapper = new Mock<IMapper>();
-				mockMapper
-				.Setup(map=>map.Map<NewRecipeVm>(It.IsAny<Recipe>()))
-				.Returns(existRecipeVm);
+			mockMapper
+			.Setup(map => map.Map<Recipe>(recipeVm))
+			.Returns(existingRecipe);
+			
+			var mockRecipeRepository = new Mock<IRecipeRepository>();
+			mockRecipeRepository
+				.Setup(repo => repo.UpdateRecipe(existingRecipe));
+			//.Returns(updatedRecipeVm);
+			var mockIngredientService = new Mock<IIngredientService>();
+			mockIngredientService
+				.Setup(i => i.DeleteCompleteIngredients(recipeId));
 			var mockService = new RecipeService(mockRecipeRepository.Object, mockMapper.Object, mockIngredientService.Object);
-
-
 			//Act
-			mockService.UpdateRecipe(updatedRecipeVm);
-
+			mockService.UpdateRecipe(recipeVm);
 			//Assert
-			//mockIngredientService.Verify(service => service.DeleteCompleteIngredients(recipeId), Times.Once); // Usunięcie starych składników
+			mockIngredientService.Verify(service => service.DeleteCompleteIngredients(recipeId), Times.Once); 
 			mockRecipeRepository.Verify(repo => repo.UpdateRecipe(It.IsAny<Recipe>()), Times.Once); // Aktualizacja przepisu
-			//mockIngredientService.Verify(service => service.AddCompleteIngredients(It.IsAny<RecipeIngredient>()), Times.Exactly(2)); // Dodanie nowych składników
+			mockIngredientService.Verify(service => service.AddCompleteIngredients(It.IsAny<RecipeIngredient>()), Times.Exactly(2));
+			mockMapper.Verify(map => map.Map<Recipe>(recipeVm), Times.Once);
+			mockIngredientService.Verify(service => service.AddCompleteIngredients(
+			It.Is<RecipeIngredient>(r => r.RecipeId == recipeId && r.IngredientId == 1 && r.UnitId == 1 && r.Quantity == 100)), Times.Once);
 
-			//Assert.Equal(newRecipeVm.Id, result.Id);
-			//Assert.Equal(newRecipeVm.Name, result.Name);
-			//Assert.Equal(newRecipeVm.CategoryId, result.CategoryId);
-			//Assert.Equal(newRecipeVm.DifficultyId, result.DifficultyId);
-			//Assert.Equal(newRecipeVm.TimeId, result.TimeId);
-			//Assert.Equal(newRecipeVm.Description, result.Description);
-
-			//// Dodatkowo można sprawdzić konkretne wartości składników
-			//mockIngredientService.Verify(service => service.AddCompleteIngredients(It.Is<RecipeIngredient>(ri =>
-			//	ri.RecipeId == recipeId && ri.IngredientId == 1 && ri.UnitId == 1 && ri.Quantity == 150)), Times.Once);
-
-			//mockIngredientService.Verify(service => service.AddCompleteIngredients(It.Is<RecipeIngredient>(ri =>
-			//	ri.RecipeId == recipeId && ri.IngredientId == 2 && ri.UnitId == 2 && ri.Quantity == 250)), Times.Once);
-
-
+			mockIngredientService.Verify(service => service.AddCompleteIngredients(
+				It.Is<RecipeIngredient>(r => r.RecipeId == recipeId && r.IngredientId == 3 && r.UnitId == 2 && r.Quantity == 200)), Times.Once);			
 		}
 		//[Fact]
 		//public void UpdateRecipe_ShouldUpdateRecipeAndManageIngredients()

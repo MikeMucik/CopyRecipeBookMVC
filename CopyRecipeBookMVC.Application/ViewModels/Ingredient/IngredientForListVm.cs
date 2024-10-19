@@ -15,9 +15,7 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Ingredient
       
         public void Mapping(Profile profile )
         {
-            profile.CreateMap<Domain.Model.Ingredient, IngredientForListVm>()
-               
-                ;
+            profile.CreateMap<Domain.Model.Ingredient, IngredientForListVm>();
         }
 
     }

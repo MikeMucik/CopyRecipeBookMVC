@@ -23,11 +23,11 @@ namespace CopyRecipeBookMVC.Application.Services
 		{
 			var categories = _categoryRepo.GetAllCategories();
 			var categoryVms = _mapper.Map<List<CategoryForListVm>>(categories);
-			var categogoryList = new ListCategoryForListVm
+			var categoryList = new ListCategoryForListVm
 			{
 				Categories = categoryVms,
 			};
-			return categogoryList;
+			return categoryList;
 		}
 	}
 }

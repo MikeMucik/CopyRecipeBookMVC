@@ -23,14 +23,19 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
 			return time.Id;
 		}
 
-		public Time GetTimeById(int id)
-		{
-			return _context.Times.Find(id);
-		}
+		//public Time GetTimeById(int id)
+		//{
+		//	return _context.Times.Find(id);
+		//}
 
 		public IQueryable<Time> GetAllTimes()
 		{
 			return _context.Times;
+		}
+
+		public Time ExistingTime(decimal? timeAmount, string TimeUnit)
+		{
+			return _context.Times.FirstOrDefault(t => t.Amount == timeAmount && t.	Unit == TimeUnit);
 		}
 	}
 }

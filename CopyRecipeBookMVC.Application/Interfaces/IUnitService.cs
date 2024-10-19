@@ -12,7 +12,7 @@ namespace CopyRecipeBookMVC.Application.Interfaces
     public interface IUnitService
     {
         ListUnitForListVm GetAllUnitsForList ();
-        Unit GetUnit (int id);
+       
         int AddUnit(IngredientForNewRecipeVm unit);
         int GetOrAddUnit(IngredientForNewRecipeVm ingredient);
 

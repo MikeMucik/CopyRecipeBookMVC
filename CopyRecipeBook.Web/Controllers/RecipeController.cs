@@ -123,7 +123,7 @@ namespace CopyRecipeBook.Web.Controllers
 				return View(model);
 			}
 			var existingRecipeId = _recipeService.CheckIfRecipeExists(model.Name);
-			_logger.LogInformation("Jesteś po sprawdzeniu nazwy przepisu");
+			//_logger.LogInformation("Jesteś po sprawdzeniu nazwy przepisu");
 			if (existingRecipeId != null)
 			{						
 				return RedirectToAction("EditRecipe", new { id = existingRecipeId });

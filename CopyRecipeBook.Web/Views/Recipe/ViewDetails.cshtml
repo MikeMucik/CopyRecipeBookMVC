@@ -46,15 +46,17 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Description)
         </dd>
+	</dl>
         <h3>Składniki:</h3>
         
-     @Html.Partial("_IngredientList", Model.Ingredients)
-    </dl>
+     @await Html.PartialAsync("_IngredientList", Model.Ingredients)
+    
 </div>
 <div>
-    @if (User.IsInRole("Admin, SuperUser"))
+    @if (User.IsInRole("Admin") || User.IsInRole("SuperUser"))
 	{
     @Html.ActionLink("Edytuj przepis", "EditRecipe", new { id = Model.Id }); 
+
     }
-    <a asp-action="Index">Wróć do listy przepisów</a>
+    <p><a asp-action="Index">Wróć do listy przepisów</a></p>
 </div>

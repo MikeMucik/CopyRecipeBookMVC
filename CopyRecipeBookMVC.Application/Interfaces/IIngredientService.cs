@@ -14,7 +14,7 @@ namespace CopyRecipeBookMVC.Application.Interfaces
         void AddCompleteIngredients (RecipeIngredient recipeIngredient);
 		int	AddIngredient (IngredientForNewRecipeVm ingredient);
         ListIngredientsForRecipeVm GetListIngredientForList ();
-        Ingredient GetIngredient(int id);
+        //Ingredient GetIngredient(int id);
         int GetOrAddIngredient (IngredientForNewRecipeVm ingredient);
         void DeleteCompleteIngredients (int recipeId);
     }
