@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CopyRecipeBookMVC.Application.Services;
 using CopyRecipeBookMVC.Application.ViewModels.Ingredient;
+using CopyRecipeBookMVC.Application.ViewModels.RecipeIngredient;
 using CopyRecipeBookMVC.Domain.Interfaces;
 using CopyRecipeBookMVC.Domain.Model;
 using Moq;
@@ -14,6 +15,15 @@ namespace CopyRecipeBookMVC.Test.UnitTests
 {
     public class IngredientServiceTests
     {
+        private readonly Mock<IIngredientRepository> _ingredientRepoMock;
+        private readonly Mock<IMapper> _mapperMock;
+        private readonly IngredientService _ingredientService;
+        public IngredientServiceTests()
+        {
+            _ingredientRepoMock = new Mock<IIngredientRepository>();
+            _mapperMock = new Mock<IMapper>();
+            _ingredientService = new IngredientService(_ingredientRepoMock.Object, _mapperMock.Object);
+        }
         [Fact]
         public void Add_AddIngredient_ShouldAddIngredientNameToCollection()
         {
@@ -27,20 +37,14 @@ namespace CopyRecipeBookMVC.Test.UnitTests
             {
                 NewIngredientName = "Test",
                 NewIngredientUnit = "TestUnit",
-            };
-            var mockRepo = new Mock<IIngredientRepository>();
-            mockRepo
-                .Setup(repo => repo.AddIngredient(It.IsAny<Ingredient>()))
-                .Returns(1);
-            var mockMapper = new Mock<IMapper>();
-            mockMapper
-                .Setup(mapper => mapper.Map<Ingredient>(It.IsAny<IngredientForNewRecipeVm>()))
-                .Returns(newIngredient);
-            var mockService = new IngredientService(mockRepo.Object, mockMapper.Object);
+            };            
+            _ingredientRepoMock.Setup(repo => repo.AddIngredient(It.IsAny<Ingredient>())).Returns(1);
+            _mapperMock.Setup(mapper => mapper.Map<Ingredient>(It.IsAny<IngredientForNewRecipeVm>()))
+                .Returns(newIngredient);            
             //Act
-            var result = mockService.AddIngredient(newIngredientVm);
+            var result = _ingredientService.AddIngredient(newIngredientVm);
             //Assert
-            mockRepo.Verify(repo => repo.AddIngredient(It.Is<Ingredient>(i => i.Name == "Test")), Times.Once);
+            _ingredientRepoMock.Verify(repo => repo.AddIngredient(It.Is<Ingredient>(i => i.Name == "Test")), Times.Once);
             Assert.Equal(1, result);
         }
         [Fact]
@@ -57,17 +61,11 @@ namespace CopyRecipeBookMVC.Test.UnitTests
                 new IngredientForListVm { Id = 1, Name="TestI1" },
                 new IngredientForListVm { Id = 2, Name="TestI2" }
             };
-            var mockRepo = new Mock<IIngredientRepository>();
-            mockRepo
-                .Setup(repo => repo.GetAllIngredients())
-                .Returns(ingredients.AsQueryable);
-            var mockMapper = new Mock<IMapper>();
-            mockMapper
-                .Setup(map => map.Map<List<IngredientForListVm>>(ingredients))
-                .Returns(ingredientsVms);
-            var mockService = new IngredientService(mockRepo.Object, mockMapper.Object);
+            _ingredientRepoMock.Setup(repo => repo.GetAllIngredients()).Returns(ingredients.AsQueryable);
+           _mapperMock.Setup(map => map.Map<List<IngredientForListVm>>(ingredients))
+                .Returns(ingredientsVms);            
             //Act
-            var result = mockService.GetListIngredientForList();
+            var result = _ingredientService.GetListIngredientForList();
             //Assert
             Assert.NotNull(result);
             Assert.IsType<ListIngredientsForRecipeVm>(result);
@@ -75,7 +73,6 @@ namespace CopyRecipeBookMVC.Test.UnitTests
             Assert.Contains(result.Ingredients, c => c.Name == "TestI1");
             Assert.Contains(result.Ingredients, c => c.Name == "TestI2");
         }
-
         [Fact]
         public void GetOrAdd_GetOrAddIngredient_ShouldAddNewIngredientNameWhenIngredientNotSelected()
         {
@@ -85,21 +82,15 @@ namespace CopyRecipeBookMVC.Test.UnitTests
                 Name = 0,
                 NewIngredientName = "potato"
             };
-            var mockRepo = new Mock<IIngredientRepository>();
-            mockRepo
-                .Setup(i => i.ExistingIngredient(newIngredientNameVm.NewIngredientName))
+            _ingredientRepoMock.Setup(i => i.ExistingIngredient(newIngredientNameVm.NewIngredientName))
                 .Returns((Ingredient)null);
-            mockRepo
-                .Setup(i => i.AddIngredient(It.IsAny<Ingredient>()))
-                .Returns(1);
-            var mockMapper = new Mock<IMapper>();
-            var mockService = new IngredientService(mockRepo.Object, mockMapper.Object);
+            _ingredientRepoMock.Setup(i => i.AddIngredient(It.IsAny<Ingredient>())).Returns(1);            
             //Act
-            var result = mockService.GetOrAddIngredient(newIngredientNameVm);
+            var result =_ingredientService.GetOrAddIngredient(newIngredientNameVm);
             //Assert
             Assert.NotEqual(0, result);
             Assert.Equal(1, result);
-            mockRepo.Verify(i => i.AddIngredient(It.IsAny<Ingredient>()), Times.Once);
+            _ingredientRepoMock.Verify(i => i.AddIngredient(It.IsAny<Ingredient>()), Times.Once);
         }
         [Fact]
         public void GetOrAdd_GetOrAddIngredient_ShouldGetBackIdIngredientByName()
@@ -113,61 +104,18 @@ namespace CopyRecipeBookMVC.Test.UnitTests
             {
                 Id = 2,
                 Name = "potato"
-            };
-            var mockRepo = new Mock<IIngredientRepository>();
-            mockRepo
+            };           
+            _ingredientRepoMock
                 .Setup(i => i.ExistingIngredient(newIngredientNameVm.NewIngredientName))
                 .Returns(newIngredientName);
-            var mockMapper = new Mock<IMapper>();
-            var mockService = new IngredientService(mockRepo.Object, mockMapper.Object);
+            
             //Act
-            var result = mockService.GetOrAddIngredient(newIngredientNameVm);
+            var result = _ingredientService.GetOrAddIngredient(newIngredientNameVm);
             //Assert
             Assert.NotNull(result);
             Assert.Equal(2, result);
         }
-        [Fact]
-        public void Add_AddCompleteIngredients()
-        {
-
-        }
-        [Fact]
-        public void Remove_DeleteCompleteIngredient_RemoveFromListCompleteIngredients()
-        {
-            //Arrange
-            var recipeId = 1;
-            var completeIngredient1 = new RecipeIngredient
-            {
-                RecipeId = recipeId,
-                IngredientId = 1,
-                UnitId = 1,
-                Quantity = 1,
-            };
-            var completeIngredient2 = new RecipeIngredient
-            {
-                RecipeId = recipeId,
-                IngredientId = 2,
-                UnitId = 2,
-                Quantity = 2,
-            };
-            var ingredientsToDelete = new List<RecipeIngredient>
-            {
-                completeIngredient1, completeIngredient2
-            };
-
-            var mockRepo = new Mock<IIngredientRepository>();
-            mockRepo
-                .Setup(repo => repo.GetAllIngredientsById(recipeId))
-                .Returns(ingredientsToDelete);
-            var mockMapper = new Mock<IMapper>();
-
-            var mockService = new IngredientService(mockRepo.Object, mockMapper.Object);
-            //Act
-            mockService.DeleteCompleteIngredients(recipeId);
-            //Assert
-            mockRepo.Verify(repo => repo.DeleteCompleteIngredient(It.Is<RecipeIngredient>(r => r.IngredientId == completeIngredient1.IngredientId)), Times.Once);
-            mockRepo.Verify(repo => repo.DeleteCompleteIngredient(It.Is<RecipeIngredient>(r => r.IngredientId == completeIngredient2.IngredientId)), Times.Once);
-        }
+              
     }
 
 }

@@ -5,51 +5,52 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using CopyRecipeBookMVC.Application.Interfaces;
-using CopyRecipeBookMVC.Application.ViewModels.Ingredient;
+using CopyRecipeBookMVC.Application.ViewModels.RecipeIngredient;
 using CopyRecipeBookMVC.Application.ViewModels.Unit;
 using CopyRecipeBookMVC.Domain.Interfaces;
 using CopyRecipeBookMVC.Domain.Model;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CopyRecipeBookMVC.Application.Services
 {
 	public class UnitService : IUnitService
 	{
-		private readonly IIngredientRepository _ingredientRepo;
+		private readonly IUnitRepository _unitRepo;
 		private readonly IMapper _mapper;
-		public UnitService(IIngredientRepository ingredientRepo, IMapper mapper)
+		public UnitService(IUnitRepository unitRepo, IMapper mapper)
 		{
-			_ingredientRepo = ingredientRepo;
+			_unitRepo = unitRepo;
 			_mapper = mapper;
 		}
 		public int AddUnit(IngredientForNewRecipeVm unit)
 		{
 			var unitNew = _mapper.Map<Unit>(unit);
-			var id = _ingredientRepo.AddUnit(unitNew);
+			var id = _unitRepo.AddUnit(unitNew);
 			return id;
 		}
-
-		public ListUnitForListVm GetAllUnitsForList()
+		public List<SelectListItem> GetUnitsForSelectList()
 		{
-			var unit = _ingredientRepo.GetAllUnits();
+			var unit = _unitRepo.GetAllUnits();
 			var unitVms = _mapper.Map<List<UnitForListVm>>(unit);
 			var unitList = new ListUnitForListVm()
 			{
 				Units = unitVms
 			};
-			return unitList;
+			return unitList.Units.Select(uni => new SelectListItem
+			{
+				Value = uni.Id.ToString(),
+				Text = uni.Name	
+			}).ToList();
 		}
-
-
 		public int GetOrAddUnit(IngredientForNewRecipeVm ingredient)
 		{
 			if (ingredient.Unit > 0)
 			{
-				return ingredient.Unit;//  ingredient.Unit to ID istniejącej miary jednostki
+				return ingredient.Unit;
 			}
-
 			if (!string.IsNullOrEmpty(ingredient.NewIngredientUnit))
 			{
-				var existingUnit = _ingredientRepo.ExistingUnit(ingredient.NewIngredientUnit);
+				var existingUnit = _unitRepo.ExistingUnit(ingredient.NewIngredientUnit);
 				if (existingUnit != null)
 				{
 					return existingUnit.Id;
@@ -64,7 +65,5 @@ namespace CopyRecipeBookMVC.Application.Services
 				return -1;
 			}
 		}
-		
-		
 	}
 }

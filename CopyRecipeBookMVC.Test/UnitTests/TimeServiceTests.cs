@@ -14,6 +14,15 @@ namespace CopyRecipeBookMVC.Test.UnitTests
 {
     public class TimeServiceTests
     {
+        private readonly Mock<ITimeRepositoy> _timeRepoMock;
+        private readonly Mock<IMapper> _mapperMock;
+        private readonly TimeService _timeService;
+        public TimeServiceTests()
+        {
+            _timeRepoMock = new Mock<ITimeRepositoy>();
+            _mapperMock = new Mock<IMapper>();
+            _timeService = new TimeService(_timeRepoMock.Object, _mapperMock.Object);
+        }
         [Fact]
         public void AddOrGetTime_AddTime_ShouldAddTimeToRecipesWhenTimeExisting()
         {
@@ -29,53 +38,34 @@ namespace CopyRecipeBookMVC.Test.UnitTests
                 TimeAmount = 1,
                 TimeUnit = "m"
             };
-
-            var mockRepo = new Mock<ITimeRepositoy>();
-            mockRepo
-                .Setup(repo => repo.ExistingTime(newTimeVm.TimeAmount, newTimeVm.TimeUnit))
+            _timeRepoMock.Setup(repo => repo.ExistingTime(newTimeVm.TimeAmount, newTimeVm.TimeUnit))
                 .Returns(existingTime);
-            var mockMapper = new Mock<IMapper>();
-
-            var mockService = new TimeService(mockRepo.Object, mockMapper.Object);
             //Act
-            var result = mockService.AddTime(newTimeVm);
+            var result = _timeService.AddTime(newTimeVm);
             //Assert
             Assert.NotEqual(0, result);
             Assert.Equal(1, result);
-            mockRepo.Verify(repo => repo.ExistingTime(newTimeVm.TimeAmount, newTimeVm.TimeUnit), Times.Once);
-            mockRepo.Verify(repo => repo.AddTime(It.IsAny<Time>()), Times.Never);
+            _timeRepoMock.Verify(repo => repo.ExistingTime(newTimeVm.TimeAmount, newTimeVm.TimeUnit), Times.Once);
+            _timeRepoMock.Verify(repo => repo.AddTime(It.IsAny<Time>()), Times.Never);
         }
-
         [Fact]
         public void AddOrGetTime_AddTime_ShouldAddTimeToCollectionWhenTimeNotExisting()
         {
-
             var newTimeVm = new Application.ViewModels.Recipe.NewRecipeVm
             {
                 TimeAmount = 1,
                 TimeUnit = "m"
             };
-
-            var mockRepo = new Mock<ITimeRepositoy>();
-            mockRepo
-                .Setup(repo => repo.AddTime(It.IsAny<Time>()))
-                .Returns(1);
-            mockRepo
-                .Setup(repo => repo.ExistingTime(newTimeVm.TimeAmount, newTimeVm.TimeUnit))
+            _timeRepoMock.Setup(repo => repo.AddTime(It.IsAny<Time>())).Returns(1);
+            _timeRepoMock.Setup(repo => repo.ExistingTime(newTimeVm.TimeAmount, newTimeVm.TimeUnit))
                 .Returns((Time)null);
-
-            var mockMapper = new Mock<IMapper>();
-
-            var mockService = new TimeService(mockRepo.Object, mockMapper.Object);
             //Act
-            var result = mockService.AddTime(newTimeVm);
+            var result = _timeService.AddTime(newTimeVm);
             //Assert
             Assert.NotEqual(0, result);
             Assert.Equal(1, result);
-            mockRepo.Verify(repo => repo.AddTime(It.IsAny<Time>()), Times.Once);
-
+            _timeRepoMock.Verify(repo => repo.AddTime(It.IsAny<Time>()), Times.Once);
         }
-
         [Fact]
         public void Get_GetListTimeForList()
         {
@@ -90,26 +80,17 @@ namespace CopyRecipeBookMVC.Test.UnitTests
                 new TimeForListVm { Id = 1, Amount = 1, Unit = "h" },
                 new TimeForListVm { Id = 2, Amount = 1, Unit = "m" }
             };
-
-            var mockRepo = new Mock<ITimeRepositoy>();
-            mockRepo
-                .Setup(repo => repo.GetAllTimes())
-                .Returns(times.AsQueryable);
-
-            var mockMapper = new Mock<IMapper>();
-            mockMapper
-                .Setup(mapper => mapper.Map<List<TimeForListVm>>(times))
+            _timeRepoMock.Setup(repo => repo.GetAllTimes()).Returns(times.AsQueryable);
+            _mapperMock.Setup(mapper => mapper.Map<List<TimeForListVm>>(times))
                 .Returns(timesVms);
-
-            var mockService = new TimeService(mockRepo.Object, mockMapper.Object);
             //Act
-            var result = mockService.GetListTimeForList();
+            var result = _timeService.GetListTimeForList();
             //Assert
             Assert.NotNull(result);
             Assert.IsType<ListTimeForListVm>(result);
             Assert.Equal(2, result.Times.Count);
-            Assert.Contains(result.Times, t => t.Unit == "h");
-            Assert.Contains(result.Times, t => t.Unit == "m");
+            Assert.Contains(result.Times, t => t.Unit == "h"&& t.Amount ==1);
+            Assert.Contains(result.Times, t => t.Unit == "m"&& t.Amount ==1);
         }
     }
 }

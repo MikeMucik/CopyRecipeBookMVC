@@ -20,12 +20,7 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
             _context.Ingredients.Add(ingredient);
             _context.SaveChanges();
             return ingredient.Id;
-        }
-        public void AddCompleteIngredients(RecipeIngredient recipeIngredient)
-        {
-            _context.RecipeIngredient.Add(recipeIngredient);
-            _context.SaveChanges();
-        }
+        }       
         public IQueryable<Ingredient> GetAllIngredients()
         {
             return _context.Ingredients;
@@ -35,41 +30,28 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
             var ingredient = _context.Ingredients.FirstOrDefault(x => x.Id == id);
             return ingredient;
         }
-        public int AddUnit(Unit unit)
-        {
-            _context.Units.Add(unit);
-            _context.SaveChanges();
-            return unit.Id;
-        }
-
-        public IQueryable<Unit> GetAllUnits()
-        {
-            return _context.Units;
-        }
-        public Unit GetUnitById(int id)
-        {
-            var unit = _context.Units.FirstOrDefault(x => x.Id == id);
-            return unit;
-        }
-        public IEnumerable<RecipeIngredient> GetAllIngredientsById(int recipeId)
-        {
-            return _context.RecipeIngredient.Where(ri => ri.RecipeId == recipeId)
-                                            .ToList();
-        }
-        public void DeleteCompleteIngredient(RecipeIngredient item)
-        {
-            _context.RecipeIngredient.Remove(item);
-            _context.SaveChanges();
-        }
-
+        //public int AddUnit(Unit unit)
+        //{
+        //    _context.Units.Add(unit);
+        //    _context.SaveChanges();
+        //    return unit.Id;
+        //}
+        //public IQueryable<Unit> GetAllUnits()
+        //{
+        //    return _context.Units;
+        //}
+        //public Unit GetUnitById(int id)
+        //{
+        //    var unit = _context.Units.FirstOrDefault(x => x.Id == id);
+        //    return unit;
+        //}       
         public Ingredient ExistingIngredient(string name)
         {
             return _context.Ingredients.FirstOrDefault(i => i.Name.ToLower() == name.ToLower());
         }
-
-        public Unit ExistingUnit(string name)
-        {
-            return _context.Units.FirstOrDefault(i => i.Name.ToLower() == name.ToLower());
-        }
+        //public Unit ExistingUnit(string name)
+        //{
+        //    return _context.Units.FirstOrDefault(i => i.Name.ToLower() == name.ToLower());
+        //}
     }
 }

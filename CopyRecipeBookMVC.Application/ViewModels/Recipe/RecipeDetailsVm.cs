@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using CopyRecipeBookMVC.Application.Mapping;
-using CopyRecipeBookMVC.Application.ViewModels.Ingredient;
+using CopyRecipeBookMVC.Application.ViewModels.RecipeIngredient;
 
 namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 {

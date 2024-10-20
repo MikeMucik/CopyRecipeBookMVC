@@ -6,9 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using CopyRecipeBookMVC.Application.Mapping;
-using CopyRecipeBookMVC.Application.ViewModels.Ingredient;
+using CopyRecipeBookMVC.Application.ViewModels.RecipeIngredient;
 using FluentValidation;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 {

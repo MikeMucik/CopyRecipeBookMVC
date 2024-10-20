@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using CopyRecipeBookMVC.Application.Interfaces;
-using CopyRecipeBookMVC.Application.ViewModels.Ingredient;
 using CopyRecipeBookMVC.Application.ViewModels.Recipe;
 using CopyRecipeBookMVC.Domain.Interfaces;
 using CopyRecipeBookMVC.Domain.Model;
@@ -17,17 +16,16 @@ namespace CopyRecipeBookMVC.Application.Services
 	public class RecipeService : IRecipeService
 	{
 		private readonly IRecipeRepository _recipeRepo;		
-		private readonly IMapper _mapper;		
-		private readonly IIngredientService _ingredientService;	
-		
+		private readonly IMapper _mapper;				
+		private readonly IRecipeIngredientService _recipeIngredientService;
 		public RecipeService(
 			IRecipeRepository recipeRepo,			
-			IMapper mapper,
-			IIngredientService ingredientService)
+			IMapper mapper,			
+			IRecipeIngredientService recipeIngredientService)
 		{
-			_recipeRepo = recipeRepo;			
-			_mapper = mapper;			
-			_ingredientService = ingredientService;			
+			_recipeRepo = recipeRepo;
+			_mapper = mapper;
+			_recipeIngredientService = recipeIngredientService;			
 		}
 		public int AddRecipe(NewRecipeVm recipe)
 		{			
@@ -42,7 +40,7 @@ namespace CopyRecipeBookMVC.Application.Services
 					UnitId = ingredient.Unit,
 					Quantity = ingredient.Quantity
 				};
-				_ingredientService.AddCompleteIngredients(recipeIngredient);
+				_recipeIngredientService.AddCompleteIngredients(recipeIngredient);
 			}
 			return recipeId;
 		}
@@ -137,11 +135,9 @@ namespace CopyRecipeBookMVC.Application.Services
 		}
 		public void UpdateRecipe(NewRecipeVm recipe)
 		{
-			_ingredientService.DeleteCompleteIngredients(recipe.Id);
+			_recipeIngredientService.DeleteCompleteIngredients(recipe.Id);
 			Recipe editRecipe = _mapper.Map<Recipe>(recipe);
-			_recipeRepo.UpdateRecipe(editRecipe);
-			//usuń rekordy z tabeli składników i dodaj nowe z modelu
-
+			_recipeRepo.UpdateRecipe(editRecipe);			
             foreach (var ingredient in recipe.Ingredients)
             {
                 var recipeIngredient = new RecipeIngredient
@@ -151,7 +147,7 @@ namespace CopyRecipeBookMVC.Application.Services
                     UnitId = ingredient.Unit,
                     Quantity = ingredient.Quantity
                 };
-                _ingredientService.AddCompleteIngredients(recipeIngredient);
+                _recipeIngredientService.AddCompleteIngredients(recipeIngredient);
             }           
 		}
 	}

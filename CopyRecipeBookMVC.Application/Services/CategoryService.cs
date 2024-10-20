@@ -7,6 +7,7 @@ using AutoMapper;
 using CopyRecipeBookMVC.Application.Interfaces;
 using CopyRecipeBookMVC.Application.ViewModels.Category;
 using CopyRecipeBookMVC.Domain.Interfaces;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CopyRecipeBookMVC.Application.Services
 {
@@ -28,6 +29,15 @@ namespace CopyRecipeBookMVC.Application.Services
 				Categories = categoryVms,
 			};
 			return categoryList;
+		}
+		public List<SelectListItem> GetCategorySelectList()
+		{
+			var categoryListVm= GetListCategoryForList();
+			return categoryListVm.Categories.Select(cat => new SelectListItem
+			{
+				Value = cat.Id.ToString(),
+				Text = cat.Name,
+			}).ToList();
 		}
 	}
 }

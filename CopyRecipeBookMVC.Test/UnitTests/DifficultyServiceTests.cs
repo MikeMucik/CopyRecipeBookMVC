@@ -14,6 +14,15 @@ namespace CopyRecipeBookMVC.Test.UnitTests
 {
     public class DifficultyServiceTests
     {
+        private readonly Mock<IDifficultyRepository> _difficultyRepoMock;
+        private readonly Mock<IMapper> _mapperMock;
+        private readonly DifficultyService _difficultyService;
+        public DifficultyServiceTests()
+        {
+            _difficultyRepoMock = new Mock<IDifficultyRepository>();
+            _mapperMock = new Mock<IMapper>();
+            _difficultyService = new DifficultyService(_difficultyRepoMock.Object, _mapperMock.Object);
+        }
         [Fact]
         public void Get_GetListDifficulyForList_ShouldGetAllList()
         {
@@ -28,19 +37,11 @@ namespace CopyRecipeBookMVC.Test.UnitTests
                 new DifficultyForListVm { Id = 1, Name = "TestD1" },
                 new DifficultyForListVm { Id = 2, Name = "TestD2" }
             };
-            var mockRepo = new Mock<IDifficultyRepository>();
-            mockRepo
-                .Setup(repo => repo.GetAllDifficulties())
-                .Returns(difficulties);
-
-            var mockMapper = new Mock<IMapper>();
-            mockMapper
-                .Setup(mapper => mapper.Map<List<DifficultyForListVm>>(difficulties))
+           _difficultyRepoMock.Setup(repo => repo.GetAllDifficulties()) .Returns(difficulties);
+            _mapperMock.Setup(mapper => mapper.Map<List<DifficultyForListVm>>(difficulties))
                 .Returns(difficultyVms);
-
-            var mockService = new DifficultyService(mockRepo.Object, mockMapper.Object);
             //Act
-            var result = mockService.GetListDifficultyForList();
+            var result =_difficultyService.GetListDifficultyForList();
             //Assert
             Assert.NotNull(result);
             Assert.IsType<ListDifficultyForListVm>(result);

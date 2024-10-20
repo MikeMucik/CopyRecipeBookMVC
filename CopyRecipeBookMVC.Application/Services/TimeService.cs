@@ -9,6 +9,7 @@ using CopyRecipeBookMVC.Application.ViewModels.Recipe;
 using CopyRecipeBookMVC.Application.ViewModels.Time;
 using CopyRecipeBookMVC.Domain.Interfaces;
 using CopyRecipeBookMVC.Domain.Model;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CopyRecipeBookMVC.Application.Services
 {
@@ -49,6 +50,16 @@ namespace CopyRecipeBookMVC.Application.Services
 				Times = timeVms
 			};
 			return timeList;
+		}
+
+		public List<SelectListItem> GetTimeSelectItem()
+		{
+			var timeListVm = GetListTimeForList();
+			return timeListVm.Times.Select(tim => new SelectListItem
+			{
+				Value = tim.Id.ToString(),
+				Text = tim.Amount.ToString() + " " + tim.Unit ,
+			}).ToList();
 		}
 	}
 }

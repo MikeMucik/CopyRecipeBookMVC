@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Localization;
 using FluentValidation.AspNetCore;
 using FluentValidation;
 using CopyRecipeBookMVC.Application.ViewModels.Recipe;
-using CopyRecipeBookMVC.Application.ViewModels.Ingredient;
 using Microsoft.Extensions.Logging;
 using System.Configuration;
+using CopyRecipeBookMVC.Application.ViewModels.RecipeIngredient;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,22 +29,6 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<CopyRecipeBookMVC.Infrastructure.Context>();
-
-//builder.Services.ConfigureApplicationCookie(options =>
-//{
-//    options.Cookie.HttpOnly = true; // Ciasteczko nie dostêpne przez JavaScript
-//    options.ExpireTimeSpan = TimeSpan.FromMinutes(60); // Czas ¿ycia ciasteczka
-//    options.SlidingExpiration = true; // Przed³u¿enie sesji przy ka¿dej aktywnoœci
-//    options.Cookie.SameSite = SameSiteMode.Lax; // Zapewnia prawid³ow¹ obs³ugê przy ¿¹daniach AJAX
-//});
-
-//builder.Services.AddSession(options =>
-//{
-//	options.IdleTimeout = TimeSpan.FromMinutes(30); // Czas trwania sesji  
-//	options.Cookie.HttpOnly = true; // Zwiêksza bezpieczeñstwo  
-//	options.Cookie.IsEssential = true; // Wymaga ciasteczka do dzia³ania  
-//});
-
 
 builder.Services.AddAplication();
 builder.Services.AddInfrastructure();

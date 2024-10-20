@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CopyRecipeBookMVC.Application.Interfaces;
 using CopyRecipeBookMVC.Application.ViewModels.Ingredient;
+using CopyRecipeBookMVC.Application.ViewModels.RecipeIngredient;
 using CopyRecipeBookMVC.Domain.Interfaces;
 using CopyRecipeBookMVC.Domain.Model;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CopyRecipeBookMVC.Application.Services
 {
@@ -19,16 +21,22 @@ namespace CopyRecipeBookMVC.Application.Services
 		{
 			_ingredientRepo = ingredientRepo;
 			_mapper = mapper;
-		}
-		public void AddCompleteIngredients(RecipeIngredient recipeIngredient)
-		{
-			_ingredientRepo.AddCompleteIngredients(recipeIngredient);
-		}
+		}		
 		public int AddIngredient(IngredientForNewRecipeVm ingredient)
 		{
 			var ingredientNew = _mapper.Map<Ingredient>(ingredient);
 			var id = _ingredientRepo.AddIngredient(ingredientNew);
 			return id;
+		}
+
+		public List<SelectListItem> GetIngredientSelectList()
+		{
+			var ingredientListVm = GetListIngredientForList();
+			return ingredientListVm.Ingredients.Select(ing => new SelectListItem
+			{
+				Value = ing.Id.ToString(),
+				Text = ing.Name,
+			}).ToList();				
 		}
 		public ListIngredientsForRecipeVm GetListIngredientForList()
 		{
@@ -44,9 +52,8 @@ namespace CopyRecipeBookMVC.Application.Services
 		{
 			if (ingredient.Name > 0)
 			{
-				return ingredient.Name; // Ingredient.Name to ID nazwy istniejącego składnika
-			}
-			
+				return ingredient.Name; 
+			}			
 			if (!string.IsNullOrEmpty(ingredient.NewIngredientName))
 			{
 				var existingIngredient = _ingredientRepo.ExistingIngredient(ingredient.NewIngredientName);
@@ -61,18 +68,6 @@ namespace CopyRecipeBookMVC.Application.Services
 				Console.WriteLine("Błąd");
 				return -1;
 			}
-		}
-		//public Ingredient GetIngredient(int id)
-		//{
-		//	throw new NotImplementedException();
-		//}
-        public void DeleteCompleteIngredients(int recipeId)
-        {
-			var ingredientsToDelete = _ingredientRepo.GetAllIngredientsById(recipeId);
-            foreach (var item in ingredientsToDelete)
-            {
-				_ingredientRepo.DeleteCompleteIngredient(item);
-            }            
-        }
+		}		
     }
 }

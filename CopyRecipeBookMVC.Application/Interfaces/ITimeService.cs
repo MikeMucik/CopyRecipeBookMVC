@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CopyRecipeBookMVC.Application.ViewModels.Recipe;
 using CopyRecipeBookMVC.Application.ViewModels.Time;
 using CopyRecipeBookMVC.Domain.Model;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CopyRecipeBookMVC.Application.Interfaces
 {
@@ -14,5 +15,7 @@ namespace CopyRecipeBookMVC.Application.Interfaces
 		int AddTime (NewRecipeVm time);
 		//Time GetTime (int id);
 		ListTimeForListVm GetListTimeForList ();
+		List<SelectListItem> GetTimeSelectItem();
+
 	}
 }

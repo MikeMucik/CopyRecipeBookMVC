@@ -1,11 +1,8 @@
 ﻿using CopyRecipeBookMVC.Application.Interfaces;
-using CopyRecipeBookMVC.Application.Services;
-using CopyRecipeBookMVC.Application.ViewModels.Ingredient;
 using CopyRecipeBookMVC.Application.ViewModels.Recipe;
-using CopyRecipeBookMVC.Domain.Model;
+using CopyRecipeBookMVC.Application.ViewModels.RecipeIngredient;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CopyRecipeBook.Web.Controllers
 {
@@ -16,7 +13,8 @@ namespace CopyRecipeBook.Web.Controllers
 		private readonly IDifficultyService _difficultyService;
 		private readonly ITimeService _timeService;
 		private readonly IIngredientService _ingredientService;
-		private readonly IUnitService _unitService;
+		private readonly IRecipeIngredientService _recipeIngredientService;
+		private readonly IUnitService _unitService;		
 		private readonly ILogger<RecipeController> _logger;
         public RecipeController(IRecipeService recipeService,
 			ICategoryService categoryService,
@@ -24,6 +22,7 @@ namespace CopyRecipeBook.Web.Controllers
             ITimeService timeService,
             IIngredientService ingredientService,
 			IUnitService unitService,
+			IRecipeIngredientService recipeIngredientService,
 			ILogger<RecipeController> logger/*, ..*/)
         {
             _recipeService = recipeService;
@@ -32,13 +31,13 @@ namespace CopyRecipeBook.Web.Controllers
             _timeService = timeService;
             _ingredientService = ingredientService;
 			_unitService = unitService;
+			_recipeIngredientService = recipeIngredientService;
 			_logger = logger;
         }
         [HttpGet]
 		[Authorize]
         public IActionResult Index(int pageSize=12, int pageNumber=1, string searchString ="")
-		{			
-			
+		{						
 			var model = _recipeService.GetAllRecipesForList(pageSize, pageNumber, searchString);
 			return View(model);
 		}
@@ -155,7 +154,7 @@ namespace CopyRecipeBook.Web.Controllers
 		//[HttpPost]
 		[AutoValidateAntiforgeryToken]
 		[Authorize(Roles = "Admin, SuperUser")]
-		//To trzeba zmienić usuwanie nie powinno być GET
+		// nie powinno być GET
 		public IActionResult DeleteRecipe(int id)
 		{
 			_recipeService.DeleteRecipe(id);
@@ -178,45 +177,14 @@ namespace CopyRecipeBook.Web.Controllers
 		{	
 			var newTimeId = _timeService.AddTime(model);
 			return Json(new { success = true, newTimeId });
-		}
-
-		//Czy to nie powinno być w innym miejscu ??
+		}		
 		public void FillViewBags()
 		{
-			var categoryListVm = _categoryService.GetListCategoryForList();
-			ViewBag.Categories = categoryListVm.Categories.Select(cat => new SelectListItem
-			{
-				Value = cat.Id.ToString(),
-				Text = cat.Name,	
-			}).ToList();
-
-			var difficultyListVm = _difficultyService.GetListDifficultyForList();
-			ViewBag.Difficulties = difficultyListVm.Difficulties.Select(cat => new SelectListItem
-			{
-				Value = cat.Id.ToString(),
-				Text = cat.Name,
-			}).ToList();
-
-            var timeListVm = _timeService.GetListTimeForList();
-            ViewBag.Times = timeListVm.Times.Select(tim => new SelectListItem
-            {
-                Value = tim.Id.ToString(),
-                Text = tim.Amount.ToString() + " " + tim.Unit
-            }).ToList();
-
-            var ingredientListVm = _ingredientService.GetListIngredientForList();
-            ViewBag.Ingredients = ingredientListVm.Ingredients.Select(ing => new SelectListItem
-            {
-                Value = ing.Id.ToString(),
-                Text = ing.Name, 
-            }).ToList();
-
-			var unitListVm = _unitService.GetAllUnitsForList();
-			ViewBag.Units = unitListVm.Units.Select(uni => new SelectListItem
-			{
-				Value = uni.Id.ToString(),
-				Text = uni.Name,
-			}).ToList();
+			ViewBag.Categories = _categoryService.GetCategorySelectList();			
+			ViewBag.Difficulties = _difficultyService.GetDifficultySelectList();			
+			ViewBag.Times = _timeService.GetTimeSelectItem();			
+			ViewBag.Ingredients = _ingredientService.GetIngredientSelectList();			
+			ViewBag.Units = _unitService.GetUnitsForSelectList();			
 		}
 	}
 }

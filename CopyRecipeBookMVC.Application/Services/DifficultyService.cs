@@ -7,6 +7,7 @@ using AutoMapper;
 using CopyRecipeBookMVC.Application.Interfaces;
 using CopyRecipeBookMVC.Application.ViewModels.Difficulty;
 using CopyRecipeBookMVC.Domain.Interfaces;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CopyRecipeBookMVC.Application.Services
 {
@@ -19,7 +20,10 @@ namespace CopyRecipeBookMVC.Application.Services
 			_difficultyRepo = difficultyRepo;
 			_mapper = mapper;
         }
-        public ListDifficultyForListVm GetListDifficultyForList()
+
+		
+
+		public ListDifficultyForListVm GetListDifficultyForList()
 		{
 			var difficulties = _difficultyRepo.GetAllDifficulties();
 			var difficultyVms = _mapper.Map<List<DifficultyForListVm>>(difficulties);
@@ -28,6 +32,15 @@ namespace CopyRecipeBookMVC.Application.Services
 				Difficulties = difficultyVms,
 			};
 			return difficultyList;
+		}
+		public List<SelectListItem> GetDifficultySelectList()
+		{
+			var difficultyListVm = GetListDifficultyForList();
+			return difficultyListVm.Difficulties.Select(difficultyListVm => new SelectListItem
+			{
+				Value = difficultyListVm.Id.ToString(),
+				Text = difficultyListVm.Name,	
+			}).ToList();
 		}
 	}
 }

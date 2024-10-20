@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CopyRecipeBookMVC.Application.Mapping;
 using FluentValidation;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
-namespace CopyRecipeBookMVC.Application.ViewModels.Ingredient
+namespace CopyRecipeBookMVC.Application.ViewModels.RecipeIngredient
 {
 	public class IngredientForNewRecipeVm:	IMapFrom<Domain.Model.RecipeIngredient>,
 											IMapFrom<Domain.Model.Ingredient>,		

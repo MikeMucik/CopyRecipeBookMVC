@@ -5,11 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using CopyRecipeBookMVC.Domain.Model;
 
-namespace CopyRecipeBookMVC.Application.Interfaces
+namespace CopyRecipeBookMVC.Domain.Interfaces
 {
-    interface IRecipeIngredient
-    {
+	public interface IRecipeIngredientRepository
+	{
 		void AddCompleteIngredients(RecipeIngredient recipeIngredient);
-		void DeleteCompleteIngredients(int recipeId);
+		void DeleteCompleteIngredient(RecipeIngredient item);
+		IEnumerable<RecipeIngredient> GetAllIngredientsById(int recipeId);
 	}
 }
