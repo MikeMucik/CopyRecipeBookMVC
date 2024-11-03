@@ -48,43 +48,43 @@ namespace CopyRecipeBookMVC.Test
 			Assert.Contains(result.Categories, c => c.Name == "Test1");
 			Assert.Contains(result.Categories, c => c.Name == "Test2");
 		}
-		//[Fact]
-		//public void GetCategorySelectList_ShouldReturnCorrectList()
-		//{
-		//	var mockCategoryRepo = new Mock<ICategoryRepository>();
-		//	var mockMapper = new Mock<IMapper>();
+		[Fact]
+		public void GetCategorySelectList_ShouldReturnCorrectList()
+		{
+			var mockCategoryRepo = new Mock<ICategoryRepository>();
+			var mockMapper = new Mock<IMapper>();
 
-		//	// Dane z repozytorium (surowe dane kategorii)
-		//	var categories = new List<Category>
-		//	{
-		//		new Category { Id = 1, Name = "Category 1" },
-		//		new Category { Id = 2, Name = "Category 2" }
-		//	};
+			// Dane z repozytorium (surowe dane kategorii)
+			var categories = new List<Category>
+			{
+				new Category { Id = 1, Name = "Category 1" },
+				new Category { Id = 2, Name = "Category 2" }
+			};
 
-		//	// Dane po mapowaniu przez AutoMapper (obiekty CategoryForListVm)
-		//	var categoryVms = new List<CategoryForListVm>
-		//	{
-		//		new CategoryForListVm { Id = 1, Name = "Category 1" },
-		//		new CategoryForListVm { Id = 2, Name = "Category 2" }
-		//	};
+			// Dane po mapowaniu przez AutoMapper (obiekty CategoryForListVm)
+			var categoryVms = new List<CategoryForListVm>
+			{
+				new CategoryForListVm { Id = 1, Name = "Category 1" },
+				new CategoryForListVm { Id = 2, Name = "Category 2" }
+			};
 
-		//	// Mockowanie repozytorium, które zwraca surowe dane kategorii
-		//	mockCategoryRepo.Setup(repo => repo.GetAllCategories()).Returns(categories);
+			// Mockowanie repozytorium, które zwraca surowe dane kategorii
+			mockCategoryRepo.Setup(repo => repo.GetAllCategories()).Returns(categories);
 
-		//	// Mockowanie AutoMappera, który mapuje surowe dane na widoki kategorii
-		//	mockMapper.Setup(m => m.Map<List<CategoryForListVm>>(categories)).Returns(categoryVms);
+			// Mockowanie AutoMappera, który mapuje surowe dane na widoki kategorii
+			mockMapper.Setup(m => m.Map<List<CategoryForListVm>>(categories)).Returns(categoryVms);
 
-		//	// Tworzymy serwis z zamockowanym repozytorium i mapperem
-		//	var categoryService = new CategoryService(mockCategoryRepo.Object, mockMapper.Object);
+			// Tworzymy serwis z zamockowanym repozytorium i mapperem
+			var categoryService = new CategoryService(mockCategoryRepo.Object, mockMapper.Object);
 
-		//	// Act
-		//	var result = categoryService.GetListCategoryForList();
+			// Act
+			var result = categoryService.GetListCategoryForList();
 
-		//	// Assert
-		//	Assert.NotNull(result); // Sprawdzamy, czy wynik nie jest null
-		//	Assert.Equal(2, result.Categories.Count); // Sprawdzamy, czy są dokładnie dwie kategorie
-		//	Assert.Equal("Category 1", result.Categories[0].Name); // Sprawdzamy poprawność mapowania pierwszej kategorii
-		//	Assert.Equal("Category 2", result.Categories[1].Name);
-		//}
+			// Assert
+			Assert.NotNull(result); // Sprawdzamy, czy wynik nie jest null
+			Assert.Equal(2, result.Categories.Count); // Sprawdzamy, czy są dokładnie dwie kategorie
+			Assert.Equal("Category 1", result.Categories[0].Name); // Sprawdzamy poprawność mapowania pierwszej kategorii
+			Assert.Equal("Category 2", result.Categories[1].Name);
+		}
 	}
 }

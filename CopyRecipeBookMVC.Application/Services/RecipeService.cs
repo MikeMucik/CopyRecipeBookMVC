@@ -36,8 +36,8 @@ namespace CopyRecipeBookMVC.Application.Services
 				var recipeIngredient = new RecipeIngredient
 				{
 					RecipeId = recipeId,
-					IngredientId = ingredient.Name,
-					UnitId = ingredient.Unit,
+					IngredientId = ingredient.IngredientName,
+					UnitId = ingredient.IngredientUnit,
 					Quantity = ingredient.Quantity
 				};
 				_recipeIngredientService.AddCompleteIngredients(recipeIngredient);
@@ -143,8 +143,8 @@ namespace CopyRecipeBookMVC.Application.Services
                 var recipeIngredient = new RecipeIngredient
                 {
                     RecipeId = recipe.Id,
-                    IngredientId = ingredient.Name,
-                    UnitId = ingredient.Unit,
+                    IngredientId = ingredient.IngredientName,
+                    UnitId = ingredient.IngredientUnit,
                     Quantity = ingredient.Quantity
                 };
                 _recipeIngredientService.AddCompleteIngredients(recipeIngredient);

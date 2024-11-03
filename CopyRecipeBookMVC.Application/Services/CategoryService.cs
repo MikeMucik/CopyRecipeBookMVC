@@ -30,14 +30,28 @@ namespace CopyRecipeBookMVC.Application.Services
 			};
 			return categoryList;
 		}
-		public List<SelectListItem> GetCategorySelectList()
+		public List<SelectListItem> GetCategoryForSelectList()
 		{
-			var categoryListVm= GetListCategoryForList();
-			return categoryListVm.Categories.Select(cat => new SelectListItem
-			{
-				Value = cat.Id.ToString(),
-				Text = cat.Name,
-			}).ToList();
+			var categories = _categoryRepo.GetAllCategories();
+			var categoriesVms = _mapper.Map<List<CategoryForListVm>>(categories);
+			return categoriesVms.Select(uniVm => new SelectListItem
+				{
+					Value = uniVm.Id.ToString(),
+					Text = uniVm.Name
+				}).ToList();
+
+			//var categories = _categoryRepo.GetAllCategories();
+			//var categoryVms = _mapper.Map<List<CategoryForListVm>>(categories);
+			////var categoryListVm= GetListCategoryForList();
+			//var categoryListVm = new ListCategoryForListVm
+			//{
+			//	Categories = categoryVms
+			//};
+			//return categoryListVm.Categories.Select(cat => new SelectListItem
+			//{
+			//	Value = cat.Id.ToString(),
+			//	Text = cat.Name,
+			//}).ToList();
 		}
 	}
 }

@@ -50,9 +50,9 @@ namespace CopyRecipeBookMVC.Application.Services
 		}
 		public int GetOrAddIngredient(IngredientForNewRecipeVm ingredient)
 		{
-			if (ingredient.Name > 0)
+			if (ingredient.IngredientName > 0)
 			{
-				return ingredient.Name; 
+				return ingredient.IngredientName; 
 			}			
 			if (!string.IsNullOrEmpty(ingredient.NewIngredientName))
 			{

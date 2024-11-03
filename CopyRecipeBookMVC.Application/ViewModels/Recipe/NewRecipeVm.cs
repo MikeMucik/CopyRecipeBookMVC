@@ -29,6 +29,7 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 		public decimal? TimeAmount { get; set; } //tu mała zmiana z int na decimal
 		[DisplayName("Jednostka nowego czasu")]
 		public string? TimeUnit { get; set; }
+		public IngredientForNewRecipeVm Ingredient { get; set; } = new IngredientForNewRecipeVm();//
 		//[ValidateNever]
 		public List<IngredientForNewRecipeVm> Ingredients { get; set; } = new List<IngredientForNewRecipeVm>();
 		[DisplayName("Wpisz recepturę przepisu")]

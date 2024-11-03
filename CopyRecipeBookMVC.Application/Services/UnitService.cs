@@ -44,9 +44,9 @@ namespace CopyRecipeBookMVC.Application.Services
 		}
 		public int GetOrAddUnit(IngredientForNewRecipeVm ingredient)
 		{
-			if (ingredient.Unit > 0)
+			if (ingredient.IngredientUnit > 0)
 			{
-				return ingredient.Unit;
+				return ingredient.IngredientUnit;
 			}
 			if (!string.IsNullOrEmpty(ingredient.NewIngredientUnit))
 			{

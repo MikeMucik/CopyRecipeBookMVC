@@ -44,8 +44,8 @@ namespace CopyRecipeBookMVC.Test.UnitTests
 				DifficultyId = 1,
 				TimeId = 1,
 				Ingredients = new List<IngredientForNewRecipeVm> {
-						new IngredientForNewRecipeVm {Name = 1, Unit = 1, Quantity = 100 },
-						new IngredientForNewRecipeVm {Name = 2, Unit = 2, Quantity = 200 }
+						new IngredientForNewRecipeVm {IngredientName = 1, IngredientUnit = 1, Quantity = 100 },
+						new IngredientForNewRecipeVm {IngredientName = 2, IngredientUnit = 2, Quantity = 200 }
 					},
 				Description = ""
 			};
@@ -320,8 +320,8 @@ namespace CopyRecipeBookMVC.Test.UnitTests
 				DifficultyId = 1,
 				TimeId = 1,
 				Ingredients = new List<IngredientForNewRecipeVm> {
-						new IngredientForNewRecipeVm {Name = 1, Unit = 1, Quantity = 100 },
-						new IngredientForNewRecipeVm {Name = 2, Unit = 2, Quantity = 200 }
+						new IngredientForNewRecipeVm {IngredientName = 1, IngredientUnit = 1, Quantity = 100 },
+						new IngredientForNewRecipeVm {IngredientName = 2, IngredientUnit = 2, Quantity = 200 }
 					},
 				Description = ""
 			};
@@ -356,8 +356,8 @@ namespace CopyRecipeBookMVC.Test.UnitTests
 			Assert.Equal(newRecipeVm.Ingredients.Count, result.Ingredients.Count);
 			for (int i = 0; i < newRecipeVm.Ingredients.Count; i++)
 			{
-				Assert.Equal(newRecipeVm.Ingredients[i].Name, result.Ingredients[i].Name);
-				Assert.Equal(newRecipeVm.Ingredients[i].Unit, result.Ingredients[i].Unit);
+				Assert.Equal(newRecipeVm.Ingredients[i].IngredientName, result.Ingredients[i].IngredientName);
+				Assert.Equal(newRecipeVm.Ingredients[i].IngredientUnit, result.Ingredients[i].IngredientUnit);
 				Assert.Equal(newRecipeVm.Ingredients[i].Quantity, result.Ingredients[i].Quantity);
 			}
 		}
@@ -374,8 +374,8 @@ namespace CopyRecipeBookMVC.Test.UnitTests
 				DifficultyId = 1,
 				TimeId = 1,
 				Ingredients = new List<IngredientForNewRecipeVm> {
-						new IngredientForNewRecipeVm {Name = 1, Unit = 1, Quantity = 100 },
-						new IngredientForNewRecipeVm {Name = 3, Unit = 2, Quantity = 200 }
+						new IngredientForNewRecipeVm {IngredientName = 1, IngredientUnit = 1, Quantity = 100 },
+						new IngredientForNewRecipeVm {IngredientName = 3, IngredientUnit = 2, Quantity = 200 }
 					},
 				Description = ""
 			};			

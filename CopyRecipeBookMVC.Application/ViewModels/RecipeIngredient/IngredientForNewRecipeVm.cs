@@ -13,16 +13,16 @@ namespace CopyRecipeBookMVC.Application.ViewModels.RecipeIngredient
 											IMapFrom<Domain.Model.Ingredient>,		
 											IMapFrom<Domain.Model.Unit>
 	{		
-		public int Name { get; set; }
+		public int IngredientName { get; set; }
 		public decimal Quantity { get; set; }		
-		public int Unit { get; set; }
+		public int IngredientUnit { get; set; }
 		public string NewIngredientName { get; set; }		
 		public string NewIngredientUnit { get; set; }
 		public void Mapping(Profile profile)
 		{
 			profile.CreateMap<IngredientForNewRecipeVm, Domain.Model.RecipeIngredient>()
-				.ForMember(ri => ri.IngredientId, opt => opt.MapFrom(i => i.Name))
-				.ForMember(ri => ri.UnitId, opt => opt.MapFrom(i => i.Unit))
+				.ForMember(ri => ri.IngredientId, opt => opt.MapFrom(i => i.IngredientName))
+				.ForMember(ri => ri.UnitId, opt => opt.MapFrom(i => i.IngredientUnit))
 				.ForMember(ri => ri.Quantity, opt => opt.MapFrom(i => i.Quantity))
 				.ReverseMap();
 			// Mapowanie do Ingredient
@@ -40,11 +40,32 @@ namespace CopyRecipeBookMVC.Application.ViewModels.RecipeIngredient
 		public IngredientForNewRecipeValidation()
 		{
 			RuleFor(i => i.NewIngredientName).MaximumLength(20)
-				.WithMessage("Nazwa składnika może mieć maksymalnie 20 znaków");
+				.WithMessage("Nazwa składnika może mieć maksymalnie 20 znaków")
+				.When(i=>i.IngredientName == 0)
+				.Empty()
+				.WithMessage("Jeśli wybrano składnik z listy to nazwa musi być pusta")
+				.When(i=>i.IngredientName > 0)
+				.NotEmpty()
+				.WithMessage("Proszę wpisać składnik lub wybrać z listy")
+				.When(i => i.IngredientName ==0);
+
+			RuleFor(i => i.IngredientName)
+				.GreaterThan(0)
+				.When(i => i.NewIngredientName == "")
+				.WithMessage("Nieprawidłowa wartość");
+				
+			
+				
+
 			RuleFor(i => i.NewIngredientUnit).MaximumLength(10)
-				.WithMessage("Miara składnika może mieć maksymalnie 10 znaków");
+				.WithMessage("Miara składnika może mieć maksymalnie 10 znaków")
+				.When(i=>i.IngredientUnit == 0)
+				.Empty()
+				.WithMessage("Jeśli wybrano miarę z listy to pole musi być puste")
+				.When(i=>i.IngredientUnit > 0);
 			RuleFor(i => i.Quantity).GreaterThan(0)
 				.WithMessage("Ilość musi być większa od zera");
+			
 		}
 	}
 }

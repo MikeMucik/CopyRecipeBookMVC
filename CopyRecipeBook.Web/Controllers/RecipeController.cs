@@ -180,7 +180,7 @@ namespace CopyRecipeBook.Web.Controllers
 		}		
 		public void FillViewBags()
 		{
-			ViewBag.Categories = _categoryService.GetCategorySelectList();			
+			ViewBag.Categories = _categoryService.GetCategoryForSelectList();			
 			ViewBag.Difficulties = _difficultyService.GetDifficultySelectList();			
 			ViewBag.Times = _timeService.GetTimeSelectItem();			
 			ViewBag.Ingredients = _ingredientService.GetIngredientSelectList();			

@@ -120,11 +120,11 @@
 				}
 				@for (int i = 0; i < Model.Ingredients?.Count; i++)
 				{
-					var ingredientId = Model.Ingredients[i].Name;
+					var ingredientId = Model.Ingredients[i].IngredientName;
 					var ingredientName = ingredientsList
 					.FirstOrDefault(x => x.Value == ingredientId.ToString())?.Text;
 
-					var unitId = Model.Ingredients[i].Unit;
+					var unitId = Model.Ingredients[i].IngredientUnit;
 					var unitName = unitList
 					.FirstOrDefault(x => x.Value == unitId.ToString())?.Text;
 
@@ -141,23 +141,23 @@
 							@unitName
 						</p>
 
-						<input type="hidden" name="Ingredients[@i].Name" value="@Model.Ingredients[i].Name" />
+						<input type="hidden" name="Ingredients[@i].Name" value="@Model.Ingredients[i].IngredientName" />
 						<input type="hidden" name="Ingredients[@i].Quantity" value="@Model.Ingredients[i].Quantity" />
-						<input type="hidden" name="Ingredients[@i].Unit" value="@Model.Ingredients[i].Unit" />
+						<input type="hidden" name="Ingredients[@i].Unit" value="@Model.Ingredients[i].IngredientUnit" />
 						<input type="hidden" name="Ingredients[@i].NewIngredientName" value="@Model.Ingredients[i].NewIngredientName" />
 						<input type="hidden" name="Ingredients[@i].NewIngredientUnit" value="@Model.Ingredients[i].NewIngredientUnit" />
 
 						<button type="button" id="EditIngredientBtn" class="btn-dark"
 								data-numberOfIngredients-id="@Model.NumberOfIngredients"
-								data-ingredient-id="@Model.Ingredients[i].Name"
+								data-ingredient-id="@Model.Ingredients[i].IngredientName"
 								data-recipe-id="@Model.Id"
-								data-unit-id="@Model.Ingredients[i].Unit">
+								data-unit-id="@Model.Ingredients[i].IngredientUnit">
 							Edytuj składnik
 						</button>
 						<button type="button" id="DeleteIngredientBtn" class="btn-dark"
-								data-ingredient-id="@Model.Ingredients[i].Name"
+								data-ingredient-id="@Model.Ingredients[i].IngredientName"
 								data-recipe-id="@Model.Id"
-								data-unit-id="@Model.Ingredients[i].Unit">
+								data-unit-id="@Model.Ingredients[i].IngredientUnit">
 							Usuń składnik
 						</button>
 					</div>

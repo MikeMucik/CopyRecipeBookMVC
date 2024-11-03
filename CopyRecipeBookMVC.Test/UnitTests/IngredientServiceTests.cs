@@ -79,7 +79,7 @@ namespace CopyRecipeBookMVC.Test.UnitTests
             //Assert
             var newIngredientNameVm = new IngredientForNewRecipeVm
             {
-                Name = 0,
+				IngredientName = 0,
                 NewIngredientName = "potato"
             };
             _ingredientRepoMock.Setup(i => i.ExistingIngredient(newIngredientNameVm.NewIngredientName))

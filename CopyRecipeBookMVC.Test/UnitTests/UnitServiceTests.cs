@@ -78,7 +78,7 @@ namespace CopyRecipeBookMVC.Test.UnitTests
 			//Assert
 			var newUnitVm = new IngredientForNewRecipeVm
 			{
-				Unit = 0,
+				IngredientUnit = 0,
 				NewIngredientUnit = "kg"
 			};
 			_unitRepoMock.Setup(i => i.ExistingUnit(It.IsAny<string>())).Returns((Unit)null);
