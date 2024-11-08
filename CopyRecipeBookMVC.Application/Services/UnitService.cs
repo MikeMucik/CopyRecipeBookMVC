@@ -36,7 +36,9 @@ namespace CopyRecipeBookMVC.Application.Services
 			{
 				Units = unitVms
 			};
-			return unitList.Units.Select(uni => new SelectListItem
+			return unitList.Units
+				.OrderBy(x => x.Name)
+				.Select(uni => new SelectListItem
 			{
 				Value = uni.Id.ToString(),
 				Text = uni.Name	

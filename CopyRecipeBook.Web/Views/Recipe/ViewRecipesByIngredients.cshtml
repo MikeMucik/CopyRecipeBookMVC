@@ -1,0 +1,217 @@
+﻿@model CopyRecipeBookMVC.Application.ViewModels.Recipe.ListRecipesByIngredientsVm
+
+@{
+	ViewData["Title"] = "ViewByIngredient";
+}
+
+<h1>Wybór przepisu po składniku</h1>
+
+<p>
+	<a asp-action="AddRecipe">Stwórz nowy przepis</a>
+</p>
+
+<form asp-action="ViewRecipesByIngredients" asp-controller="Recipe" method="post" id="ingredientsRecipes">
+	<div class="row-md6">
+		<div id="ingredients-select-container" style="display: flex; flex-direction: row; gap:10px">
+			<div class="ingredient-select" >
+				@* style="display: flex ; flex-direction: column; align-items: flex-start; gap: 5px;" *@
+				<select asp-for="IngredientIds[0]" asp-items="ViewBag.Ingredients" class="custom-select" size="5">
+					<option value="">Wybierz składnik:</option>
+				</select>
+				<button type="button" class="delete-ingredient-btn btn-dark" >Usuń składnik</button>
+				@* style="margin-top: 3px; margin-bottom: 3px;" *@
+			</div>
+		</div>		
+		<button type="button" onclick="addIngredientSelect()">Dodaj kolejny składnik</button>
+		<input type="submit" value=" Wyszukaj " />
+	</div>
+
+	<div class="row">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>
+						@Html.DisplayNameFor(model => model.RecipesByIngredients[0].Id)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.RecipesByIngredients.First().Name)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.RecipesByIngredients.First().Category)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.RecipesByIngredients.First().Difficulty)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.RecipesByIngredients.First().Time)
+					</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in Model.RecipesByIngredients)
+				{
+					<tr>
+						<td>
+							@Html.DisplayFor(modelItem => item.Id)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.Name)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.Category)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.Difficulty)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.Time)
+						</td>
+						<td>
+							@if (User.IsInRole("Admin") || User.IsInRole("SuperUser"))
+							{
+								@Html.ActionLink("Edytuj przepis", "EditRecipe", new { id = item.Id })
+							}|
+							@Html.ActionLink("Szczegóły przepisu", "ViewDetails", new { id = item.Id }) |
+							@if (User.IsInRole("Admin") || User.IsInRole("SuperUser"))
+							{
+								@Html.ActionLink("Usuń przepis", "DeleteRecipe", new { id = item.Id })
+							}
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+	<div class="row-md4">
+		<table>
+			<tr>
+				@for (int i = 1; i <= Math.Ceiling(Model.Count / (double)Model.PageSize); i++)
+				{
+					<td>
+						@if (i != Model.CurrentPage)
+						{
+							<a href="javascript:PagerClick(@i)">@i</a>
+						}
+						else
+						{
+							<span>@i</span>
+						}
+					</td>
+				}
+			</tr>
+		</table>
+		<input type="hidden" name="pageNumber" id="pageNumber" />
+		<input type="hidden" name="pageSize" id="pageSize" value="12" />
+	</div>
+</form>
+<p><a asp-action="Index">Wróć do listy przepisów</a></p>
+<button onclick="window.history.length>1 ? history?.back() :
+window.location.href='@Url.Action("Index","Home")'" class="btn btn-primary"
+		style="position: fixed; bottom: 20px;  right: 20px;   z-index: 1000; ">
+	Wróć
+</button>
+@section Scripts
+{
+	<script type="text/javascript">
+		function PagerClick(index) {
+			document.getElementById("pageNumber").value = index;
+			document.getElementById("ingredientsRecipes").submit();
+		}
+
+		function addIngredientSelect() {
+			const container = document.getElementById('ingredients-select-container');
+			const newSelect = document.createElement('div');
+			 newSelect.classList.add('ingredient-select');			
+			const selectIndex = container.children.length;
+		
+			newSelect.innerHTML = `<select name="IngredientIds[${selectIndex}]" class="custom-select" size="5" >
+						${Array.from(document.querySelector('[name="IngredientIds[0]"]').options)
+					.slice(1) // Pomijamy pierwszą opcję "Wybierz składnik"
+					.map(option => `<option value="${option.value}">${option.text}</option>`)
+					.join('')}
+						 </select>
+					   <button type="button" class="delete-ingredient-btn btn-dark" >Usuń składnik</button>`;
+
+			container.appendChild(newSelect);
+		}
+
+		document.addEventListener("DOMContentLoaded", function () {
+			const selectedIngredients = @Html.Raw(Json.Serialize(Model.IngredientIds));
+			const container = document.getElementById('ingredients-select-container');
+
+			selectedIngredients.slice(1).forEach((id, index) => {
+				const newSelect = document.createElement('div');
+				 newSelect.classList.add('ingredient-select');				
+				newSelect.innerHTML = `<select name="IngredientIds[${index + 1}]" class="custom-select" size="5" >
+							${Array.from(document.querySelector('[name="IngredientIds[0]"]').options)
+						.slice(1) // Pomijamy pierwszą opcję "Wybierz składnik"
+						.map(option => `<option value="${option.value}">${option.text}</option>`)
+						.join('')}
+							 </select>
+							<button type="button" class="delete-ingredient-btn btn-dark" >Usuń składnik</button>`;
+
+				container.appendChild(newSelect);
+				newSelect.querySelector('select').value = id;  // Ustawienie wybranego składnika
+			});
+		});
+
+		// Obsługa usuwania składników i aktualizacji indeksów
+		$(document).on('click', '.delete-ingredient-btn', function () {
+			$(this).closest(".ingredient-select").remove();
+
+			// Aktualizacja indeksów po usunięciu
+			$('#ingredients-select-container .ingredient-select select').each(function (index) {
+				$(this).attr('name', `IngredientIds[${index}]`);
+			});
+		});
+
+		// function addIngredientSelect() {
+		// 	var container = document.getElementById('ingredients-select-container');			
+		// 	var newSelect = document.createElement('div');
+		// 	newSelect.classList.add('ingredient-select');
+
+		// 	var selectIndex = container.children.length;
+		// 	console.log("selectIndex: ", selectIndex);
+		// 	newSelect.innerHTML = `<select name="IngredientIds[${selectIndex}]" style="display: flex;" class="custom-select" size="5"> 
+		// 		${Array.from(document.querySelector('[name="IngredientIds[0"]').options)
+		// 		.map(option => '<option value="${option.value}">${option.text}</option>')
+		// 		.slice(1)
+		// 		.join('')}
+											
+		// 		</select>
+		// 		<button type="button" class="delete-ingredient-btn btn-dark">Usuń składnik</button>`;
+
+		// 	container.appendChild(newSelect);
+		// }
+		// document.addEventListener("DOMContentLoaded", function () {
+		// 	const selectedIngredients = @Html.Raw(Json.Serialize(Model.IngredientIds));
+		// 	const container = document.getElementById('ingredients-select-container');			
+		// 	var selectIndex = container.children.length;
+			
+		// 	selectedIngredients.slice(1).forEach(id => {
+		// 		const newSelect = document.createElement('div');
+		// 		newSelect.classList.add('ingredient-select');
+		// 		newSelect.innerHTML = `<select name="IngredientIds[${selectIndex+1}]" style="display: flex;" class="custom-select" size="5">
+		// 										${Array.from(document.querySelector('[name="IngredientIds[0]"]').options)
+		// 				.slice(1) // Pomijamy pierwszą opcję "Wybierz składnik"
+		// 				.map(option => `<option value="${option.value}">${option.text}</option>`)
+		// 				.join('')}
+		// 										</select>
+		// 										<button type="button" class="delete-ingredient-btn btn-dark">Usuń składnik</button>`;
+
+		// 		container.appendChild(newSelect);
+		// 		newSelect.querySelector('select').value = id; 				
+		// 	});
+		// });
+		// $(document).on('click', '.delete-ingredient-btn', function () {
+			
+		// 	$(this).closest(".ingredient-select").remove();
+			
+		// 	$('#ingredients-select-container .ingredient-select select').each(function (index) {
+		// 		$(this).attr('name', `IngredientIds[${index}]`);
+		// 	});
+		// });
+		
+	</script>
+}

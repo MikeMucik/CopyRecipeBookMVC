@@ -39,30 +39,45 @@ namespace CopyRecipeBookMVC.Application.ViewModels.RecipeIngredient
 	{
 		public IngredientForNewRecipeValidation()
 		{
-			RuleFor(i => i.NewIngredientName).MaximumLength(20)
+			RuleFor(i => i.NewIngredientName)
+				.MaximumLength(20)
 				.WithMessage("Nazwa składnika może mieć maksymalnie 20 znaków")
-				.When(i=>i.IngredientName == 0)
+				.When(i => i.IngredientName == 0)
 				.Empty()
 				.WithMessage("Jeśli wybrano składnik z listy to nazwa musi być pusta")
-				.When(i=>i.IngredientName > 0)
+				.When(i => i.IngredientName > 0)
 				.NotEmpty()
 				.WithMessage("Proszę wpisać składnik lub wybrać z listy")
-				.When(i => i.IngredientName ==0);
+				.When(i => i.IngredientName == 0);
+
+			RuleFor(i=> i)
+				.Must(i =>  !(i.IngredientName > 0 && !string.IsNullOrEmpty(i.NewIngredientName)))
+				.WithMessage("Wybierz składnik z listy lub wpisz nowy, ale nie oba jednocześnie");
+				
 
 			RuleFor(i => i.IngredientName)
 				.GreaterThan(0)
 				.When(i => i.NewIngredientName == "")
-				.WithMessage("Nieprawidłowa wartość");
-				
-			
-				
+				.WithMessage("Nieprawidłowa wartość");			
 
 			RuleFor(i => i.NewIngredientUnit).MaximumLength(10)
 				.WithMessage("Miara składnika może mieć maksymalnie 10 znaków")
 				.When(i=>i.IngredientUnit == 0)
 				.Empty()
 				.WithMessage("Jeśli wybrano miarę z listy to pole musi być puste")
-				.When(i=>i.IngredientUnit > 0);
+				.When(i=>i.IngredientUnit > 0)
+				.NotEmpty()
+				.WithMessage("Proszę wpisać miarę lub wybrać z listy");
+
+			RuleFor(i => i)
+				.Must(i => !(i.IngredientUnit > 0 && !string.IsNullOrEmpty(i.NewIngredientUnit)))
+				.WithMessage("Wybierz miarę z listy lub wpisz nową, ale nie obie jednocześnie");
+
+			RuleFor(i => i.IngredientUnit)
+				.GreaterThan(0)
+				.When(i => i.NewIngredientUnit == "")
+				.WithMessage("Nieparwidłowa wartość");
+
 			RuleFor(i => i.Quantity).GreaterThan(0)
 				.WithMessage("Ilość musi być większa od zera");
 			

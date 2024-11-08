@@ -28,9 +28,7 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 		[DisplayName("Ilość nowego czasu")]
 		public decimal? TimeAmount { get; set; } //tu mała zmiana z int na decimal
 		[DisplayName("Jednostka nowego czasu")]
-		public string? TimeUnit { get; set; }
-		public IngredientForNewRecipeVm Ingredient { get; set; } = new IngredientForNewRecipeVm();//
-		//[ValidateNever]
+		public string? TimeUnit { get; set; }		
 		public List<IngredientForNewRecipeVm> Ingredients { get; set; } = new List<IngredientForNewRecipeVm>();
 		[DisplayName("Wpisz recepturę przepisu")]
 		public string Description { get; set; }
@@ -60,15 +58,27 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 	{
 		public NewRecipeValidation()
 		{
-			RuleFor(r => r.Id).NotNull();
+			RuleFor(r => r.Id)
+				.NotNull();
 			RuleFor(r => r.Name)
 				.NotNull()
 				.WithMessage("Uzupełnij nazwę przepisu")
 				.MaximumLength(30)
 				.WithMessage("Nazwa przepisu może mieć maksymalnie 30 znaków");
-			RuleFor(r => r.TimeId).NotNull()
-				.WithMessage("Musisz wybrać czas przygotowania potrawy lub dodać nowy");			
-			RuleFor(r => r.Description).NotNull()
+			RuleFor(r => r.TimeId)
+				.NotNull()
+				.WithMessage("Musisz wybrać czas przygotowania potrawy lub dodać nowy");
+			RuleFor(r => r.TimeAmount)
+				//.GreaterThan(0)
+				.InclusiveBetween(1, 59)
+				.WithMessage("Ilośc czasu musi większa od zera i mniejsza od 60")
+				.When(r => r.TimeId == 0);
+			RuleFor(r => r.TimeUnit)
+				.NotEmpty()
+				.WithMessage("Jednostka czasu nie może być pusta")
+				.When(r => r.TimeId == 0);
+			RuleFor(r => r.Description)
+				.NotNull()
 				.WithMessage("Uzupełnij recepturę przepisu");
 			RuleFor(i => i.NumberOfIngredients)
 				.NotNull()

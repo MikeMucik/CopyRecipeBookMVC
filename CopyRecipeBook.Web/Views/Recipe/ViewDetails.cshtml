@@ -58,5 +58,14 @@
     @Html.ActionLink("Edytuj przepis", "EditRecipe", new { id = Model.Id }); 
 
     }
-    <p><a asp-action="Index">Wróć do listy przepisów</a></p>
+   @Html.ActionLink("Wróć do listy przepisów", "Index");
 </div>
+@* <button onclick="window.history.length>1 ? history?.back() :
+window.location.href='@Url.Action("Index","Home")'" class="btn btn-primary"
+        style="position: fixed; bottom: 20px;  right: 20px;   z-index: 1000; ">
+    Wróć
+</button> *@
+<button onclick="window.location.href = sessionStorage.getItem('lastGetPage') || '/Home/Index'" class="btn btn-primary"
+        style="position: fixed; bottom: 20px;  left: 20px;   z-index: 1000;">
+    Wróć
+</button>

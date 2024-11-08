@@ -32,7 +32,9 @@ namespace CopyRecipeBookMVC.Application.Services
 		public List<SelectListItem> GetIngredientSelectList()
 		{
 			var ingredientListVm = GetListIngredientForList();
-			return ingredientListVm.Ingredients.Select(ing => new SelectListItem
+			return ingredientListVm.Ingredients
+				.OrderBy(x => x.Name)
+				.Select(ing => new SelectListItem
 			{
 				Value = ing.Id.ToString(),
 				Text = ing.Name,

@@ -6,6 +6,9 @@
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
     <p>
+        <a href="@Url.Action("AddRecipe", "Recipe")">Dodaj przepis</a>
+    </p>
+    <p>
         <a href="@Url.Action("Index", "Recipe")">Wyszukaj przepisy po nazwie</a>
     </p>
     <p>
@@ -15,8 +18,9 @@
         <a href="@Url.Action("ViewByDifficulty", "Recipe")">Wyszukaj przepisy po trudności</a>
     </p>
     <p>
-        <a href="@Url.Action("AddRecipe", "Recipe")">Dodaj przepis</a>
+        <a href="@Url.Action("ViewRecipesByIngredients", "Recipe")">Wyszukaj przepisy po składniku</a>
     </p>
+   
     @if(User.IsInRole("Admin"))
     {
     <p>

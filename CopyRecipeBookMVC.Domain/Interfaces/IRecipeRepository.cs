@@ -11,6 +11,7 @@ namespace CopyRecipeBookMVC.Domain.Interfaces
 	{
 		int AddRecipe(Recipe recipe);
 		void DeleteRecipe(int id);
+		Recipe FindByName(string name);
 		Recipe GetRecipeById(int id);
 		void UpdateRecipe(Recipe recipe);
 		IQueryable<Recipe> GetAllRecipes();

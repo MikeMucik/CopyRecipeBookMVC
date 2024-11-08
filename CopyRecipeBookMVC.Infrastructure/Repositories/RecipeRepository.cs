@@ -31,6 +31,10 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
 				_context.SaveChanges();
 			}
 		}
+		public Recipe FindByName(string name)
+		{
+			return _context.Recipes.FirstOrDefault(x => x.Name.ToLower() == name.ToLower());
+		}
 		public Recipe GetRecipeById(int id)
 		{
 			var recipe = _context.Recipes

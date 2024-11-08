@@ -11,8 +11,7 @@
 </p>
 
 <form asp-action="ViewByDifficulty" asp-controller="Recipe" method="post" id="difficultyrecipes">
-	<div class="row-md6">
-		<label for="difficultyId">Wybierz trudność:</label>
+	<div class="row-md6">		
 		<select asp-for="DifficultyId" asp-items="ViewBag.Difficulties">
 			<option value="" Wybierz trudność></option>
 		</select>
@@ -100,7 +99,12 @@
 		<input type="hidden" name="pageSize" id="pageSize" value="12" />
 	</div>
 </form>
-
+<p><a asp-action="Index">Wróć do listy przepisów</a></p>
+<button onclick="window.history.length>1 ? history?.back() :
+window.location.href='@Url.Action("Index","Home")'" class="btn btn-primary"
+		style="position: fixed; bottom: 20px;  right: 20px;   z-index: 1000; ">
+	Wróć
+</button>
 @section Scripts
 {
 	<script type="text/javascript">

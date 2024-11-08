@@ -11,6 +11,7 @@ using CopyRecipeBookMVC.Application.ViewModels.RecipeIngredient;
 using CopyRecipeBookMVC.Domain.Interfaces;
 using CopyRecipeBookMVC.Domain.Model;
 using CopyRecipeBookMVC.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Moq.EntityFrameworkCore;
 
@@ -71,28 +72,7 @@ namespace CopyRecipeBookMVC.Test.UnitTests
 				ri.RecipeId == 1 && ri.IngredientId == 2 && ri.UnitId == 2 && ri.Quantity == 200)), Times.Once);
 		}
 		[Fact]
-		public void Take_CheckIfRecipeExist_ShouldTakebackThatRecipeExistsTheSameLetterCase()
-		{
-			//Arrange
-			var newRecipe = new NewRecipeVm
-			{
-				Name = "Test"
-			};
-			var existingRecipe = new Recipe
-			{
-				Id = 1,
-				Name = "Test"
-			};
-			_recipeRepoMock.Setup(repo => repo.GetAllRecipes())
-				.Returns(new List<Recipe> { existingRecipe }.AsQueryable());
-			//Act
-			var result = _recipeService.CheckIfRecipeExists(newRecipe.Name);
-			//Assert
-			Assert.NotNull(result);
-			Assert.Equal(1, result);
-		}
-		[Fact]
-		public void Take_CheckIfRecipeExist_ShouldTakebackThatRecipeExistsDiffrentLetterCase()
+		public void Find_TryAddRecipe_ShouldFindExistingRecipeDifSize()
 		{
 			//Arrange
 			var newRecipe = new NewRecipeVm
@@ -104,31 +84,33 @@ namespace CopyRecipeBookMVC.Test.UnitTests
 				Id = 1,
 				Name = "Test"
 			};
-			_recipeRepoMock
-				.Setup(repo => repo.GetAllRecipes())
-				.Returns(new List<Recipe> { existingRecipe }.AsQueryable());
+			_recipeRepoMock.Setup(repo => repo.FindByName(newRecipe.Name)).Returns(existingRecipe);
 			//Act
-			var result = _recipeService.CheckIfRecipeExists(newRecipe.Name);
+			var result =_recipeService.TryAddRecipe(newRecipe);
+			//Assert
 			//Assert
 			Assert.NotNull(result);
 			Assert.Equal(1, result);
 		}
 		[Fact]
-		public void Take_CheckIfRecipeExist_ShouldReturnNullWhenRecipeDoNotExist()
+		public void Find_TryAddRecipe_ShouldNotFindExistingRecipe()
 		{
 			//Arrange
 			var newRecipe = new NewRecipeVm
 			{
-				Name = "Test"
+				Name = "Test1"
 			};
-			_recipeRepoMock
-				.Setup(repo => repo.GetAllRecipes())
-				.Returns(new List<Recipe>().AsQueryable());
+			var existingRecipe = new Recipe
+			{
+				Id = 1,
+				Name = "NotTest"
+			};
+			//	  .Returns(null);
 			//Act
-			var result = _recipeService.CheckIfRecipeExists(newRecipe.Name);
-			//Assert
-			Assert.Null(result);
-		}
+			var result = _recipeService.TryAddRecipe(newRecipe);
+			//Assert			
+			Assert.Null(result);			
+		}	
 		[Fact]
 		public void Return_GetAllRecipesForList_ShouldReturnAllList()
 		{

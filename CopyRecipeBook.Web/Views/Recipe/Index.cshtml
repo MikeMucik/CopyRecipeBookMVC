@@ -104,7 +104,11 @@
 		</div>
 	</div>
 </form>
-
+<button onclick="window.history.length>1 ? history?.back() :
+window.location.href='@Url.Action("Index","Home")'" class="btn btn-primary"
+		style="position: fixed; bottom: 20px;  right: 20px;   z-index: 1000; ">
+	Wróć
+</button>
 @section Scripts
 {
 	<script type="text/javascript">

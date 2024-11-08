@@ -10,6 +10,7 @@ using CopyRecipeBookMVC.Application.Interfaces;
 using CopyRecipeBookMVC.Application.ViewModels.Recipe;
 using CopyRecipeBookMVC.Domain.Interfaces;
 using CopyRecipeBookMVC.Domain.Model;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace CopyRecipeBookMVC.Application.Services
 {
@@ -44,11 +45,21 @@ namespace CopyRecipeBookMVC.Application.Services
 			}
 			return recipeId;
 		}
-		public int? CheckIfRecipeExists(string recipeName)
+		public bool CheckNameForRecipe(string name)
 		{
-			var existingRecipe = _recipeRepo.GetAllRecipes().FirstOrDefault			
-				(r => r.Name.ToLower() == recipeName.ToLower());			
-			return existingRecipe?.Id; 
+			var exist = _recipeRepo.FindByName(name);
+			if(exist == null)
+			{
+				return false;
+			} else { return true; }
+		}
+		
+		public int? TryAddRecipe(NewRecipeVm model)
+		{
+			var existingRecipe = _recipeRepo.FindByName(model.Name);
+			if (existingRecipe != null)
+				return existingRecipe.Id;	
+			return null;
 		}
 		public void DeleteRecipe(int id)
 		{
@@ -57,6 +68,7 @@ namespace CopyRecipeBookMVC.Application.Services
 		public ListRecipeForListVm GetAllRecipesForList(int pageSize, int pageNumber, string searchString)
 		{
 			var recipes = _recipeRepo.GetAllRecipes()
+				.OrderBy(x => x.Name)
 				.Where(r => r.Name.StartsWith(searchString))
 				.ProjectTo<RecipeListForVm>(_mapper.ConfigurationProvider)
 				.ToList();
@@ -87,6 +99,7 @@ namespace CopyRecipeBookMVC.Application.Services
 		public ListRecipesByCategoryVm GetRecipesByCategory(int pageSize, int pageNumber, int categoryId)
 		{
 			var recipes = _recipeRepo.GetAllRecipes()
+				.OrderBy(x=>x.Name)
 				.Where(r => categoryId == r.Category.Id)
 				.ProjectTo<RecipeListForVm>(_mapper.ConfigurationProvider).ToList();
 			var recipesToShow = recipes
@@ -106,6 +119,7 @@ namespace CopyRecipeBookMVC.Application.Services
 		public ListRecipesByDifficultyVm GetRecipesByDifficulty(int pageSize, int pageNumber, int difficultyId)
 		{
 			var recipes = _recipeRepo.GetAllRecipes()
+				.OrderBy(x => x.Name)
 				.Where(r => difficultyId == r.Difficulty.Id)
 				.ProjectTo<RecipeListForVm>(_mapper.ConfigurationProvider).ToList();
 			var recipesToShow = recipes
@@ -149,6 +163,34 @@ namespace CopyRecipeBookMVC.Application.Services
                 };
                 _recipeIngredientService.AddCompleteIngredients(recipeIngredient);
             }           
+		}
+
+		public ListRecipesByIngredientsVm GetRecipesByIngredients(int pageSize, int pageNumber, 
+			List<int> ingredientIds)
+		{
+			var recipes = _recipeRepo.GetAllRecipes()
+				.Where(r => ingredientIds.All(id => r.RecipeIngredient.Any(ri => ri.IngredientId == id)))
+				.OrderBy(x => x.Name)
+				//.Skip(pageSize * (pageNumber - 1))
+				//.Take(pageSize)
+				.ProjectTo<RecipeListForVm>(_mapper.ConfigurationProvider)
+				.ToList();
+			//var totalRecipesCount = _recipeRepo.GetAllRecipes()
+			//	.Where(r => r.RecipeIngredient.Any(i => i.IngredientId == ingredientId))
+			//	.Count();
+			var recipesToShow = recipes
+				.Skip(pageSize * (pageNumber - 1))
+				.Take(pageSize)
+				.ToList();
+			var recipeList = new ListRecipesByIngredientsVm()
+			{
+				RecipesByIngredients = recipes,
+				PageSize = pageSize,
+				CurrentPage = pageNumber,
+				IngredientIds = ingredientIds,
+				Count = recipes.Count
+			};
+			return recipeList;
 		}
 	}
 }

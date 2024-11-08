@@ -45,6 +45,15 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        // Zapisujemy aktualny adres URL w sessionStorage tylko dla żądań GET
+        if (document.referrer && !window.location.href.includes("Post") && window.location.search === "") {
+            sessionStorage.setItem("lastGetPage", document.referrer);
+
+            // Logowanie zapisanej wartości referrer do konsoli
+            console.log("Zapisano lastGetPage:", document.referrer);
+        }
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
