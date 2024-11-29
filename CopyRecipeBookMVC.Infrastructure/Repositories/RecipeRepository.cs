@@ -18,6 +18,19 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
 		}
 		public int AddRecipe(Recipe recipe)
 		{
+			if (recipe == null)
+			{
+				throw new ArgumentNullException(nameof(recipe), "Nieprawidłowe dane");
+			}
+			if (recipe.Id <= 0)
+			{
+				throw new ArgumentOutOfRangeException(nameof(recipe), "Id przepisu musi mieć wartość większą od zera");
+			}
+			if (_context.Recipes.Any(r => r.Id == recipe.Id))
+			{
+				throw new InvalidOperationException($"Przepis o Id '{recipe.Id}' już istnieje.");
+			}
+
 			_context.Recipes.Add(recipe);
 			_context.SaveChanges();
 			return recipe.Id;
@@ -29,6 +42,10 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
 			{
 				_context.Recipes.Remove(recipe);
 				_context.SaveChanges();
+			}
+			else
+			{
+				throw new InvalidOperationException($"Przepis o Id '{id}' nie istnieje.");
 			}
 		}
 		public Recipe FindByName(string name)
@@ -43,23 +60,36 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
 				.Include(r => r.Time)
 				.Include(r => r.RecipeIngredient)
 					.ThenInclude(i => i.Ingredient)
-				.Include(r=> r.RecipeIngredient)
+				.Include(r => r.RecipeIngredient)
 					.ThenInclude(i => i.Unit)
-				.FirstOrDefault(r => r.Id == id);			
+				.FirstOrDefault(r => r.Id == id);
 			if (recipe == null)
 			{
-				Console.WriteLine("Not Found");
+				throw new InvalidOperationException($"Przepis o Id '{id}' nie istnieje.");
 			}
 			return recipe;
-		}		
+		}
 		public void UpdateRecipe(Recipe recipe)
 		{
+			if (recipe == null)
+			{
+				throw new ArgumentNullException(nameof(recipe), "Nieprawidłowe dane");
+			}
+			if (recipe.Id <= 0)
+			{
+				throw new InvalidDataException("Numer przepisu musi być większy od zera");
+			}
+			
+			if (!_context.Recipes.Any(r=>r.Id == recipe.Id))
+			{
+				throw new InvalidOperationException($"Przepis o Id '{recipe.Id}' nie istnieje");
+			}
 			_context.Attach(recipe);
-			_context.Entry(recipe).Property(nameof(recipe.Name)).IsModified =true;
-			_context.Entry(recipe).Property(nameof(recipe.CategoryId)).IsModified =true;
-			_context.Entry(recipe).Property(nameof(recipe.DifficultyId)).IsModified =true;
-			_context.Entry(recipe).Property(nameof(recipe.TimeId)).IsModified =true;
-			_context.Entry(recipe).Property(nameof(recipe.Description)).IsModified =true;						
+			_context.Entry(recipe).Property(nameof(recipe.Name)).IsModified = true;
+			_context.Entry(recipe).Property(nameof(recipe.CategoryId)).IsModified = true;
+			_context.Entry(recipe).Property(nameof(recipe.DifficultyId)).IsModified = true;
+			_context.Entry(recipe).Property(nameof(recipe.TimeId)).IsModified = true;
+			_context.Entry(recipe).Property(nameof(recipe.Description)).IsModified = true;
 			_context.SaveChanges();
 		}
 		public IQueryable<Recipe> GetAllRecipes()
@@ -74,17 +104,14 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
 		{
 			return _context.Recipes.Where(r => r.DifficultyId == difficultyId);
 		}
-		public IQueryable<Recipe> GetRecipesByTime(int timeId)
+		public IQueryable<Recipe> GetRecipesByTime(int timeId) //To jest na razie nie wykorzystane
 		{
-			return _context.Recipes.Where(r=> r.TimeId == timeId);
+			return _context.Recipes.Where(r => r.TimeId == timeId);
 		}
-		public IEnumerable<Category> GetAllCategories()	
+
+		public IQueryable<Recipe> GetRecipesByIngredients(List<int> ingredientsIds)
 		{
-			return _context.Categories.ToList();
+			return _context.Recipes.Where(r => ingredientsIds.All(id => r.RecipeIngredient.Any(ri => ri.IngredientId == id)));
 		}
-		public IEnumerable<Difficulty> GetAllDifficulties()
-		{
-			return _context.Difficulties.ToList();
-		}		
 	}
 }

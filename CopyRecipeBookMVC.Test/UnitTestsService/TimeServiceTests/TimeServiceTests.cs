@@ -10,7 +10,7 @@ using CopyRecipeBookMVC.Domain.Interfaces;
 using CopyRecipeBookMVC.Domain.Model;
 using Moq;
 
-namespace CopyRecipeBookMVC.Test.UnitTests
+namespace CopyRecipeBookMVC.Application.Test.UnitTestsService.TimeServiceTests
 {
     public class TimeServiceTests
     {
@@ -33,7 +33,7 @@ namespace CopyRecipeBookMVC.Test.UnitTests
                 Amount = 1,
                 Unit = "m"
             };
-            var newTimeVm = new Application.ViewModels.Recipe.NewRecipeVm
+            var newTimeVm = new ViewModels.Recipe.NewRecipeVm
             {
                 TimeAmount = 1,
                 TimeUnit = "m"
@@ -51,7 +51,7 @@ namespace CopyRecipeBookMVC.Test.UnitTests
         [Fact]
         public void AddOrGetTime_AddTime_ShouldAddTimeToCollectionWhenTimeNotExisting()
         {
-            var newTimeVm = new Application.ViewModels.Recipe.NewRecipeVm
+            var newTimeVm = new ViewModels.Recipe.NewRecipeVm
             {
                 TimeAmount = 1,
                 TimeUnit = "m"
@@ -89,8 +89,8 @@ namespace CopyRecipeBookMVC.Test.UnitTests
             Assert.NotNull(result);
             Assert.IsType<ListTimeForListVm>(result);
             Assert.Equal(2, result.Times.Count);
-            Assert.Contains(result.Times, t => t.Unit == "h"&& t.Amount ==1);
-            Assert.Contains(result.Times, t => t.Unit == "m"&& t.Amount ==1);
+            Assert.Contains(result.Times, t => t.Unit == "h" && t.Amount == 1);
+            Assert.Contains(result.Times, t => t.Unit == "m" && t.Amount == 1);
         }
     }
 }

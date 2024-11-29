@@ -17,8 +17,7 @@ namespace CopyRecipeBookMVC.Domain.Interfaces
 		IQueryable<Recipe> GetAllRecipes();
 		IQueryable<Recipe> GetRecipesByCategory(int categoryId);
 		IQueryable<Recipe> GetRecipesByDifficulty(int difficultyId);
-		IQueryable<Recipe> GetRecipesByTime(int timeId);
-		IEnumerable<Category> GetAllCategories();
-		IEnumerable<Difficulty> GetAllDifficulties();
+		IQueryable<Recipe> GetRecipesByIngredients(List<int> ingredients);
+		IQueryable<Recipe> GetRecipesByTime(int timeId);		
 	}
 }

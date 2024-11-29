@@ -21,8 +21,6 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 		public int CategoryId { get; set; }
 		[DisplayName("Wybierz poziom trudności")]
 		public int DifficultyId { get; set; }
-
-
 		[DisplayName("Lista czasów")]
 		public int? TimeId { get; set; }
 		[DisplayName("Ilość nowego czasu")]
@@ -54,12 +52,14 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 				.ForMember(t => t.TimeUnit, opt => opt.MapFrom(i => i.Unit));
 		}
 	}
+	//Czy klasa validacji nie powinna być zawarta w klasie której się tyczy
 	public class NewRecipeValidation : AbstractValidator<NewRecipeVm>
 	{
 		public NewRecipeValidation()
 		{
 			RuleFor(r => r.Id)
-				.NotNull();
+				.NotNull()
+				.GreaterThan(0);
 			RuleFor(r => r.Name)
 				.NotNull()
 				.WithMessage("Uzupełnij nazwę przepisu")

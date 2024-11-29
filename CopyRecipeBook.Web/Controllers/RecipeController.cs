@@ -80,8 +80,7 @@ namespace CopyRecipeBook.Web.Controllers
 				pageNumber = 1;
 			}
 			var model = _recipeService.GetRecipesByCategory(pageSize, pageNumber.Value, categoryId);
-			FillViewBags();
-			//return RedirectToAction("ViewByCategory");
+			FillViewBags();			
 			return View(model);
 		}
 		[HttpGet]
@@ -113,8 +112,7 @@ namespace CopyRecipeBook.Web.Controllers
 			ingredientIds ??= [0];
 			FillViewBags();
 			var model = _recipeService.GetRecipesByIngredients(pageSize, pageNumber,
-			 ingredientIds);
-			//?? new List<int>()
+			 ingredientIds);			
 			return View(model);
 		}
 		[HttpPost]
@@ -144,8 +142,7 @@ namespace CopyRecipeBook.Web.Controllers
 		[Authorize(Roles = "Admin, SuperUser, User")]
 		public IActionResult AddRecipe(NewRecipeVm model)
 		{
-			var existingRecipeId = _recipeService.TryAddRecipe(model);
-			//var existingRecipeId = _recipeService.CheckIfRecipeExists(model.Name);			
+			var existingRecipeId = _recipeService.TryAddRecipe(model);						
 			if (existingRecipeId != null)
 			{
 				TempData["RecipeExist"] = $"Przepis o nazwie '{model.Name} istnieje, jesteś w edycji tego przepisu. ";
@@ -162,9 +159,7 @@ namespace CopyRecipeBook.Web.Controllers
 		[HttpPost]
 		public IActionResult CheckName(string name)
 		{
-			bool exists = _recipeService.CheckNameForRecipe(name);
-			//_recipeService.TryAddRecipe(model);
-
+			bool exists = _recipeService.CheckNameForRecipe(name);			
 			return Json(new { exists = exists });
 		}
 		[HttpGet]

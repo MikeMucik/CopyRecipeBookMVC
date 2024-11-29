@@ -16,8 +16,8 @@ namespace CopyRecipeBookMVC.Application.ViewModels.RecipeIngredient
 		public int IngredientName { get; set; }
 		public decimal Quantity { get; set; }		
 		public int IngredientUnit { get; set; }
-		public string NewIngredientName { get; set; }		
-		public string NewIngredientUnit { get; set; }
+		public string? NewIngredientName { get; set; }		//
+		public string? NewIngredientUnit { get; set; }	//
 		public void Mapping(Profile profile)
 		{
 			profile.CreateMap<IngredientForNewRecipeVm, Domain.Model.RecipeIngredient>()

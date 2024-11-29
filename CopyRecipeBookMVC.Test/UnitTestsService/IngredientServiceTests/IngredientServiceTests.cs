@@ -11,7 +11,7 @@ using CopyRecipeBookMVC.Domain.Interfaces;
 using CopyRecipeBookMVC.Domain.Model;
 using Moq;
 
-namespace CopyRecipeBookMVC.Test.UnitTests
+namespace CopyRecipeBookMVC.Application.Test.UnitTestsService.IngredientServiceTests
 {
     public class IngredientServiceTests
     {
@@ -37,10 +37,10 @@ namespace CopyRecipeBookMVC.Test.UnitTests
             {
                 NewIngredientName = "Test",
                 NewIngredientUnit = "TestUnit",
-            };            
+            };
             _ingredientRepoMock.Setup(repo => repo.AddIngredient(It.IsAny<Ingredient>())).Returns(1);
             _mapperMock.Setup(mapper => mapper.Map<Ingredient>(It.IsAny<IngredientForNewRecipeVm>()))
-                .Returns(newIngredient);            
+                .Returns(newIngredient);
             //Act
             var result = _ingredientService.AddIngredient(newIngredientVm);
             //Assert
@@ -62,8 +62,8 @@ namespace CopyRecipeBookMVC.Test.UnitTests
                 new IngredientForListVm { Id = 2, Name="TestI2" }
             };
             _ingredientRepoMock.Setup(repo => repo.GetAllIngredients()).Returns(ingredients.AsQueryable);
-           _mapperMock.Setup(map => map.Map<List<IngredientForListVm>>(ingredients))
-                .Returns(ingredientsVms);            
+            _mapperMock.Setup(map => map.Map<List<IngredientForListVm>>(ingredients))
+                 .Returns(ingredientsVms);
             //Act
             var result = _ingredientService.GetListIngredientForList();
             //Assert
@@ -79,14 +79,14 @@ namespace CopyRecipeBookMVC.Test.UnitTests
             //Assert
             var newIngredientNameVm = new IngredientForNewRecipeVm
             {
-				IngredientName = 0,
+                IngredientName = 0,
                 NewIngredientName = "potato"
             };
             _ingredientRepoMock.Setup(i => i.ExistingIngredient(newIngredientNameVm.NewIngredientName))
                 .Returns((Ingredient)null);
-            _ingredientRepoMock.Setup(i => i.AddIngredient(It.IsAny<Ingredient>())).Returns(1);            
+            _ingredientRepoMock.Setup(i => i.AddIngredient(It.IsAny<Ingredient>())).Returns(1);
             //Act
-            var result =_ingredientService.GetOrAddIngredient(newIngredientNameVm);
+            var result = _ingredientService.GetOrAddIngredient(newIngredientNameVm);
             //Assert
             Assert.NotEqual(0, result);
             Assert.Equal(1, result);
@@ -104,18 +104,18 @@ namespace CopyRecipeBookMVC.Test.UnitTests
             {
                 Id = 2,
                 Name = "potato"
-            };           
+            };
             _ingredientRepoMock
                 .Setup(i => i.ExistingIngredient(newIngredientNameVm.NewIngredientName))
                 .Returns(newIngredientName);
-            
+
             //Act
             var result = _ingredientService.GetOrAddIngredient(newIngredientNameVm);
             //Assert
             Assert.NotNull(result);
             Assert.Equal(2, result);
         }
-              
+
     }
 
 }

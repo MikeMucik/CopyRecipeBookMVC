@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CopyRecipeBookMVC.Domain", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CopyRecipeBookMVC.Infrastructure", "CopyRecipeBookMVC.Infrastructure\CopyRecipeBookMVC.Infrastructure.csproj", "{0D925DE9-CA8C-4F45-B037-B3E3FDA43C24}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CopyRecipeBookMVC.Test", "CopyRecipeBookMVC.Test\CopyRecipeBookMVC.Test.csproj", "{231A79FB-51AC-4E32-AE4E-96504F7418C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CopyRecipeBookMVC.Application.Test", "CopyRecipeBookMVC.Test\CopyRecipeBookMVC.Application.Test.csproj", "{231A79FB-51AC-4E32-AE4E-96504F7418C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

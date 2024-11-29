@@ -10,7 +10,7 @@ using CopyRecipeBookMVC.Domain.Interfaces;
 using CopyRecipeBookMVC.Domain.Model;
 using Moq;
 
-namespace CopyRecipeBookMVC.Test.UnitTests
+namespace CopyRecipeBookMVC.Application.Test.UnitTestsService.DifficultyServiceTests
 {
     public class DifficultyServiceTests
     {
@@ -37,11 +37,11 @@ namespace CopyRecipeBookMVC.Test.UnitTests
                 new DifficultyForListVm { Id = 1, Name = "TestD1" },
                 new DifficultyForListVm { Id = 2, Name = "TestD2" }
             };
-           _difficultyRepoMock.Setup(repo => repo.GetAllDifficulties()) .Returns(difficulties);
+            _difficultyRepoMock.Setup(repo => repo.GetAllDifficulties()).Returns(difficulties);
             _mapperMock.Setup(mapper => mapper.Map<List<DifficultyForListVm>>(difficulties))
                 .Returns(difficultyVms);
             //Act
-            var result =_difficultyService.GetListDifficultyForList();
+            var result = _difficultyService.GetListDifficultyForList();
             //Assert
             Assert.NotNull(result);
             Assert.IsType<ListDifficultyForListVm>(result);
