@@ -26,8 +26,7 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
 			_context.SaveChanges();
 		}
 		public void DeleteCompleteIngredient(RecipeIngredient item)
-		{
-			
+		{			
 			_context.RecipeIngredient.Remove(item);
 			_context.SaveChanges();
 		}

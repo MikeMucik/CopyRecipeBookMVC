@@ -14,28 +14,24 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
 		public TimeRepository(Context context)
 		{
 			_context = context;
-		}
-		
+		}		
 		public int AddTime(Time time)
 		{
 			_context.Times.Add(time);
 			_context.SaveChanges();
 			return time.Id;
 		}
-
 		//public Time GetTimeById(int id)
 		//{
 		//	return _context.Times.Find(id);
 		//}
-
 		public IQueryable<Time> GetAllTimes()
 		{
 			return _context.Times;
 		}
-
 		public Time ExistingTime(decimal? timeAmount, string TimeUnit)
 		{
-			return _context.Times.FirstOrDefault(t => t.Amount == timeAmount && t.	Unit == TimeUnit);
+			return _context.Times.FirstOrDefault(t => t.Amount == timeAmount && t.Unit == TimeUnit);
 		}
 	}
 }

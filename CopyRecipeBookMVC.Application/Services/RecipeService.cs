@@ -54,7 +54,6 @@ namespace CopyRecipeBookMVC.Application.Services
 			}
 			else { return true; }
 		}
-
 		public int? TryAddRecipe(NewRecipeVm model)
 		{
 			var existingRecipe = _recipeRepo.FindByName(model.Name);
@@ -146,16 +145,7 @@ namespace CopyRecipeBookMVC.Application.Services
 			catch (InvalidOperationException)
 			{ 
 				return new NewRecipeVm();
-			}
-			//Recipe recipe = _recipeRepo.GetRecipeById(id);
-			//if (recipe == null)
-			//{
-			//	return new NewRecipeVm();
-			//}
-			//else
-			//{
-			//	return _mapper.Map<NewRecipeVm>(recipe);
-			//}
+			}			
 		}
 		public void UpdateRecipe(NewRecipeVm recipe)
 		{
@@ -174,12 +164,10 @@ namespace CopyRecipeBookMVC.Application.Services
 				_recipeIngredientService.AddCompleteIngredients(recipeIngredient);
 			}
 		}
-
 		public ListRecipesByIngredientsVm GetRecipesByIngredients(int pageSize, int pageNumber,
 			List<int> ingredientIds)
 		{
-			var recipes = _recipeRepo.GetRecipesByIngredients(ingredientIds)
-				//.Where(r => ingredientIds.All(id => r.RecipeIngredient.Any(ri => ri.IngredientId == id)))
+			var recipes = _recipeRepo.GetRecipesByIngredients(ingredientIds)				
 				.OrderBy(x => x.Name)
 				.ProjectTo<RecipeListForVm>(_mapper.ConfigurationProvider)
 				.ToList();
@@ -189,7 +177,7 @@ namespace CopyRecipeBookMVC.Application.Services
 				.ToList();
 			var recipeList = new ListRecipesByIngredientsVm()
 			{
-				RecipesByIngredients = recipes,
+				RecipesByIngredients = recipesToShow,
 				PageSize = pageSize,
 				CurrentPage = pageNumber,
 				IngredientIds = ingredientIds,

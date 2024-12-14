@@ -15,7 +15,7 @@ namespace CopyRecipeBookMVC.Application.Test.Common
         public CommandTestBase()
         {
 			_contextMock = DbContextFactory.Create();
-			_context = _contextMock.Object;
+			_context = _contextMock.Object;			
         }
         public void Dispose()
 		{

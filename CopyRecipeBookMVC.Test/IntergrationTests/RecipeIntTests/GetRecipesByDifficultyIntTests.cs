@@ -13,23 +13,8 @@ using CopyRecipeBookMVC.Infrastructure.Repositories;
 namespace CopyRecipeBookMVC.Application.Test.IntergrationTests.RecipeIntTests
 {
 	[Collection("QueryCollection")]
-	public class GetRecipesByDifficultyIntTests
+	public class GetRecipesByDifficultyIntTests(QueryTestFixtures fixtures) : RecipeIntegrationView(fixtures)
 	{
-		private readonly RecipeService _recipeService;
-		private readonly RecipeRepository _recipeRepo;
-		private readonly IMapper _mapper;
-
-        public GetRecipesByDifficultyIntTests(QueryTestFixtures fixtures)
-        {
-            var _context = fixtures.Context;
-			var MappingConfig = new MapperConfiguration(cfg =>
-			{
-				cfg.AddProfile<MappingProfile>();
-			});
-			_mapper = MappingConfig.CreateMapper();
-			_recipeRepo = new RecipeRepository(_context);
-			_recipeService = new RecipeService(_recipeRepo, _mapper, null);
-        }
 		[Fact]
 		public void ReturnByDifficulty_GetRecipesByDifficulty_ReturnList()
 		{

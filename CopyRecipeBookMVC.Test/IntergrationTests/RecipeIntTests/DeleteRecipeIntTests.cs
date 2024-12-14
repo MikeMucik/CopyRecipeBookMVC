@@ -9,16 +9,9 @@ using CopyRecipeBookMVC.Infrastructure.Repositories;
 
 namespace CopyRecipeBookMVC.Application.Test.IntergrationTests.RecipeIntTests
 {
-	public class DeleteRecipeIntTests :CommandTestBase
-	{
-		private readonly RecipeService _recipeService;
-		private readonly RecipeRepository _recipeRepo;
-
-        public DeleteRecipeIntTests() :base()
-        {
-            _recipeRepo = new RecipeRepository(_context);
-            _recipeService = new RecipeService(_recipeRepo, null, null);
-        }
+	public class DeleteRecipeIntTests :RecipeIntegrationCommand
+		
+	{		
         [Fact]
         public void ExistingRecipe_DeleteRecipe_DeleteOk()
         {

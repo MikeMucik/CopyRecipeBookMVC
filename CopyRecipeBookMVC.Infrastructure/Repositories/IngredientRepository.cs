@@ -28,30 +28,11 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
         public Ingredient GetIngredientById(int id)
         {
             var ingredient = _context.Ingredients.FirstOrDefault(x => x.Id == id);
-            return ingredient;
-        }
-        //public int AddUnit(Unit unit)
-        //{
-        //    _context.Units.Add(unit);
-        //    _context.SaveChanges();
-        //    return unit.Id;
-        //}
-        //public IQueryable<Unit> GetAllUnits()
-        //{
-        //    return _context.Units;
-        //}
-        //public Unit GetUnitById(int id)
-        //{
-        //    var unit = _context.Units.FirstOrDefault(x => x.Id == id);
-        //    return unit;
-        //}       
+            return ingredient;        }
+        
         public Ingredient ExistingIngredient(string name)
         {
             return _context.Ingredients.FirstOrDefault(i => i.Name.ToLower() == name.ToLower());
-        }
-        //public Unit ExistingUnit(string name)
-        //{
-        //    return _context.Units.FirstOrDefault(i => i.Name.ToLower() == name.ToLower());
-        //}
+        }        
     }
 }

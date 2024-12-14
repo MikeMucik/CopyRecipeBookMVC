@@ -13,25 +13,27 @@ using CopyRecipeBookMVC.Infrastructure.Repositories;
 namespace CopyRecipeBookMVC.Application.Test.IntergrationTests.RecipeIntTests
 {
 	[Collection("QueryCollection")]
-	public class GetAllRecipesForListIntTests 		
+	public class GetAllRecipesForListIntTests : RecipeIntegrationView		
 	{
-		private readonly RecipeService _recipeService;
-		private readonly RecipeRepository _recipeRepo;
+		//private readonly RecipeService _recipeService;
+		//private readonly RecipeRepository _recipeRepo;
 
-		private readonly IMapper _mapper;
-
-        public GetAllRecipesForListIntTests(QueryTestFixtures fixtures)
-        {
-			var _context = fixtures.Context;
-			var MapperConfig = new MapperConfiguration(cfg =>
-			{
-				cfg.AddProfile<MappingProfile>();
-			});
-			_mapper = MapperConfig.CreateMapper();
-
-			_recipeRepo = new RecipeRepository(_context);
-			_recipeService = new RecipeService(_recipeRepo, _mapper, null);
+		//private readonly IMapper _mapper;
+		public GetAllRecipesForListIntTests(QueryTestFixtures fixtures) : base(fixtures)
+		{
 		}
+		//public GetAllRecipesForListIntTests(QueryTestFixtures fixtures)
+  //      {
+		//	var _context = fixtures.Context;
+		//	var MapperConfig = new MapperConfiguration(cfg =>
+		//	{
+		//		cfg.AddProfile<MappingProfile>();
+		//	});
+		//	_mapper = MapperConfig.CreateMapper();
+
+		//	_recipeRepo = new RecipeRepository(_context);
+		//	_recipeService = new RecipeService(_recipeRepo, _mapper, null);
+		//}
 		[Fact]
 		public void NullSearchString_GetAllRecipesForList_ReturnCorrectList()
 		{

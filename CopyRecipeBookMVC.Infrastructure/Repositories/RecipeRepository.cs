@@ -108,10 +108,19 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
 		{
 			return _context.Recipes.Where(r => r.TimeId == timeId);
 		}
-
 		public IQueryable<Recipe> GetRecipesByIngredients(List<int> ingredientsIds)
 		{
-			return _context.Recipes.Where(r => ingredientsIds.All(id => r.RecipeIngredient.Any(ri => ri.IngredientId == id)));
+			//return _context.Recipes
+			//	.Where(r => ingredientsIds.All(id => r.RecipeIngredient.Any(ri => ri.IngredientId == id)));
+			// Wersja dla testów
+			var recipeIds = _context.RecipeIngredient
+				.Where(ri => ingredientsIds.Contains(ri.IngredientId))
+				.GroupBy(ri => ri.RecipeId)
+				.Where(group => group.Select(ri => ri.IngredientId).Distinct().Count() == ingredientsIds.Count)
+				.Select(group => group.Key);
+
+			// Pobierz przepisy o wybranych ID
+			return _context.Recipes.Where(r => recipeIds.Contains(r.Id));
 		}
 	}
 }

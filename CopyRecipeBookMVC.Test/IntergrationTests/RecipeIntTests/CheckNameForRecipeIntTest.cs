@@ -13,19 +13,9 @@ using Microsoft.CodeAnalysis.FlowAnalysis;
 namespace CopyRecipeBookMVC.Application.Test.IntergrationTests.RecipeIntTests
 {
     [Collection("QueryCollection")]
-    public class CheckNameForRecipeIntTest 
+    public class CheckNameForRecipeIntTest(QueryTestFixtures fixtures) : RecipeIntegrationView(fixtures)
     {
-        private readonly RecipeService _recipeService;
-        private readonly RecipeRepository _recipeRepo;
-
-        public CheckNameForRecipeIntTest(QueryTestFixtures fixtures) 
-        {
-            var _context = fixtures.Context;
-            _recipeRepo = new RecipeRepository(_context);
-            _recipeService = new RecipeService(_recipeRepo, null, null);
-        }
-
-        [Fact]
+		[Fact]
         public void CheckExistingRecipe_CheckNameForRecipe_ReturnTrue()
         {
             //Arrange
@@ -45,6 +35,5 @@ namespace CopyRecipeBookMVC.Application.Test.IntergrationTests.RecipeIntTests
             //Assert
             Assert.False(result);
         }
-
     }
 }

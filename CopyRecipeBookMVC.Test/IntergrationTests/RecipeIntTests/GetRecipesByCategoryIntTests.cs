@@ -13,23 +13,9 @@ using CopyRecipeBookMVC.Infrastructure.Repositories;
 namespace CopyRecipeBookMVC.Application.Test.IntergrationTests.RecipeIntTests
 {
 	[Collection("QueryCollection")]
-	public class GetRecipesByCategoryIntTests
+	public class GetRecipesByCategoryIntTests(QueryTestFixtures fixtures) : RecipeIntegrationView(fixtures)
 	{
-		private readonly RecipeRepository _recipeRepo;
-        private readonly RecipeService _recipeService;
-        private readonly IMapper _mapper;
-        public GetRecipesByCategoryIntTests(QueryTestFixtures fixtures)
-        {
-            var _context = fixtures.Context;
-            var mapperConfig = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile<MappingProfile>();
-            });
-            _mapper = mapperConfig.CreateMapper();
-            _recipeRepo = new RecipeRepository(_context);
-            _recipeService = new RecipeService(_recipeRepo, _mapper, null);
-        }
-        [Fact]
+		[Fact]
         public void ReturnByCategory_GetRecipesByCategory_ReturnListRecipesByCategory()
         {
             //Arrange

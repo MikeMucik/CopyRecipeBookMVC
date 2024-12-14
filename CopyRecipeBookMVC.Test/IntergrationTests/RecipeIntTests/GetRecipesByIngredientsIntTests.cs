@@ -13,34 +13,21 @@ using CopyRecipeBookMVC.Infrastructure.Repositories;
 namespace CopyRecipeBookMVC.Application.Test.IntergrationTests.RecipeIntTests
 {
 	[Collection("QueryCollection")]
-	public class TryAddRecipeIntTests(QueryTestFixtures fixtures) : RecipeIntegrationView(fixtures)
+	public class GetRecipesByIngredientsIntTests(QueryTestFixtures fixtures) : RecipeIntegrationView(fixtures)
 	{
 		[Fact]
-		public void ExistingRecipe_TryAddRecipe_ReturnIdExisting()
+		public void ReturnByIngredients_GetRecipesByIngredients_ReturnList()
 		{
 			//Arrange
-			var tryRecipe = new NewRecipeVm
-			{
-				Name = "Test",
-			};
+			int pageSize = 2;
+			int pageNumber = 1;
+			List<int> ingredientIds = new List<int> {  1 };
 			//Act
-			var result = _recipeService.TryAddRecipe(tryRecipe);
+			var result = _recipeService.GetRecipesByIngredients(pageSize, pageNumber, ingredientIds);
 			//Assert
+			Assert.Equal(1, result.Count);
 			Assert.NotNull(result);
-			Assert.Equal(1, result);
-		}
-		[Fact]
-		public void NotExistingRecipe_TryAddRecipe_ReturnNull()
-		{
-			//Arrange
-			var tryRecipe = new NewRecipeVm
-			{
-				Name = "NotTest",
-			};
-			//Act
-			var result = _recipeService.TryAddRecipe(tryRecipe);
-			//Assert
-			Assert.Null(result);
+			Assert.IsType<ListRecipesByIngredientsVm>(result);
 		}
 	}
 }
