@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CopyRecipeBookMVC.Infrastru
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CopyRecipeBookMVC.Application.Test", "CopyRecipeBookMVC.Test\CopyRecipeBookMVC.Application.Test.csproj", "{231A79FB-51AC-4E32-AE4E-96504F7418C7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CopyRecipeBookApi", "CopyRecipeBookApi\CopyRecipeBookApi.csproj", "{671E5698-7E3E-458C-BC35-35DC12F36AA1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{231A79FB-51AC-4E32-AE4E-96504F7418C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{231A79FB-51AC-4E32-AE4E-96504F7418C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{231A79FB-51AC-4E32-AE4E-96504F7418C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{671E5698-7E3E-458C-BC35-35DC12F36AA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{671E5698-7E3E-458C-BC35-35DC12F36AA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{671E5698-7E3E-458C-BC35-35DC12F36AA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{671E5698-7E3E-458C-BC35-35DC12F36AA1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -59,6 +65,7 @@ Global
 		{62AAB1E0-C7FF-411D-A8C2-E747E51C5985} = {64EB5235-D833-4284-82EE-9F53962F40CC}
 		{0D925DE9-CA8C-4F45-B037-B3E3FDA43C24} = {9F038979-D633-4D78-B96C-5D76A36BA310}
 		{231A79FB-51AC-4E32-AE4E-96504F7418C7} = {F9A5B775-E12B-4267-8ED7-D6D28A463373}
+		{671E5698-7E3E-458C-BC35-35DC12F36AA1} = {AE5B1F18-A464-4BBD-AA98-873CAE063908}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CB4424D4-452B-47C8-A859-18BCA29B72C2}
