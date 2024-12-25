@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using AutoMapper;
 using CopyRecipeBookMVC.Application.Mapping;
@@ -14,6 +15,7 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 	public class NewRecipeVm : IMapFrom<Domain.Model.Recipe>,
 								IMapFrom<Domain.Model.Time>
 	{
+		
 		public int Id { get; set; }
 		[DisplayName("Podaj nazwę nowego przepisu")]
 		public string Name { get; set; }
@@ -52,7 +54,6 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 				.ForMember(t => t.TimeUnit, opt => opt.MapFrom(i => i.Unit));
 		}
 	}
-	//Czy klasa validacji nie powinna być zawarta w klasie której się tyczy
 	public class NewRecipeValidation : AbstractValidator<NewRecipeVm>
 	{
 		public NewRecipeValidation()

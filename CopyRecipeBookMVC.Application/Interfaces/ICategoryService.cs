@@ -12,5 +12,6 @@ namespace CopyRecipeBookMVC.Application.Interfaces
 	{
 		ListCategoryForListVm GetListCategoryForList();
 		List<SelectListItem> GetCategoryForSelectList();
+		int GetCategoryIdByName(string name);
 	}
 }

@@ -16,7 +16,7 @@ namespace CopyRecipeBookMVC.Domain.Model
 		public virtual Difficulty Difficulty { get; set; }
 		public int TimeId { get; set; }
 		public virtual Time Time { get; set; }
-		public virtual ICollection<RecipeIngredient> RecipeIngredient { get; set; }
+		public virtual ICollection<RecipeIngredient> RecipeIngredient { get; set; } = new List<RecipeIngredient>();
 		public string Description { get; set; }
 
 	}

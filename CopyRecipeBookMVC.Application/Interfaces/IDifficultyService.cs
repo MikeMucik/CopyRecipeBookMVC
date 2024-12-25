@@ -12,5 +12,7 @@ namespace CopyRecipeBookMVC.Application.Interfaces
 	{
 		ListDifficultyForListVm GetListDifficultyForList();
 		List<SelectListItem> GetDifficultySelectList();
+		int GetDifficultyIdByName(string name);
 	}
 }
+

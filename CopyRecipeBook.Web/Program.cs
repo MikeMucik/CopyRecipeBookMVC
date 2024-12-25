@@ -36,7 +36,7 @@ builder.Services.AddInfrastructure();
 builder.Services.AddControllersWithViews().AddViewOptions(opt => { opt.ClientModelValidatorProviders.Clear(); });
 
 builder.Services.AddAuthentication()
-	//.AddCookie()
+	
     .AddGoogle(options =>
     {
         var googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");

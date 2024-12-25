@@ -8,6 +8,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using CopyRecipeBookMVC.Application.Interfaces;
 using CopyRecipeBookMVC.Application.ViewModels.Recipe;
+using CopyRecipeBookMVC.Application.ViewModels.RecipeIngredient;
 using CopyRecipeBookMVC.Domain.Interfaces;
 using CopyRecipeBookMVC.Domain.Model;
 
@@ -19,6 +20,30 @@ namespace CopyRecipeBookMVC.Application.Services
 		private readonly IRecipeRepository _recipeRepo;
 		private readonly IMapper _mapper;
 		private readonly IRecipeIngredientService _recipeIngredientService;
+		private readonly ITimeService _timeService;
+		private readonly IIngredientService _ingredientService;
+		private readonly IUnitService _unitService;
+		private readonly ICategoryService _categoryService;
+		private readonly IDifficultyService _difficultyService;
+		public RecipeService(
+			IRecipeRepository recipeRepo,
+			IMapper mapper,
+			IRecipeIngredientService recipeIngredientService,
+			ITimeService timeService,
+			IIngredientService ingredientService,
+			IUnitService unitService,
+			ICategoryService categoryService,
+			IDifficultyService difficultyService)
+		{
+			_recipeRepo = recipeRepo;
+			_mapper = mapper;
+			_recipeIngredientService = recipeIngredientService;
+			_timeService = timeService;
+			_ingredientService = ingredientService;
+			_unitService = unitService;
+			_categoryService = categoryService;
+			_difficultyService = difficultyService;
+		}
 		public RecipeService(
 			IRecipeRepository recipeRepo,
 			IMapper mapper,
@@ -26,7 +51,7 @@ namespace CopyRecipeBookMVC.Application.Services
 		{
 			_recipeRepo = recipeRepo;
 			_mapper = mapper;
-			_recipeIngredientService = recipeIngredientService;
+			_recipeIngredientService = recipeIngredientService;		
 		}
 		public int AddRecipe(NewRecipeVm recipe)
 		{
@@ -44,6 +69,41 @@ namespace CopyRecipeBookMVC.Application.Services
 				_recipeIngredientService.AddCompleteIngredients(recipeIngredient);
 			}
 			return recipeId;
+		}
+		public int AddRecipeApi(NewRecipeDTO newRecipe)
+		{
+			var recipeNew = new Recipe();
+
+			recipeNew.Id = newRecipe.Id;
+			recipeNew.Name = newRecipe.Name;
+			recipeNew.CategoryId = _categoryService.GetCategoryIdByName(newRecipe.Category);
+			recipeNew.DifficultyId = _difficultyService.GetDifficultyIdByName(newRecipe.Difficulty);
+			var newTime = new NewRecipeVm
+			{
+				TimeAmount = newRecipe.TimeAmount,
+				TimeUnit = newRecipe.TimeUnit,
+			};
+			recipeNew.TimeId = _timeService.AddTime(newTime);
+			recipeNew.Description = newRecipe.Description;
+			recipeNew.RecipeIngredient.Clear();
+			foreach (var ingredient in newRecipe.Ingredients)
+			{
+				var newIngredient = _mapper.Map<IngredientForNewRecipeVm>(ingredient);
+				int ingredientId = _ingredientService.GetOrAddIngredient(newIngredient);
+
+				int unitId = _unitService.GetOrAddUnit(newIngredient);
+
+				var recipeIngredient = new RecipeIngredient
+				{
+					RecipeId = recipeNew.Id,
+					IngredientId = ingredientId,
+					UnitId = unitId,
+					Quantity = ingredient.Quantity
+				};
+				recipeNew.RecipeIngredient.Add(recipeIngredient);
+			}
+			_recipeRepo.AddRecipe(recipeNew);			
+			return recipeNew.Id;
 		}
 		public bool CheckNameForRecipe(string name)
 		{
@@ -96,6 +156,7 @@ namespace CopyRecipeBookMVC.Application.Services
 			var recipeVm = _mapper.Map<RecipeDetailsVm>(recipe);
 			return recipeVm;
 		}
+
 		public ListRecipesByCategoryVm GetRecipesByCategory(int pageSize, int pageNumber, int categoryId)
 		{
 			var recipes = _recipeRepo.GetRecipesByCategory(categoryId)
@@ -143,10 +204,11 @@ namespace CopyRecipeBookMVC.Application.Services
 				return _mapper.Map<NewRecipeVm>(recipe);
 			}
 			catch (InvalidOperationException)
-			{ 
+			{
 				return new NewRecipeVm();
-			}			
+			}
 		}
+
 		public void UpdateRecipe(NewRecipeVm recipe)
 		{
 			_recipeIngredientService.DeleteCompleteIngredients(recipe.Id);
@@ -164,10 +226,45 @@ namespace CopyRecipeBookMVC.Application.Services
 				_recipeIngredientService.AddCompleteIngredients(recipeIngredient);
 			}
 		}
+		public bool UpdateRecipeApi(NewRecipeDTO recipeUpdated)
+		{			
+			var recipeNew = new Recipe();
+			
+			recipeNew.Id = recipeUpdated.Id;
+			recipeNew.Name = recipeUpdated.Name;
+			recipeNew.CategoryId = _categoryService.GetCategoryIdByName(recipeUpdated.Category);
+			recipeNew.DifficultyId = _difficultyService.GetDifficultyIdByName(recipeUpdated.Difficulty);
+			var newTime = new NewRecipeVm
+			{
+				TimeAmount = recipeUpdated.TimeAmount,
+				TimeUnit = recipeUpdated.TimeUnit,
+			};
+				recipeNew.TimeId = _timeService.AddTime(newTime);			
+			recipeNew.Description = recipeUpdated.Description;
+			recipeNew.RecipeIngredient.Clear();
+			foreach (var ingredient in recipeUpdated.Ingredients)
+			{
+				var newIngredient = _mapper.Map<IngredientForNewRecipeVm>(ingredient);
+				int ingredientId = _ingredientService.GetOrAddIngredient(newIngredient);
+				
+				int unitId = _unitService.GetOrAddUnit(newIngredient);
+
+				var recipeIngredient = new RecipeIngredient
+				{
+					RecipeId = recipeNew.Id,
+					IngredientId = ingredientId,
+					UnitId = unitId,
+					Quantity = ingredient.Quantity
+				};				
+				recipeNew.RecipeIngredient.Add(recipeIngredient);
+			}	
+			_recipeRepo.UpdateRecipe(recipeNew);
+			return true;
+		}
 		public ListRecipesByIngredientsVm GetRecipesByIngredients(int pageSize, int pageNumber,
 			List<int> ingredientIds)
 		{
-			var recipes = _recipeRepo.GetRecipesByIngredients(ingredientIds)				
+			var recipes = _recipeRepo.GetRecipesByIngredients(ingredientIds)
 				.OrderBy(x => x.Name)
 				.ProjectTo<RecipeListForVm>(_mapper.ConfigurationProvider)
 				.ToList();

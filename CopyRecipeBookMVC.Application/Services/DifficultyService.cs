@@ -42,5 +42,10 @@ namespace CopyRecipeBookMVC.Application.Services
 				Text = difficultyListVm.Name,	
 			}).ToList();
 		}
+		public int GetDifficultyIdByName(string name)
+		{
+			int id = _difficultyRepo.GetIdByName(name);
+			return id;
+		}
 	}
 }

@@ -53,5 +53,11 @@ namespace CopyRecipeBookMVC.Application.Services
 			//	Text = cat.Name,
 			//}).ToList();
 		}
+
+		public int GetCategoryIdByName(string name)
+		{
+			int id = _categoryRepo.GetIdByName(name);
+			return id;
+		}
 	}
 }

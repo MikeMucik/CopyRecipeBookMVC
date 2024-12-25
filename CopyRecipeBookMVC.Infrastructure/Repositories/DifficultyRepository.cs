@@ -19,5 +19,9 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
 		{
 			return _context.Difficulties.ToList();
 		}
+		public int GetIdByName(string name)
+		{
+			return _context.Difficulties.FirstOrDefault(c => c.Name == name).Id;
+		}
 	}
 }

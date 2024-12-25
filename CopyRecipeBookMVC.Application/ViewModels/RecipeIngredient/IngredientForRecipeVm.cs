@@ -24,7 +24,13 @@ namespace CopyRecipeBookMVC.Application.ViewModels.RecipeIngredient
                 .ForMember(i => i.Quantity, opt => opt.MapFrom(o => o.Quantity))
                 .ForMember(i => i.Unit, opt => opt.MapFrom(o => o.Unit.Name))
                 ;
+            profile.CreateMap<IngredientForNewRecipeVm, IngredientForRecipeVm>()
+                .ForMember(i => i.Name, opt => opt.MapFrom(o => o.NewIngredientName))
+                .ForMember(i => i.Unit, opt => opt.MapFrom(o => o.NewIngredientUnit))
+                .ForMember(i => i.Quantity, opt => opt.MapFrom(o => o.Quantity))
+                .ReverseMap();//
 
-        }
+
+		}
     }
 }

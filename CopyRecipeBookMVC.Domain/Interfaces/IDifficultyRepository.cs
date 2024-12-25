@@ -10,5 +10,6 @@ namespace CopyRecipeBookMVC.Domain.Interfaces
 	public interface IDifficultyRepository
 	{
 		IEnumerable<Difficulty> GetAllDifficulties();
+		int GetIdByName(string name);
 	}
 }

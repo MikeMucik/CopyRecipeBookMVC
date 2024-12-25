@@ -21,7 +21,8 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
         public string Difficulty { get; set; }
         [DisplayName("Czas przygotowania przepisu")]
         public string Time { get; set; }
-
+        public decimal TimeAmount { get; set; }
+        public string TimeUnit { get; set; }
         public List<IngredientForRecipeVm> Ingredients { get; set; }
         [DisplayName("Receptura przygotowania przepisu")]
         public string Description { get; set; }
@@ -31,6 +32,8 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
                 .ForMember(d => d.Category, opt => opt.MapFrom(q => q.Category.Name))
                 .ForMember(d => d.Difficulty, opt => opt.MapFrom(q => q.Difficulty.Name))
                 .ForMember(d => d.Time, opt => opt.MapFrom(q => q.Time.Amount + " " + q.Time.Unit))
+                .ForMember(d => d.TimeAmount, opt => opt.MapFrom(q => q.Time.Amount))
+                .ForMember(d => d.TimeUnit, opt => opt.MapFrom(q => q.Time.Unit))
                 .ForMember(d => d.Ingredients, opt => opt.MapFrom(q => q.RecipeIngredient));
         }
     }

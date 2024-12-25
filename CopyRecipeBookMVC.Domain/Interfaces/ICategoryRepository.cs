@@ -7,9 +7,9 @@ using CopyRecipeBookMVC.Domain.Model;
 
 namespace CopyRecipeBookMVC.Domain.Interfaces
 {
-	public interface 
-		ICategoryRepository
+	public interface ICategoryRepository
 	{
 		IEnumerable<Category> GetAllCategories();
+		int GetIdByName(string name);
 	}
 }

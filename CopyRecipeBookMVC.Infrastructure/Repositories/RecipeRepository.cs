@@ -22,10 +22,10 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
 			{
 				throw new ArgumentNullException(nameof(recipe), "Nieprawidłowe dane");
 			}
-			if (recipe.Id <= 0)
-			{
-				throw new ArgumentOutOfRangeException(nameof(recipe), "Id przepisu musi mieć wartość większą od zera");
-			}
+			//if (recipe.Id <= 0)
+			//{
+			//	throw new ArgumentOutOfRangeException(nameof(recipe), "Id przepisu musi mieć wartość większą od zera");
+			//}
 			if (_context.Recipes.Any(r => r.Id == recipe.Id))
 			{
 				throw new InvalidOperationException($"Przepis o Id '{recipe.Id}' już istnieje.");
@@ -75,10 +75,10 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
 			{
 				throw new ArgumentNullException(nameof(recipe), "Nieprawidłowe dane");
 			}
-			if (recipe.Id <= 0)
-			{
-				throw new InvalidDataException("Numer przepisu musi być większy od zera");
-			}
+			//if (recipe.Id <= 0)
+			//{
+			//	throw new InvalidDataException("Numer przepisu musi być większy od zera");
+			//}
 			
 			if (!_context.Recipes.Any(r=>r.Id == recipe.Id))
 			{
@@ -90,6 +90,26 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
 			_context.Entry(recipe).Property(nameof(recipe.DifficultyId)).IsModified = true;
 			_context.Entry(recipe).Property(nameof(recipe.TimeId)).IsModified = true;
 			_context.Entry(recipe).Property(nameof(recipe.Description)).IsModified = true;
+			// Aktualizacja składników dl DTO
+			var existingIngredients = _context.RecipeIngredient
+				.Where(ri => ri.RecipeId == recipe.Id)
+				.ToList();
+
+			foreach (var ingredient in existingIngredients)
+			{
+				if (!recipe.RecipeIngredient.Any(i => i.IngredientId == ingredient.IngredientId && i.UnitId == ingredient.UnitId))
+				{
+					_context.RecipeIngredient.Remove(ingredient);
+				}
+			}
+			
+			foreach (var ingredient in recipe.RecipeIngredient)
+			{
+				if (!existingIngredients.Any(i => i.IngredientId == ingredient.IngredientId && i.UnitId == ingredient.UnitId))
+				{
+					_context.RecipeIngredient.Add(ingredient);
+				}
+			}
 			_context.SaveChanges();
 		}
 		public IQueryable<Recipe> GetAllRecipes()

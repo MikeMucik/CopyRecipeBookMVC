@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CopyRecipeBookMVC.Infrastructure.Repositories
 {
-    public class RecipeIngredientRepository :IRecipeIngredientRepository
-    {
+	public class RecipeIngredientRepository : IRecipeIngredientRepository
+	{
 		private readonly Context _context;
 		public RecipeIngredientRepository(Context context)
 		{
@@ -18,15 +18,18 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
 		}
 		public void AddCompleteIngredients(RecipeIngredient recipeIngredient)
 		{
-			if (recipeIngredient == null || (recipeIngredient.IngredientId ==0 || recipeIngredient.UnitId == 0 || recipeIngredient.Quantity ==0))
+			if (recipeIngredient == null || recipeIngredient.Quantity <= 0 ||
+				(recipeIngredient.IngredientId == 0 && string.IsNullOrEmpty(recipeIngredient.Ingredient?.Name))
+				|| (recipeIngredient.UnitId == 0 && string.IsNullOrEmpty(recipeIngredient.Unit?.Name)))				
 			{
 				throw new ArgumentNullException(nameof(recipeIngredient), "Błędne dane");
 			}
+
 			_context.RecipeIngredient.Add(recipeIngredient);
 			_context.SaveChanges();
 		}
 		public void DeleteCompleteIngredient(RecipeIngredient item)
-		{			
+		{
 			_context.RecipeIngredient.Remove(item);
 			_context.SaveChanges();
 		}
