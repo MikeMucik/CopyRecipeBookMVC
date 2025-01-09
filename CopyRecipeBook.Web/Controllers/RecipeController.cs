@@ -65,10 +65,10 @@ namespace CopyRecipeBook.Web.Controllers
 		}
 		[HttpGet]
 		[Authorize]
-		public IActionResult ViewByCategory(int pageSize = 12, int pageNumber = 1, int categoryId = 0)
+		public IActionResult ViewByCategory(int pageSize = 12, int pageNumber = 1, int categoryId = 1)
 		{
 			FillViewBags();
-			var model = _recipeService.GetRecipesByCategory(pageSize, pageNumber, categoryId);
+			var model = _recipeService.GetRecipesByCategory(pageSize, pageNumber, categoryId, null);
 			return View(model);
 		}
 		[HttpPost]
@@ -79,16 +79,20 @@ namespace CopyRecipeBook.Web.Controllers
 			{
 				pageNumber = 1;
 			}
-			var model = _recipeService.GetRecipesByCategory(pageSize, pageNumber.Value, categoryId);
-			FillViewBags();			
+			if (categoryId == 0)
+			{
+				categoryId = 1;
+			}
+			var model = _recipeService.GetRecipesByCategory(pageSize, pageNumber.Value, categoryId, null);
+			FillViewBags();
 			return View(model);
 		}
 		[HttpGet]
 		[Authorize]
-		public IActionResult ViewByDifficulty(int pageSize = 12, int pageNumber = 1, int difficultyId = 0)
+		public IActionResult ViewByDifficulty(int pageSize = 12, int pageNumber = 1, int difficultyId = 1)
 		{
 			FillViewBags();
-			var model = _recipeService.GetRecipesByDifficulty(pageSize, pageNumber, difficultyId)
+			var model = _recipeService.GetRecipesByDifficulty(pageSize, pageNumber, difficultyId, null)
 				;
 			return View(model);
 		}
@@ -100,7 +104,35 @@ namespace CopyRecipeBook.Web.Controllers
 			{
 				pageNumber = 1;
 			}
-			var model = _recipeService.GetRecipesByDifficulty(pageSize, pageNumber.Value, difficultyId);
+			if (difficultyId == 0)
+			{
+				difficultyId = 1;
+			}
+			var model = _recipeService.GetRecipesByDifficulty(pageSize, pageNumber.Value, difficultyId, null);
+			FillViewBags();
+			return View(model);
+		}
+		[HttpGet]
+		[Authorize]
+		public IActionResult ViewByTime(int pageSize = 12, int pageNumber = 1, int? timeId = 1)
+		{
+			FillViewBags();
+			var model = _recipeService.GetRecipesByTime(pageSize, pageNumber, timeId, null, null);
+			return View(model);
+		}
+		[HttpPost]
+		[AutoValidateAntiforgeryToken]
+		public IActionResult ViewByTime(int pageSize, int? pageNumber, int timeId)
+		{
+			if (!pageNumber.HasValue)
+			{
+				pageNumber = 1;
+			}
+			if (timeId == 0)
+			{
+				timeId = 1;
+			}
+			var model = _recipeService.GetRecipesByTime(pageSize, pageNumber.Value, timeId, null, null);
 			FillViewBags();
 			return View(model);
 		}
@@ -112,7 +144,7 @@ namespace CopyRecipeBook.Web.Controllers
 			ingredientIds ??= [0];
 			FillViewBags();
 			var model = _recipeService.GetRecipesByIngredients(pageSize, pageNumber,
-			 ingredientIds);			
+			 ingredientIds, null);
 			return View(model);
 		}
 		[HttpPost]
@@ -125,7 +157,7 @@ namespace CopyRecipeBook.Web.Controllers
 				pageNumber = 1;
 			}
 			var model = _recipeService.GetRecipesByIngredients(pageSize, pageNumber.Value,
-				ingredientIds ?? new List<int>());
+				ingredientIds ?? new List<int>(), null);
 			model.IngredientIds = ingredientIds;
 			FillViewBags();
 			return View(model);
@@ -142,7 +174,7 @@ namespace CopyRecipeBook.Web.Controllers
 		[Authorize(Roles = "Admin, SuperUser, User")]
 		public IActionResult AddRecipe(NewRecipeVm model)
 		{
-			var existingRecipeId = _recipeService.TryAddRecipe(model);						
+			var existingRecipeId = _recipeService.TryAddRecipe(model);
 			if (existingRecipeId != null)
 			{
 				TempData["RecipeExist"] = $"Przepis o nazwie '{model.Name} istnieje, jesteś w edycji tego przepisu. ";
@@ -159,7 +191,7 @@ namespace CopyRecipeBook.Web.Controllers
 		[HttpPost]
 		public IActionResult CheckName(string name)
 		{
-			bool exists = _recipeService.CheckNameForRecipe(name);			
+			bool exists = _recipeService.CheckNameForRecipe(name);
 			return Json(new { exists = exists });
 		}
 		[HttpGet]

@@ -30,15 +30,14 @@ namespace CopyRecipeBookMVC.Application.Test.UnitTestsRepo.RecipeRepoTests
 			Assert.Equal(1, result.CategoryId);
 		}
 		[Fact]
-		public void InvalidId_GetRecipeById_ReturnThrowException()
+		public void InvalidId_GetRecipeById_ReturnNull()
 		{
 			//Arrange
-			var id = 0;
+			var id = -1;
 			//Act
-			void result() => _recipeRepo.GetRecipeById(id);
+			var result = _recipeRepo.GetRecipeById(id);
 			//Assert
-			var exception = Assert.Throws<InvalidOperationException>(result);
-			Assert.Equal("Przepis o Id '0' nie istnieje.", exception.Message);
+			Assert.Equal(null, result);
 		}
 	}
 }

@@ -49,7 +49,7 @@ namespace CopyRecipeBookMVC.Application.Test.IntergrationTests.RecipeIntTests
 
 		}
 		[Fact]
-		public void PutNotByExistingId_GetRecipeToEdit_ReturnEmptyNewRecipeVm()
+		public void PutNotExistingId_GetRecipeToEdit_ReturnEmptyNewRecipeVm()
 		{
 			//Arrange
 			var existingRecipe = -1;

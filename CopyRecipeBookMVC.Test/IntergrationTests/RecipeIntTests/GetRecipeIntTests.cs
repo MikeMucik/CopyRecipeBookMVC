@@ -51,7 +51,7 @@ namespace CopyRecipeBookMVC.Application.Test.IntergrationTests.RecipeIntTests
 			//Act			
 			void result()=> _recipeService.GetRecipe(existingIdOfRecipe);
 			//Assert
-			var exception = Assert.Throws<InvalidOperationException>(result);
+			var exception = Assert.Throws<InvalidDataException>(result);
 			Assert.Equal($"Przepis o Id '{existingIdOfRecipe}' nie istnieje.", exception.Message);			
 		}
 

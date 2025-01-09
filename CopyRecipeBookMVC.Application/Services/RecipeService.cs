@@ -51,10 +51,22 @@ namespace CopyRecipeBookMVC.Application.Services
 		{
 			_recipeRepo = recipeRepo;
 			_mapper = mapper;
-			_recipeIngredientService = recipeIngredientService;		
+			_recipeIngredientService = recipeIngredientService;
 		}
 		public int AddRecipe(NewRecipeVm recipe)
 		{
+			if (recipe == null)
+			{
+				throw new ArgumentNullException(nameof(recipe), "Nieprawidłowe dane");
+			}
+			if (_recipeRepo.FindByName(recipe.Name) != null)
+			{
+				throw new InvalidDataException($"Przepis o Nazwie '{recipe.Name}' już istnieje.");
+			}
+			if (recipe.Id != 0)
+			{
+				throw new InvalidOperationException("Numer Id przepisu nie można ustawić ręcznie.");
+			}
 			var recipeNew = _mapper.Map<Recipe>(recipe);
 			var recipeId = _recipeRepo.AddRecipe(recipeNew);
 			foreach (var ingredient in recipe.Ingredients)
@@ -72,10 +84,19 @@ namespace CopyRecipeBookMVC.Application.Services
 		}
 		public int AddRecipeApi(NewRecipeDTO newRecipe)
 		{
-			var recipeNew = new Recipe();
-
-			recipeNew.Id = newRecipe.Id;
-			recipeNew.Name = newRecipe.Name;
+			if (newRecipe == null)
+			{
+				throw new ArgumentNullException(nameof(newRecipe), "Nieprawidłowe dane");
+			}
+			if (_recipeRepo.FindByName(newRecipe.Name) != null)
+			{
+				throw new InvalidOperationException($"Przepis o Nazwie '{newRecipe.Name}' już istnieje.");
+			}
+			if (newRecipe.Id != 0)
+			{
+				throw new InvalidOperationException("Numer Id przepisu nie można ustawić ręcznie.");
+			}
+			var recipeNew = _mapper.Map<Recipe>(newRecipe);
 			recipeNew.CategoryId = _categoryService.GetCategoryIdByName(newRecipe.Category);
 			recipeNew.DifficultyId = _difficultyService.GetDifficultyIdByName(newRecipe.Difficulty);
 			var newTime = new NewRecipeVm
@@ -84,15 +105,11 @@ namespace CopyRecipeBookMVC.Application.Services
 				TimeUnit = newRecipe.TimeUnit,
 			};
 			recipeNew.TimeId = _timeService.AddTime(newTime);
-			recipeNew.Description = newRecipe.Description;
-			recipeNew.RecipeIngredient.Clear();
 			foreach (var ingredient in newRecipe.Ingredients)
 			{
 				var newIngredient = _mapper.Map<IngredientForNewRecipeVm>(ingredient);
 				int ingredientId = _ingredientService.GetOrAddIngredient(newIngredient);
-
 				int unitId = _unitService.GetOrAddUnit(newIngredient);
-
 				var recipeIngredient = new RecipeIngredient
 				{
 					RecipeId = recipeNew.Id,
@@ -102,7 +119,7 @@ namespace CopyRecipeBookMVC.Application.Services
 				};
 				recipeNew.RecipeIngredient.Add(recipeIngredient);
 			}
-			_recipeRepo.AddRecipe(recipeNew);			
+			_recipeRepo.AddRecipe(recipeNew);
 			return recipeNew.Id;
 		}
 		public bool CheckNameForRecipe(string name)
@@ -123,7 +140,15 @@ namespace CopyRecipeBookMVC.Application.Services
 		}
 		public void DeleteRecipe(int id)
 		{
-			_recipeRepo.DeleteRecipe(id);
+			var recipe = _recipeRepo.GetRecipeById(id);
+			if (recipe != null)
+			{
+				_recipeRepo.DeleteRecipe(id);
+			}
+			else
+			{
+				throw new InvalidOperationException($"Przepis o Id '{id}' nie istnieje.");
+			}
 		}
 		public ListRecipeForListVm GetAllRecipesForList(int pageSize, int pageNumber, string searchString)
 		{
@@ -151,15 +176,18 @@ namespace CopyRecipeBookMVC.Application.Services
 			var recipe = _recipeRepo.GetRecipeById(id);
 			if (recipe == null)
 			{
-				throw new Exception("Recipe is null");
+				throw new InvalidDataException($"Przepis o Id '{id}' nie istnieje.");
 			}
 			var recipeVm = _mapper.Map<RecipeDetailsVm>(recipe);
 			return recipeVm;
 		}
-
-		public ListRecipesByCategoryVm GetRecipesByCategory(int pageSize, int pageNumber, int categoryId)
+		public ListRecipesByCategoryVm GetRecipesByCategory(int pageSize, int pageNumber, int? categoryId, string? categoryName)
 		{
-			var recipes = _recipeRepo.GetRecipesByCategory(categoryId)
+			if (categoryId == 0 && string.IsNullOrEmpty(categoryName))
+			{
+				throw new ArgumentException("Kategoria musi być określona przez ID lub nazwę.");
+			}
+			var recipes = _recipeRepo.GetRecipesByCategory(categoryId, categoryName)
 				.OrderBy(r => r.Name)
 				.ProjectTo<RecipeListForVm>(_mapper.ConfigurationProvider)
 				.ToList();
@@ -173,13 +201,18 @@ namespace CopyRecipeBookMVC.Application.Services
 				PageSize = pageSize,
 				CurrentPage = pageNumber,
 				CategoryId = categoryId,
+				CategoryName = categoryName,
 				Count = recipes.Count()
 			};
 			return recipeList;
 		}
-		public ListRecipesByDifficultyVm GetRecipesByDifficulty(int pageSize, int pageNumber, int difficultyId)
+		public ListRecipesByDifficultyVm GetRecipesByDifficulty(int pageSize, int pageNumber, int? difficultyId, string? difficultyName = "")
 		{
-			var recipes = _recipeRepo.GetRecipesByDifficulty(difficultyId)
+			if (difficultyId == 0 && string.IsNullOrWhiteSpace(difficultyName))
+			{
+				throw new ArgumentException("Trudność musi być określona przez Id lub nazwę.");
+			}
+			var recipes = _recipeRepo.GetRecipesByDifficulty(difficultyId, difficultyName)
 				.OrderBy(x => x.Name)
 				.ProjectTo<RecipeListForVm>(_mapper.ConfigurationProvider).ToList();
 			var recipesToShow = recipes
@@ -191,26 +224,32 @@ namespace CopyRecipeBookMVC.Application.Services
 				RecipesByDifficulty = recipesToShow,
 				PageSize = pageSize,
 				CurrentPage = pageNumber,
-				DifficultyId = difficultyId,
+				DifficultyId = (int)difficultyId,
+
 				Count = recipes.Count
 			};
 			return recipeList;
 		}
 		public NewRecipeVm GetRecipeToEdit(int id)
 		{
-			try
-			{
-				var recipe = _recipeRepo.GetRecipeById(id);
-				return _mapper.Map<NewRecipeVm>(recipe);
-			}
-			catch (InvalidOperationException)
+			var recipe = _recipeRepo.GetRecipeById(id);
+			if (recipe == null)
 			{
 				return new NewRecipeVm();
 			}
+			return _mapper.Map<NewRecipeVm>(recipe);			
 		}
-
 		public void UpdateRecipe(NewRecipeVm recipe)
 		{
+			var existRecipe = _recipeRepo.RecipeExist(recipe.Id);
+			if (!existRecipe)
+			{
+				throw new KeyNotFoundException($"Przepis o Id '{recipe.Id}' nie istnieje.");
+			}
+				if (recipe == null)
+			{
+				throw new ArgumentNullException(nameof(recipe), "Nieprawidłowe dane");
+			}
 			_recipeIngredientService.DeleteCompleteIngredients(recipe.Id);
 			Recipe editRecipe = _mapper.Map<Recipe>(recipe);
 			_recipeRepo.UpdateRecipe(editRecipe);
@@ -227,9 +266,19 @@ namespace CopyRecipeBookMVC.Application.Services
 			}
 		}
 		public bool UpdateRecipeApi(NewRecipeDTO recipeUpdated)
-		{			
+		{
+			var existRecipe = _recipeRepo.RecipeExist(recipeUpdated.Id);
+			if (!existRecipe)
+			{
+				throw new KeyNotFoundException($"Przepis o Id '{recipeUpdated.Id}' nie istnieje.");
+			}
+
+			if (recipeUpdated == null)
+			{
+				throw new ArgumentNullException(nameof(recipeUpdated), "Nieprawidłowe dane");
+			}
 			var recipeNew = new Recipe();
-			
+
 			recipeNew.Id = recipeUpdated.Id;
 			recipeNew.Name = recipeUpdated.Name;
 			recipeNew.CategoryId = _categoryService.GetCategoryIdByName(recipeUpdated.Category);
@@ -239,14 +288,14 @@ namespace CopyRecipeBookMVC.Application.Services
 				TimeAmount = recipeUpdated.TimeAmount,
 				TimeUnit = recipeUpdated.TimeUnit,
 			};
-				recipeNew.TimeId = _timeService.AddTime(newTime);			
+			recipeNew.TimeId = _timeService.AddTime(newTime);
 			recipeNew.Description = recipeUpdated.Description;
 			recipeNew.RecipeIngredient.Clear();
 			foreach (var ingredient in recipeUpdated.Ingredients)
 			{
 				var newIngredient = _mapper.Map<IngredientForNewRecipeVm>(ingredient);
 				int ingredientId = _ingredientService.GetOrAddIngredient(newIngredient);
-				
+
 				int unitId = _unitService.GetOrAddUnit(newIngredient);
 
 				var recipeIngredient = new RecipeIngredient
@@ -255,16 +304,20 @@ namespace CopyRecipeBookMVC.Application.Services
 					IngredientId = ingredientId,
 					UnitId = unitId,
 					Quantity = ingredient.Quantity
-				};				
+				};
 				recipeNew.RecipeIngredient.Add(recipeIngredient);
-			}	
+			}
 			_recipeRepo.UpdateRecipe(recipeNew);
 			return true;
 		}
 		public ListRecipesByIngredientsVm GetRecipesByIngredients(int pageSize, int pageNumber,
-			List<int> ingredientIds)
+			List<int>? ingredientIds, List<string>? ingredientsName)
 		{
-			var recipes = _recipeRepo.GetRecipesByIngredients(ingredientIds)
+			if ((ingredientIds == null || ingredientIds.Count ==0) && (ingredientsName == null || ingredientsName.Count == 0))
+			{
+				throw new ArgumentNullException("Liczba składników nie może być pusta.");
+			}
+			var recipes = _recipeRepo.GetRecipesByIngredients(ingredientIds, ingredientsName)
 				.OrderBy(x => x.Name)
 				.ProjectTo<RecipeListForVm>(_mapper.ConfigurationProvider)
 				.ToList();
@@ -282,5 +335,32 @@ namespace CopyRecipeBookMVC.Application.Services
 			};
 			return recipeList;
 		}
+
+		public ListRecipesByTimeVm GetRecipesByTime(int pageSize, int pageNumber, int? timeId, int? timeAmount, string? timeUnit)
+		{
+            if (timeId == 0 && (string.IsNullOrEmpty(timeUnit)||timeAmount ==0))
+            {
+                throw new ArgumentException("Wpisz/wybierz czas przygotowania potrawy.");
+            }
+            var recipes = _recipeRepo.GetRecipesByTime(timeId, timeAmount, timeUnit)
+                .OrderBy(r => r.Name)
+                .ProjectTo<RecipeListForVm>(_mapper.ConfigurationProvider)
+                .ToList();
+            var recipesToShow = recipes
+                .Skip(pageSize * (pageNumber - 1))
+                .Take(pageSize)
+                .ToList();
+            var recipeList = new ListRecipesByTimeVm()
+            {
+                RecipesByTime = recipesToShow,
+                PageSize = pageSize,
+                CurrentPage = pageNumber,
+				TimeId = timeId,
+				TimeAmount = timeAmount,
+				TimeUnit = timeUnit,                
+                Count = recipes.Count()
+            };
+            return recipeList;
+        }
 	}
 }

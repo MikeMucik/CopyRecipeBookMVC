@@ -23,7 +23,7 @@ namespace CopyRecipeBookMVC.Application.Test.IntergrationTests.RecipeIntTests
 			int pageNumber = 1;
 			List<int> ingredientIds = new List<int> {  1 };
 			//Act
-			var result = _recipeService.GetRecipesByIngredients(pageSize, pageNumber, ingredientIds);
+			var result = _recipeService.GetRecipesByIngredients(pageSize, pageNumber, ingredientIds, null);
 			//Assert
 			Assert.Equal(1, result.Count);
 			Assert.NotNull(result);

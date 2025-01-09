@@ -24,7 +24,7 @@ namespace CopyRecipeBookMVC.Application.Test.UnitTestsRepo.RecipeRepoTests
             //Arrange
             List<int> ints = new List<int>() { 1,2};
             //Act
-            var result = _recipeRepo.GetRecipesByIngredients(ints);
+            var result = _recipeRepo.GetRecipesByIngredients(ints, null);
             //Assert
             Assert.NotNull(result);
             Assert.IsAssignableFrom<IQueryable<Recipe>>(result);
@@ -36,7 +36,7 @@ namespace CopyRecipeBookMVC.Application.Test.UnitTestsRepo.RecipeRepoTests
 			//Arrange
 			List<int> ints = new List<int> { 1};
 			//Act
-			var result = _recipeRepo.GetRecipesByIngredients(ints);
+			var result = _recipeRepo.GetRecipesByIngredients(ints, null);
 			//Assert
 			Assert.NotNull(result);
 			Assert.IsAssignableFrom<IQueryable<Recipe>>(result);

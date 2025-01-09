@@ -55,10 +55,10 @@ namespace CopyRecipeBookMVC.Application.Services
 		public List<SelectListItem> GetTimeSelectItem()
 		{
 			var timeListVm = GetListTimeForList();
-			return timeListVm.Times.Select(tim => new SelectListItem
+			return timeListVm.Times.Select(timeListVm => new SelectListItem
 			{
-				Value = tim.Id.ToString(),
-				Text = tim.Amount.ToString() + " " + tim.Unit ,
+				Value = timeListVm.Id.ToString(),
+				Text = timeListVm.Amount.ToString() + " " + timeListVm.Unit ,
 			}).ToList();
 		}
 	}

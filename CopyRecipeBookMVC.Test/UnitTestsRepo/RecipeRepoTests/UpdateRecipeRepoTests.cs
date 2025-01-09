@@ -38,7 +38,6 @@ namespace CopyRecipeBookMVC.Application.Test.UnitTestsRepo.RecipeRepoTests
 				Description = "Original Description",
 			});
 			arrangeContext.SaveChanges();
-
 			// Act: Aktualizujemy rekord w nowym kontekście
 			using (var actContext = new Context(_contextOptions))
 			{
@@ -53,7 +52,6 @@ namespace CopyRecipeBookMVC.Application.Test.UnitTestsRepo.RecipeRepoTests
 					Description = "Updated Description",
 				});
 			}
-
 			// Assert: Sprawdzamy wynik w kolejnym kontekście
 			using (var assertContext = new Context(_contextOptions))
 			{
@@ -67,26 +65,26 @@ namespace CopyRecipeBookMVC.Application.Test.UnitTestsRepo.RecipeRepoTests
 				Assert.Equal("Updated Description", result.Description);
 			}
 		}
-		[Fact]
-		public void AddNotExistingRecipe_UpdateRecipe_ThrowException()
-		{
-			//Arrange
-			var updatedRecipe = new Recipe
-			{
-				Id = -999, 
-				Name = "Updated Name",
-				CategoryId = 2,
-				DifficultyId = 2,
-				TimeId = 2,
-				Description = "Updated Description",
-			};
-			// Act
-			void result() => _recipeRepo.UpdateRecipe(updatedRecipe);
+		//[Fact]
+		//public void AddNotExistingRecipe_UpdateRecipe_ThrowException()
+		//{
+		//	//Arrange
+		//	var updatedRecipe = new Recipe
+		//	{
+		//		Id = -999, 
+		//		Name = "Updated Name",
+		//		CategoryId = 2,
+		//		DifficultyId = 2,
+		//		TimeId = 2,
+		//		Description = "Updated Description",
+		//	};
+		//	// Act
+		//	void result() => _recipeRepo.UpdateRecipe(updatedRecipe);
 
-			// Assert
-			var exception = Assert.Throws<InvalidOperationException>(result);
-			Assert.Equal($"Przepis o Id '{updatedRecipe.Id}' nie istnieje", exception.Message);
-		}
+		//	// Assert
+		//	var exception = Assert.Throws<InvalidOperationException>(result);
+		//	Assert.Equal($"Przepis o Id '{updatedRecipe.Id}' nie istnieje", exception.Message);
+		//}
 		//[Fact]
 		//public void AddInvalidData_UpdateRecipe_ThrowException()
 		//{
@@ -107,16 +105,16 @@ namespace CopyRecipeBookMVC.Application.Test.UnitTestsRepo.RecipeRepoTests
 		//	var exception = Assert.Throws<InvalidDataException>(result);
 		//	Assert.Equal("Numer przepisu musi być większy od zera", exception.Message);
 		//}
-		[Fact]
-		public void AddNullData_UpdateRecipe_ThrowException()
-		{
-			//Arrange
-			// Act
-			void result() => _recipeRepo.UpdateRecipe(null);
+		//[Fact]
+		//public void AddNullData_UpdateRecipe_ThrowException()
+		//{
+		//	//Arrange
+		//	// Act
+		//	void result() => _recipeRepo.UpdateRecipe(null);
 
-			// Assert
-			var exception = Assert.Throws<ArgumentNullException>(result);
-			Assert.Equal("Nieprawidłowe dane (Parameter 'recipe')", exception.Message);
-		}		
+		//	// Assert
+		//	var exception = Assert.Throws<ArgumentNullException>(result);
+		//	Assert.Equal("Nieprawidłowe dane (Parameter 'recipe')", exception.Message);
+		//}		
 	}
 }

@@ -30,53 +30,9 @@ namespace CopyRecipeBookMVC.Application.Test.UnitTestsRepo.RecipeRepoTests
 			//Act
 			var result = _recipeRepo.AddRecipe(repo);
 			//Assert
-			//Assert.NotNull(result);
+			Assert.NotNull(result);
 			Assert.Equal(2, result);
 			Assert.IsType<int>(result);
-		}
-		[Fact]
-		public void AddTheSameId_AddRecipe_ShouldNotAddToCollection()
-		{
-			//Arrange
-			var repo = new Recipe
-			{
-				Id = 1,
-				Name = "Name",
-				Description = "Description",
-			};
-			//Act
-			void result() => _recipeRepo.AddRecipe(repo);
-			//Assert			
-			var exception = Assert.Throws<InvalidOperationException>(result);
-			Assert.Equal("Przepis o Id '1' już istnieje.", exception.Message);
-		}
-		//[Fact]
-		//public void AddInvalidDataId_AddRecipe_ShouldNotAddToCollection()
-		//{
-		//	//Arrange
-		//	var repo = new Recipe
-		//	{
-		//		Id = -1,		
-		//		Name = "Name",
-		//		Description = "Description",
-		//	};
-		//	//Act
-		//	void result() => _recipeRepo.AddRecipe(repo);
-		//	//Assert			
-		//	var exception = Assert.Throws<ArgumentOutOfRangeException>(result);
-		//	Assert.Equal("Id przepisu musi mieć wartość większą od zera (Parameter 'recipe')", exception.Message);
-		//}
-		[Fact]
-		public void AddNullRecipe_AddRecipe_ShouldThrowsException()
-		{
-			//Arrange
-			 Recipe repo = null;
-			
-			//Act
-			void result() => _recipeRepo.AddRecipe(repo);
-			//Assert				
-			var exception = Assert.Throws<ArgumentNullException>(result);
-			Assert.Equal("Nieprawidłowe dane (Parameter 'recipe')", exception.Message);
-		}
+		}	
 	}
 }

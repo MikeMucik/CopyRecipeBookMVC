@@ -138,7 +138,7 @@ namespace CopyRecipeBookMVC.Application.Test.UnitTestsService.RecipeServiceTests
 				new Recipe {Id = 1, Name= "Test1", Category = new Category{Id = 1 , Name ="Śniadanie" }, Difficulty=new Difficulty{Name="Łatwy" }, Time = new Time{Amount = 5, Unit = "m" } },
 				new Recipe {Id = 2, Name= "Test2", Category = new Category{Id = 2,  Name = "Obiad" }, Difficulty=new Difficulty{Name="Trudny" }, Time = new Time{Amount = 1, Unit = "h" } }
 			};
-			_recipeRepoMock.Setup(repo => repo.GetRecipesByCategory(categoryId)).Returns(recipeList.AsQueryable());
+			_recipeRepoMock.Setup(repo => repo.GetRecipesByCategory(categoryId, null)).Returns(recipeList.AsQueryable());
 			_mapperMock.Setup(mapper => mapper.ConfigurationProvider)
 			.Returns(new MapperConfiguration(mc =>
 			{
@@ -150,7 +150,7 @@ namespace CopyRecipeBookMVC.Application.Test.UnitTestsService.RecipeServiceTests
 			}));
 
 			//Act
-			var result = _recipeService.GetRecipesByCategory(pageSize, pageNumber, categoryId);
+			var result = _recipeService.GetRecipesByCategory(pageSize, pageNumber, categoryId, null);
 			//Assert
 			Assert.NotNull(result);
 			//Assert.Equal(1, result.Count);
@@ -171,7 +171,7 @@ namespace CopyRecipeBookMVC.Application.Test.UnitTestsService.RecipeServiceTests
 				new Recipe {Id = 1, Name= "Test1", Category = new Category{ Name ="Śniadanie" }, Difficulty=new Difficulty{Id = 1 ,Name="Łatwy" }, Time = new Time{Amount = 5, Unit = "m" } },
 				new Recipe {Id = 2, Name= "Test2", Category = new Category{ Name = "Obiad" }, Difficulty=new Difficulty{Id = 2, Name="Trudny" }, Time = new Time{Amount = 1, Unit = "h" } }
 			};
-			_recipeRepoMock.Setup(repo => repo.GetRecipesByDifficulty(difficultyId)).Returns(recipeList.AsQueryable());
+			_recipeRepoMock.Setup(repo => repo.GetRecipesByDifficulty(difficultyId, null)).Returns(recipeList.AsQueryable());
 			_mapperMock.Setup(mapper => mapper.ConfigurationProvider)
 			.Returns(new MapperConfiguration(mc =>
 			{
@@ -183,7 +183,7 @@ namespace CopyRecipeBookMVC.Application.Test.UnitTestsService.RecipeServiceTests
 			}));
 
 			//Act
-			var result = _recipeService.GetRecipesByDifficulty(pageSize, pageNumber, difficultyId);
+			var result = _recipeService.GetRecipesByDifficulty(pageSize, pageNumber, difficultyId, null);
 			//Assert
 			Assert.NotNull(result);
 			//Assert.Equal(1, result.Count);
@@ -330,7 +330,7 @@ namespace CopyRecipeBookMVC.Application.Test.UnitTestsService.RecipeServiceTests
 					}
 				}
 			};
-			_recipeRepoMock.Setup(repo => repo.GetRecipesByIngredients(ingredientIds.ToList())).Returns(recipeList.AsQueryable());
+			_recipeRepoMock.Setup(repo => repo.GetRecipesByIngredients(ingredientIds.ToList(), null)).Returns(recipeList.AsQueryable());
 			_mapperMock.Setup(mapper => mapper.ConfigurationProvider)
 			.Returns(new MapperConfiguration(mc =>
 			{
@@ -341,7 +341,7 @@ namespace CopyRecipeBookMVC.Application.Test.UnitTestsService.RecipeServiceTests
 			}));
 
 			//Act
-			var result = _recipeService.GetRecipesByIngredients(pageSize, pageNumber, ingredientIds);
+			var result = _recipeService.GetRecipesByIngredients(pageSize, pageNumber, ingredientIds, null);
 			//Assert
 			Assert.NotNull(result);
 			//Assert.Equal(1, result.Count);
@@ -349,7 +349,7 @@ namespace CopyRecipeBookMVC.Application.Test.UnitTestsService.RecipeServiceTests
 			Assert.Equal(pageSize, result.PageSize);
 			Assert.Equal(pageNumber, result.CurrentPage);
 			Assert.Equal(ingredientIds, result.IngredientIds);
-			_recipeRepoMock.Verify(repo => repo.GetRecipesByIngredients(It.IsAny<List<int>>()), Times.Once);
+			_recipeRepoMock.Verify(repo => repo.GetRecipesByIngredients(It.IsAny<List<int>>(), null), Times.Once);
 			_mapperMock.Verify(mapper => mapper.ConfigurationProvider, Times.Once);
 		}
 

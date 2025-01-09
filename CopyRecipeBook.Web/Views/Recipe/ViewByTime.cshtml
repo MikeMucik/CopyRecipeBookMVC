@@ -1,0 +1,116 @@
+﻿@model CopyRecipeBookMVC.Application.ViewModels.Recipe.ListRecipesByTimeVm
+
+@{
+    ViewData["Title"] = "ViewByTime";
+}
+
+<h1>Wybór przepisu po kategorii</h1>
+
+<p>
+	<a asp-action="AddRecipe">Stwórz nowy przepis</a>
+</p>
+
+<form asp-action="ViewByTime" asp-controller="Recipe" method="post" id="timeRecipes">
+	<div class="row-md6">
+		<label for="timeId">Wybierz czas:</label>
+		<select asp-for="TimeId" asp-items="ViewBag.Times">
+			<option value="Wybierz kategorię"></option>
+		</select>
+		<input type="submit" value=" Wyszukaj " />
+	</div>
+
+	<div class="row">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>
+						@Html.DisplayNameFor(model => model.RecipesByTime.First().Id)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.RecipesByTime.First().Name)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.RecipesByTime.First().Category)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.RecipesByTime.First().Difficulty)
+					</th>
+					<th>
+						@Html.DisplayNameFor(model => model.RecipesByTime.First().Time)
+					</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in Model.RecipesByTime)
+				{
+					<tr>
+						<td>
+							@Html.DisplayFor(modelItem => item.Id)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.Name)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.Category)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.Difficulty)
+						</td>
+						<td>
+							@Html.DisplayFor(modelItem => item.Time)
+						</td>
+						<td>
+							@if (User.IsInRole("Admin") || User.IsInRole("SuperUser"))
+							{
+								@Html.ActionLink("Edytuj przepis", "EditRecipe", new { id = item.Id })
+							}|
+							@Html.ActionLink("Szczegóły przepisu", "ViewDetails", new { id = item.Id }) |
+							@if (User.IsInRole("Admin") || User.IsInRole("SuperUser"))
+							{
+								@Html.ActionLink("Usuń przepis", "DeleteRecipe", new { id = item.Id })
+							}
+						</td>
+					</tr>
+				}
+				<input type="hidden" name="pageSize" value="12" />
+			</tbody>
+		</table>
+	</div>
+	<div class="row-md4">
+		<table>
+			<tr>
+				@for (int i = 1; i <= Math.Ceiling(Model.Count / (double)Model.PageSize); i++)
+				{
+					<td>
+						@if (i != Model.CurrentPage)
+						{
+							<a href="javascript:PagerClick(@i)">@i</a>
+						}
+						else
+						{
+							<span>@i</span>
+						}
+					</td>
+				}
+			</tr>
+		</table>
+		<input type="hidden" name="pageNumber" id="pageNumber" />
+		<input type="hidden" name="pageSize" id="pageSize" value="12" />
+	</div>
+</form>
+<p><a asp-action="Index">Wróć do listy przepisów</a></p>
+<button onclick="window.history.length>1 ? history?.back() :
+window.location.href='@Url.Action("Index","Home")'" class="btn btn-primary"
+		style="position: fixed; bottom: 20px;  right: 20px;   z-index: 1000; ">
+	Wróć
+</button>
+@section Scripts
+{
+	<script type="text/javascript">
+		function PagerClick(index) {
+			document.getElementById("pageNumber").value = index;
+			document.getElementById("timeRecipes").submit();
+		}
+	</script>
+}

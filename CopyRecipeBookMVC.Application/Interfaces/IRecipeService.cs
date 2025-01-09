@@ -22,9 +22,10 @@ namespace CopyRecipeBookMVC.Application.Interfaces
 		//RecipeDetailsVm GetRecipeDTO(int id);
 		void UpdateRecipe(NewRecipeVm recipe);
 		bool UpdateRecipeApi(NewRecipeDTO recipeUpdated);
-		ListRecipesByCategoryVm GetRecipesByCategory(int pageSize, int pageNumber, int categoryId);
-		ListRecipesByDifficultyVm GetRecipesByDifficulty(int pageSize, int pageNumber, int difficultyId);
+		ListRecipesByCategoryVm GetRecipesByCategory(int pageSize, int pageNumber, int? categoryId, string? categoryName);
+		ListRecipesByTimeVm GetRecipesByTime(int pageSize, int pageNumber, int? timeId, int? timeAmount, string? timeUnit);
+		ListRecipesByDifficultyVm GetRecipesByDifficulty(int pageSize, int pageNumber, int? difficultyId, string difficultyName);
 		NewRecipeVm GetRecipeToEdit(int id);
-		ListRecipesByIngredientsVm GetRecipesByIngredients(int pageSize, int pageNumber, List<int> IngredientIds);
+		ListRecipesByIngredientsVm GetRecipesByIngredients(int pageSize, int pageNumber, List<int>? IngredientIds, List<string>? ingredientsName);
 	}
 }

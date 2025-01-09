@@ -39,8 +39,7 @@ namespace CopyRecipeBookMVC.Application.Test.UnitTestsService.RecipeServiceTests
 		{
 			//Arrange
 			var newRecipeVm = new NewRecipeVm
-			{
-				Id = 1,
+			{				
 				Name = "Test Recipe Vm",
 				CategoryId = 1,
 				DifficultyId = 1,
@@ -55,8 +54,7 @@ namespace CopyRecipeBookMVC.Application.Test.UnitTestsService.RecipeServiceTests
 			_mapperMock.Setup(mapper => mapper.Map<Recipe>(It.IsAny<NewRecipeVm>()));
 			//Act
 			var result = _recipeService.AddRecipe(newRecipeVm);
-			// Assert
-			Assert.Equal(1, result);
+			// Assert			
 			_recipeRepoMock.Verify(repo => repo.AddRecipe(It.IsAny<Recipe>()), Times.Once);
 			_recipeIngredientServiceMock.Verify(service => service.AddCompleteIngredients(It.IsAny<RecipeIngredient>()), Times.Exactly(2));
 			_recipeIngredientServiceMock.Verify(service => service.AddCompleteIngredients(It.Is<RecipeIngredient>(ri =>
@@ -248,6 +246,8 @@ namespace CopyRecipeBookMVC.Application.Test.UnitTestsService.RecipeServiceTests
 				Description = ""
 			};
 			_mapperMock.Setup(map => map.Map<Recipe>(recipeVm)).Returns(existingRecipe);
+			_recipeRepoMock.Setup(recipeRepo => recipeRepo.RecipeExist(recipeId))
+				.Returns(true);
 			_recipeRepoMock.Setup(repo => repo.UpdateRecipe(existingRecipe));
 			//.Returns(updatedRecipeVm);
 			_recipeIngredientServiceMock.Setup(i => i.DeleteCompleteIngredients(recipeId));
@@ -295,6 +295,8 @@ namespace CopyRecipeBookMVC.Application.Test.UnitTestsService.RecipeServiceTests
 				}
 			};
 			_mapperMock.Setup(map => map.Map<Recipe>(updatedRecipeVm)).Returns(existingRecipe);
+			_recipeRepoMock.Setup(recipeRepo => recipeRepo.RecipeExist(recipeId))
+				.Returns(true);
 			_recipeRepoMock.Setup(repo => repo.UpdateRecipe(existingRecipe));
 
 			_recipeIngredientServiceMock.Setup(i => i.DeleteCompleteIngredients(recipeId));

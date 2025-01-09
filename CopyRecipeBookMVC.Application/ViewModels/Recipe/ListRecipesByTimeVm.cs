@@ -6,13 +6,15 @@ using System.Threading.Tasks;
 
 namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 {
-    public class ListRecipesByCategoryVm
+    public class ListRecipesByTimeVm
     {
-        public List<RecipeListForVm> RecipesByCategory { get; set; }
+
+        public List<RecipeListForVm> RecipesByTime { get; set; }
         public int CurrentPage { get; set; }
         public int PageSize { get; set; }
-        public int? CategoryId { get; set; } 
-        public string CategoryName { get; set; } //dla WebApi
-        public int Count { get; set; }        
+        public int? TimeId { get; set; }
+        public int? TimeAmount { get; set; } 
+        public string TimeUnit { get; set; } 
+        public int Count { get; set; }
     }
 }
