@@ -14,7 +14,7 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
         public int PageSize { get; set; }
         public int? TimeId { get; set; }
         public int? TimeAmount { get; set; } 
-        public string TimeUnit { get; set; } 
+        public string? TimeUnit { get; set; } 
         public int Count { get; set; }
     }
 }

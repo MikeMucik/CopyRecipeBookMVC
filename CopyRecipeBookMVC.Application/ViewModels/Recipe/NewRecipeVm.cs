@@ -14,8 +14,7 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 {
 	public class NewRecipeVm : IMapFrom<Domain.Model.Recipe>,
 								IMapFrom<Domain.Model.Time>
-	{
-		
+	{		
 		public int Id { get; set; }
 		[DisplayName("Podaj nazwę nowego przepisu")]
 		public string Name { get; set; }

@@ -14,40 +14,7 @@ namespace CopyRecipeBookMVC.Application.Test.Common
 {
 	public class DbContextFactory
 	{
-		//private static DbContextOptions<Context> _sharedOptions;//
-		//private static bool _useSharedDatabase = false;
-		//public static void UseSharedDatabase(bool useSharedDatabase)
-		//{
-		//	_useSharedDatabase = useSharedDatabase;
-		//}
-		//public static Context CreateContext()
-		//{
-		//	if (_useSharedDatabase)
-		//	{
-		//		if (_sharedOptions == null)
-		//		{
-		//			_sharedOptions = new DbContextOptionsBuilder<Context>()
-		//				.UseInMemoryDatabase("SharedTestDatabase")
-		//				.Options;
-		//			using var context = new Context(_sharedOptions);
-		//			context.Database.EnsureCreated();
-		//			SeedDatabase(context);
-		//		}
-		//		return new Context(_sharedOptions);
-		//	}
-		//	else
-		//	{
-		//		var option = new DbContextOptionsBuilder<Context>()
-		//			.UseInMemoryDatabase(Guid.NewGuid().ToString())
-		//			.Options;
-
-		//		var context = new Context(option);
-		//		context.Database.EnsureCreated();
-		//		SeedDatabase(context);
-		//		return context;
-		//	}
-		//}
-
+	
 		public static Mock<Context> Create()
 			{
 			var options = new DbContextOptionsBuilder<Context>()

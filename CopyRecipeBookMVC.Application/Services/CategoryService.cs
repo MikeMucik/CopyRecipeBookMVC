@@ -39,21 +39,7 @@ namespace CopyRecipeBookMVC.Application.Services
 					Value = uniVm.Id.ToString(),
 					Text = uniVm.Name
 				}).ToList();
-
-			//var categories = _categoryRepo.GetAllCategories();
-			//var categoryVms = _mapper.Map<List<CategoryForListVm>>(categories);
-			////var categoryListVm= GetListCategoryForList();
-			//var categoryListVm = new ListCategoryForListVm
-			//{
-			//	Categories = categoryVms
-			//};
-			//return categoryListVm.Categories.Select(cat => new SelectListItem
-			//{
-			//	Value = cat.Id.ToString(),
-			//	Text = cat.Name,
-			//}).ToList();
 		}
-
 		public int GetCategoryIdByName(string name)
 		{
 			int id = _categoryRepo.GetIdByName(name);

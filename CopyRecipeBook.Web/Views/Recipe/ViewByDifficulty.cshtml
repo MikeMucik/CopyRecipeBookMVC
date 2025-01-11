@@ -12,8 +12,9 @@
 
 <form asp-action="ViewByDifficulty" asp-controller="Recipe" method="post" id="difficultyrecipes">
 	<div class="row-md6">		
+		<label for="difficultyId">Wybierz trudność:</label>
 		<select asp-for="DifficultyId" asp-items="ViewBag.Difficulties">
-			<option value="" Wybierz trudność></option>
+			<option value=" Wybierz trudność"></option>
 		</select>
 		<input type="submit" value=" Wyszukaj " />
 	</div>

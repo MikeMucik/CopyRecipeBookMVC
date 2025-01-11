@@ -11,11 +11,7 @@ namespace CopyRecipeBookMVC.Domain.Interfaces
 	{
 		int AddIngredient (Ingredient ingredient);		
 		IQueryable<Ingredient> GetAllIngredients ();
-		Ingredient GetIngredientById (int id);
-		//int AddUnit (Unit unit);
-		//IQueryable<Unit> GetAllUnits ();
-		//Unit GetUnitById (int id);       
-		Ingredient ExistingIngredient(string name);
-		//Unit ExistingUnit(string name);
+		Ingredient GetIngredientById (int id);		     
+		Ingredient ExistingIngredient(string name);		
     }
 }

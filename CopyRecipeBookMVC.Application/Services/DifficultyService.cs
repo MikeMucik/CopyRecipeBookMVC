@@ -20,9 +20,6 @@ namespace CopyRecipeBookMVC.Application.Services
 			_difficultyRepo = difficultyRepo;
 			_mapper = mapper;
         }
-
-		
-
 		public ListDifficultyForListVm GetListDifficultyForList()
 		{
 			var difficulties = _difficultyRepo.GetAllDifficulties();

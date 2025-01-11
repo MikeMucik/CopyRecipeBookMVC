@@ -11,7 +11,8 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 		public List<RecipeListForVm> RecipesByIngredients { get; set; }
 		public int CurrentPage { get; set; }
 		public int PageSize { get; set; }
-		public List<int> IngredientIds { get; set; }
+		public List<int>? IngredientIds { get; set; }
+		public List<string>? IngredientNames { get; set; }
 		
 		public int Count { get; set; }
 	}

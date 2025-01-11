@@ -202,7 +202,7 @@ namespace CopyRecipeBookMVC.Application.Services
 				CurrentPage = pageNumber,
 				CategoryId = categoryId,
 				CategoryName = categoryName,
-				Count = recipes.Count()
+				Count = recipes.Count
 			};
 			return recipeList;
 		}
@@ -224,8 +224,8 @@ namespace CopyRecipeBookMVC.Application.Services
 				RecipesByDifficulty = recipesToShow,
 				PageSize = pageSize,
 				CurrentPage = pageNumber,
-				DifficultyId = (int)difficultyId,
-
+				DifficultyId = difficultyId,
+				DifficultyName = difficultyName,
 				Count = recipes.Count
 			};
 			return recipeList;
@@ -237,7 +237,7 @@ namespace CopyRecipeBookMVC.Application.Services
 			{
 				return new NewRecipeVm();
 			}
-			return _mapper.Map<NewRecipeVm>(recipe);			
+			return _mapper.Map<NewRecipeVm>(recipe);
 		}
 		public void UpdateRecipe(NewRecipeVm recipe)
 		{
@@ -246,7 +246,7 @@ namespace CopyRecipeBookMVC.Application.Services
 			{
 				throw new KeyNotFoundException($"Przepis o Id '{recipe.Id}' nie istnieje.");
 			}
-				if (recipe == null)
+			if (recipe == null)
 			{
 				throw new ArgumentNullException(nameof(recipe), "Nieprawidłowe dane");
 			}
@@ -313,7 +313,7 @@ namespace CopyRecipeBookMVC.Application.Services
 		public ListRecipesByIngredientsVm GetRecipesByIngredients(int pageSize, int pageNumber,
 			List<int>? ingredientIds, List<string>? ingredientsName)
 		{
-			if ((ingredientIds == null || ingredientIds.Count ==0) && (ingredientsName == null || ingredientsName.Count == 0))
+			if ((ingredientIds == null || ingredientIds.Count == 0) && (ingredientsName == null || ingredientsName.Count == 0))
 			{
 				throw new ArgumentNullException("Liczba składników nie może być pusta.");
 			}
@@ -331,36 +331,112 @@ namespace CopyRecipeBookMVC.Application.Services
 				PageSize = pageSize,
 				CurrentPage = pageNumber,
 				IngredientIds = ingredientIds,
+				IngredientNames = ingredientsName,
 				Count = recipes.Count
 			};
 			return recipeList;
 		}
-
 		public ListRecipesByTimeVm GetRecipesByTime(int pageSize, int pageNumber, int? timeId, int? timeAmount, string? timeUnit)
 		{
-            if (timeId == 0 && (string.IsNullOrEmpty(timeUnit)||timeAmount ==0))
-            {
-                throw new ArgumentException("Wpisz/wybierz czas przygotowania potrawy.");
-            }
-            var recipes = _recipeRepo.GetRecipesByTime(timeId, timeAmount, timeUnit)
-                .OrderBy(r => r.Name)
-                .ProjectTo<RecipeListForVm>(_mapper.ConfigurationProvider)
-                .ToList();
-            var recipesToShow = recipes
-                .Skip(pageSize * (pageNumber - 1))
-                .Take(pageSize)
-                .ToList();
-            var recipeList = new ListRecipesByTimeVm()
-            {
-                RecipesByTime = recipesToShow,
-                PageSize = pageSize,
-                CurrentPage = pageNumber,
+			if (timeId == 0 && (string.IsNullOrEmpty(timeUnit) || timeAmount == 0))
+			{
+				throw new ArgumentException("Wpisz/wybierz czas przygotowania potrawy.");
+			}
+			var recipes = _recipeRepo.GetRecipesByTime(timeId, timeAmount, timeUnit)
+				.OrderBy(r => r.Name)
+				.ProjectTo<RecipeListForVm>(_mapper.ConfigurationProvider)
+				.ToList();
+			var recipesToShow = recipes
+				.Skip(pageSize * (pageNumber - 1))
+				.Take(pageSize)
+				.ToList();
+			var recipeList = new ListRecipesByTimeVm()
+			{
+				RecipesByTime = recipesToShow,
+				PageSize = pageSize,
+				CurrentPage = pageNumber,
 				TimeId = timeId,
 				TimeAmount = timeAmount,
-				TimeUnit = timeUnit,                
-                Count = recipes.Count()
-            };
-            return recipeList;
-        }
+				TimeUnit = timeUnit,
+				Count = recipes.Count()
+			};
+			return recipeList;
+		}		
+		public ListRecipesByDetailsVm GetRecipesByDetails(int pageSize, int pageNumber,
+			int? categoryId, string? categoryName,
+			int? difficultyId, string difficultyName,
+			int? timeId, int? timeAmount, string? timeUnit,
+			List<int>? ingredientIds, List<string>? ingredientsName)
+		{			
+			var recipesByCategory = _recipeRepo.GetRecipesByCategory(categoryId, categoryName)				
+				.ToList();
+			var recipesByDifficulty = _recipeRepo.GetRecipesByDifficulty(difficultyId, difficultyName)				
+				.ToList();
+			var recipesByTime = _recipeRepo.GetRecipesByTime(timeId, timeAmount, timeUnit)				
+				.ToList();
+			var recipesByIngredient = _recipeRepo.GetRecipesByIngredients(ingredientIds, ingredientsName)
+				.ToList();
+
+			var filteredRecipes = CombineFilters(
+				recipesByCategory,
+				recipesByDifficulty,
+				recipesByTime,
+				recipesByIngredient);
+			var filteredRecipesMapped = _mapper.Map<List<RecipeListForVm>>(filteredRecipes);
+			var recipes = filteredRecipesMapped
+					.OrderBy(r => r.Name)
+					.ToList();
+			var recipesToShow = recipes
+				.Skip(pageSize * (pageNumber - 1))
+				.Take(pageSize)
+				.ToList();
+			var recipeList = new ListRecipesByDetailsVm()
+			{
+				RecipesByDetails = recipesToShow,
+				PageSize = pageSize,
+				CurrentPage = pageNumber,
+				CategoryId = categoryId,
+				CategoryName = categoryName,
+				DifficultyId = difficultyId,
+				DifficultyName = difficultyName,
+				TimeId = timeId,
+				TimeAmount = timeAmount,
+				TimeUnit = timeUnit,
+				IngredientIds = ingredientIds,
+				IngredientNames = ingredientsName,
+				Count = recipes.Count
+			};
+			return recipeList;
+		}
+		private List<Recipe>CombineFilters(
+			List<Recipe>? recipesByCategory,
+			List<Recipe>? recipesByDifficulty,
+			List<Recipe>? recipesByTime,
+			List<Recipe>? recipesByIngredient)
+		{
+			var result = _recipeRepo.GetAllRecipes()				
+				.ToList();
+			if (recipesByCategory != null && recipesByCategory.Count != 0)
+			{
+				result = result.Intersect(recipesByCategory).ToList();
+			}
+			if (recipesByDifficulty != null && recipesByDifficulty.Count !=0)
+			{
+				result = result.Intersect(recipesByDifficulty).ToList();
+			}
+			if (recipesByTime != null && recipesByTime.Count != 0)
+			{
+				result = result.Intersect(recipesByTime).ToList();
+			}
+			if (recipesByIngredient != null)
+			{
+				result = result.Intersect(recipesByIngredient).ToList();
+			}
+			if (!result.Any())
+			{
+				return new List<Recipe>();
+			}
+			return result;
+		}
 	}
 }

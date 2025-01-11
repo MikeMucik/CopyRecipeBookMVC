@@ -33,7 +33,6 @@ namespace CopyRecipeBookApi.Controllers
 			}
 			return respone;
 		}
-
 		private string GenerateJsonWebToken(UserModel loginModel)
 		{
 			var securitykey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
@@ -41,7 +40,6 @@ namespace CopyRecipeBookApi.Controllers
 			var token = new JwtSecurityToken(_config["Jwt:Issuer"], _config["Jwt:Issuer"], null, expires: DateTime.Now.AddMinutes(120), signingCredentials: credential);
 			return new JwtSecurityTokenHandler().WriteToken(token);						
 		}
-
 		private bool AuthenticateUser(UserModel loginModel)
 		{
 			var result = _signInManager.PasswordSignInAsync(loginModel.Email, loginModel.Password, true, lockoutOnFailure: false).Result;

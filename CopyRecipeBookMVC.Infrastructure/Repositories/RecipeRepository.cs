@@ -100,7 +100,7 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
         {
             var result = _context.Recipes
                 .Include(r => r.Difficulty)
-                .AsQueryable(); ;
+                .AsQueryable(); 
             if (difficultyId.HasValue && difficultyId < 0)
             {
                 result = result.Where(r => r.DifficultyId == difficultyId);
@@ -162,6 +162,6 @@ namespace CopyRecipeBookMVC.Infrastructure.Repositories
         public bool RecipeExist(int id)
         {
             return _context.Recipes.Any(r => r.Id == id);
-        }
-    }
+        }		
+	}
 }

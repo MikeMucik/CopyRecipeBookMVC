@@ -1,55 +1,71 @@
-﻿@model CopyRecipeBookMVC.Application.ViewModels.Recipe.ListRecipesByIngredientsVm
+﻿@model CopyRecipeBookMVC.Application.ViewModels.Recipe.ListRecipesByDetailsVm
 
 @{
-	ViewData["Title"] = "ViewByIngredient";
+	ViewData["Title"] = "ViewByDetails";
 }
 
-<h1>Wybór przepisu po składniku</h1>
+<h1>Wybór przepisu po szczegółach</h1>
 
 <p>
 	<a asp-action="AddRecipe">Stwórz nowy przepis</a>
 </p>
 
-<form asp-action="ViewRecipesByIngredients" asp-controller="Recipe" method="post" id="ingredientsRecipes">
+<form asp-action="ViewByDetails" asp-controller="Recipe" method="post" id="detailsRecipes">
+	@**<input type="hidden" name="IngredientIds" value="0" />*@
 	<div class="row-md6">
+		<label for="categoryId">Wybierz kategorię:</label>
+		<select asp-for="CategoryId" asp-items="ViewBag.Categories">
+			<option value="0">Wszystkie</option>
+		</select>
+		<label for="difficultyId">Wybierz trudność:</label>
+		<select asp-for="DifficultyId" asp-items="ViewBag.Difficulties">
+			<option value="0">Wszystkie</option>
+		</select>
+		<label for="timeId">Wybierz czas:</label>
+		<select asp-for="TimeId" asp-items="ViewBag.Times">
+			<option value="0">Wszystkie</option>
+		</select>
 		<div id="ingredients-select-container" style="display: flex; flex-direction: row; gap:10px">
-			<div class="ingredient-select" >
-				@* style="display: flex ; flex-direction: column; align-items: flex-start; gap: 5px;" *@
+			@if (Model.IngredientIds == null || !Model.IngredientIds.Any())
+			{
+				<input type="hidden" name="IngredientIds" value="0" />
+			}
+			<div class="ingredient-select">				
 				<select asp-for="IngredientIds[0]" asp-items="ViewBag.Ingredients" class="custom-select" size="5">
-					<option value="">Wybierz składnik:</option>
+					<option value="0">Wybierz składnik:</option>
 				</select>
-				<button type="button" class="delete-ingredient-btn btn-dark" >Usuń składnik</button>
-				@* style="margin-top: 3px; margin-bottom: 3px;" *@
+				@*<button type="button" class="delete-ingredient-btn btn-dark">Usuń składnik</button>*@
 			</div>
-		</div>		
+		</div>
 		<button type="button" onclick="addIngredientSelect()">Dodaj kolejny składnik</button>
 		<input type="submit" value=" Wyszukaj " />
 	</div>
 
 	<div class="row">
 		<table class="table">
-			<thead>
-				<tr>
+			<thead>				
+				<tr>					
 					<th>
-						@Html.DisplayNameFor(model => model.RecipesByIngredients[0].Id)
+						@Html.DisplayNameFor(model => model.RecipesByDetails.First().Id)
 					</th>
 					<th>
-						@Html.DisplayNameFor(model => model.RecipesByIngredients.First().Name)
+						@Html.DisplayNameFor(model => model.RecipesByDetails.First().Name)
 					</th>
 					<th>
-						@Html.DisplayNameFor(model => model.RecipesByIngredients.First().Category)
+						@Html.DisplayNameFor(model => model.RecipesByDetails.First().Category)
 					</th>
 					<th>
-						@Html.DisplayNameFor(model => model.RecipesByIngredients.First().Difficulty)
+						@Html.DisplayNameFor(model => model.RecipesByDetails.First().Difficulty)
 					</th>
 					<th>
-						@Html.DisplayNameFor(model => model.RecipesByIngredients.First().Time)
+						@Html.DisplayNameFor(model => model.RecipesByDetails.First().Time)
 					</th>
-					<th></th>
-				</tr>
+					<th></th>					
+				</tr>				
 			</thead>
 			<tbody>
-				@foreach (var item in Model.RecipesByIngredients)
+				
+				@foreach (var item in Model.RecipesByDetails)
 				{
 					<tr>
 						<td>
@@ -79,8 +95,10 @@
 							}
 						</td>
 					</tr>
-				}
-			</tbody>
+				
+				<input type="hidden" name="pageSize" value="12" />
+				}		
+			</tbody>			
 		</table>
 	</div>
 	<div class="row-md4">
@@ -116,22 +134,21 @@ window.location.href='@Url.Action("Index","Home")'" class="btn btn-primary"
 	<script type="text/javascript">
 		function PagerClick(index) {
 			document.getElementById("pageNumber").value = index;
-			document.getElementById("ingredientsRecipes").submit();
+			document.getElementById("detailsRecipes").submit();
 		}
-
 		function addIngredientSelect() {
 			const container = document.getElementById('ingredients-select-container');
 			const newSelect = document.createElement('div');
-			 newSelect.classList.add('ingredient-select');			
+			newSelect.classList.add('ingredient-select');
 			const selectIndex = container.children.length;
-		
+
 			newSelect.innerHTML = `<select name="IngredientIds[${selectIndex}]" class="custom-select" size="5" >
-						${Array.from(document.querySelector('[name="IngredientIds[0]"]').options)
+								${Array.from(document.querySelector('[name="IngredientIds[0]"]').options)
 					.slice(1) // Pomijamy pierwszą opcję "Wybierz składnik"
 					.map(option => `<option value="${option.value}">${option.text}</option>`)
 					.join('')}
-						 </select>
-					   <button type="button" class="delete-ingredient-btn btn-dark" >Usuń składnik</button>`;
+								 </select>
+							   <button type="button" class="delete-ingredient-btn btn-dark" >Usuń składnik</button>`;
 
 			container.appendChild(newSelect);
 		}
@@ -142,14 +159,14 @@ window.location.href='@Url.Action("Index","Home")'" class="btn btn-primary"
 
 			selectedIngredients.slice(1).forEach((id, index) => {
 				const newSelect = document.createElement('div');
-				 newSelect.classList.add('ingredient-select');				
+				newSelect.classList.add('ingredient-select');
 				newSelect.innerHTML = `<select name="IngredientIds[${index + 1}]" class="custom-select" size="5" >
-							${Array.from(document.querySelector('[name="IngredientIds[0]"]').options)
+									${Array.from(document.querySelector('[name="IngredientIds[0]"]').options)
 						.slice(1) // Pomijamy pierwszą opcję "Wybierz składnik"
 						.map(option => `<option value="${option.value}">${option.text}</option>`)
 						.join('')}
-							 </select>
-							<button type="button" class="delete-ingredient-btn btn-dark" >Usuń składnik</button>`;
+									 </select>
+									<button type="button" class="delete-ingredient-btn btn-dark" >Usuń składnik</button>`;
 
 				container.appendChild(newSelect);
 				newSelect.querySelector('select').value = id;  // Ustawienie wybranego składnika
@@ -165,6 +182,6 @@ window.location.href='@Url.Action("Index","Home")'" class="btn btn-primary"
 				$(this).attr('name', `IngredientIds[${index}]`);
 			});
 		});
-	
+
 	</script>
 }

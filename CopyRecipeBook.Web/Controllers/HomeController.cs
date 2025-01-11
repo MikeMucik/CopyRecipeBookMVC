@@ -11,32 +11,26 @@ namespace CopyRecipeBook.Web.Controllers
 	public class HomeController : Controller
 	{
 		private readonly ILogger<HomeController> _logger;
-		private readonly UserManager<IdentityUser> _userManager;
-       // private UserManager<ManageUsersVm>? userManager;
-
+		private readonly UserManager<IdentityUser> _userManager;    
         public HomeController(ILogger<HomeController> logger,
 			UserManager<IdentityUser> userManager)
 		{
 			_logger = logger;
 			_userManager = userManager;
 		}
-
 		public IActionResult Index()
 		{
 			return View();
 		}
-
 		public IActionResult Privacy()
 		{
 			return View();
 		}
-
 		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 		public IActionResult Error()
 		{
 			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-		}
-		
+		}		
 		[HttpGet]
        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ManageUsers()
@@ -68,17 +62,13 @@ namespace CopyRecipeBook.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ManageUsers(ListManageUsersVm model)
         {
-
             foreach (var userVm in model.ListUsers)
             {
                 var user = await _userManager.FindByIdAsync(userVm.UserId);
                 if (user != null)
-                {
-                   
+                {                   
                     var currentRoles = await _userManager.GetRolesAsync(user);
-                    await _userManager.RemoveFromRolesAsync(user, currentRoles);
-
-                    
+                    await _userManager.RemoveFromRolesAsync(user, currentRoles);                    
                     if (userVm.IsAdmin)
                     {
                         await _userManager.AddToRoleAsync(user, "Admin");

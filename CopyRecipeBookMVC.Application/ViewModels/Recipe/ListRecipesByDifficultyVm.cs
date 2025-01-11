@@ -11,7 +11,8 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 		public List<RecipeListForVm> RecipesByDifficulty {  get; set; }
 		public int CurrentPage { get; set; }
 		public int PageSize { get; set; }
-		public int DifficultyId { get; set; } 
+		public int? DifficultyId { get; set; } 
+		public string? DifficultyName { get; set; } 
 		public int Count { get; set; }
 	}
 }

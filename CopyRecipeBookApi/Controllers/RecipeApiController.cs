@@ -68,6 +68,31 @@ namespace CopyRecipeBookApi.Controllers
 
 		}
 
+		[HttpGet("FindByDetails")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		public ActionResult<ListRecipeForListVm> GetByDetails(int pageSize = 12, int pageNumber = 1,
+			int categoryId = 0, string categoryName = "",
+			int difficultyId = 0, string difficultyName = "",
+			int timeId = 0, int timeAmount = 0, string timeUnit = "",
+			[FromQuery] List<int>? ints = null,
+			[FromQuery] List<string>? strings = null)
+		{
+			try
+			{
+				var model = _recipeService.GetRecipesByDetails(pageSize, pageNumber,
+					categoryId, categoryName,
+					difficultyId, difficultyName,
+					timeId , timeAmount , timeUnit,
+					ints, strings);
+				return Ok(model);
+			}
+			catch (ArgumentException ex)
+			{
+				return BadRequest(new { message = ex.Message });
+			}
+
+		}
 		[HttpGet("Difficulty")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -76,7 +101,6 @@ namespace CopyRecipeBookApi.Controllers
 			var model = _recipeService.GetRecipesByDifficulty(pageSize, pageNumber, difficultyId, difficultyName);
 			return Ok(model);
 		}
-
         [HttpGet("Time")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -85,7 +109,6 @@ namespace CopyRecipeBookApi.Controllers
             var model = _recipeService.GetRecipesByTime(pageSize, pageNumber, timeId, timeAmount, timeUnit);
             return Ok(model);
         }
-
         [HttpGet("Ingredients")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -100,7 +123,6 @@ namespace CopyRecipeBookApi.Controllers
 			var model = _recipeService.GetRecipesByIngredients(pageSize, pageNumber, ints, strings);
 			return Ok(model);
 		}
-
 		// GET api/<RecipeApiController>/5
 		[HttpGet("{id}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
@@ -114,7 +136,6 @@ namespace CopyRecipeBookApi.Controllers
 			}
 			return Ok(model);
 		}
-
 		// POST api/<RecipeApiController>
 		[HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -160,7 +181,6 @@ namespace CopyRecipeBookApi.Controllers
 			}
 			return StatusCode(200);
 		}
-
 		// DELETE api/<RecipeApiController>/5
 		[HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]

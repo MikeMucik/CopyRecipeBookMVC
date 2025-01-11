@@ -35,12 +35,10 @@ namespace CopyRecipeBookMVC.Application.Services
 
 			return id;
 		}
-
 		//public Time GetTime(int id)
 		//{
 		//	throw new NotImplementedException();
 		//}
-
 		public ListTimeForListVm GetListTimeForList()
 		{
 			var times = _timeRepo.GetAllTimes();

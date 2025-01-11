@@ -20,14 +20,12 @@ namespace CopyRecipeBookMVC.Application.ViewModels.Recipe
 		public string Category { get; set; }
 		[DisplayName("Czas przygotowania dania")]
 		public string Time { get; set; }
-
 		public void Mapping(Profile profile)
 		{
 			profile.CreateMap<Domain.Model.Recipe, RecipeListForVm>()
 				.ForMember(n => n.Category, opt => opt.MapFrom(s => s.Category.Name))
 				.ForMember(n => n.Difficulty, opt => opt.MapFrom(s => s.Difficulty.Name))
 				.ForMember(n => n.Time, opt => opt.MapFrom(s => s.Time.Amount + " " + s.Time.Unit));
-
 		}
 	}
 }

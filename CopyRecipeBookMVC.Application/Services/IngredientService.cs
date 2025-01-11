@@ -28,7 +28,6 @@ namespace CopyRecipeBookMVC.Application.Services
 			var id = _ingredientRepo.AddIngredient(ingredientNew);
 			return id;
 		}
-
 		public List<SelectListItem> GetIngredientSelectList()
 		{
 			var ingredientListVm = GetListIngredientForList();

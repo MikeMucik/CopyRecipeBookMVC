@@ -80,7 +80,6 @@ builder.Services.AddSwaggerGen(options =>
 	});
 });
 
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

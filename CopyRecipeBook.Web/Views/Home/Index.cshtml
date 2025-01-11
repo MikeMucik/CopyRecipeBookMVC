@@ -23,6 +23,9 @@
     <p>
         <a href="@Url.Action("ViewRecipesByIngredients", "Recipe")">Wyszukaj przepisy po składniku</a>
     </p>
+    <p>
+        <a href="@Url.Action("ViewByDetails", "Recipe")">Wyszukaj po szczegółach</a>
+    </p>
    
     @if(User.IsInRole("Admin"))
     {

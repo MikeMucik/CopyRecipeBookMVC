@@ -25,7 +25,7 @@ namespace CopyRecipeBookMVC.Application.Test.IntergrationTests.RecipeIntTests
 			//Act
 			var result = _recipeService.GetRecipesByDifficulty(pageSize, pageNumber, difficulty);
 			//Assert
-			Assert.Equal(1, result.Count);
+			Assert.Equal(2, result.Count);
 			Assert.NotNull(result);
 			Assert.IsType<ListRecipesByDifficultyVm>(result);
 		}

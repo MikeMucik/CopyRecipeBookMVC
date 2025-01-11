@@ -1,4 +1,5 @@
-﻿using CopyRecipeBookMVC.Application.Interfaces;
+﻿using System.Drawing.Printing;
+using CopyRecipeBookMVC.Application.Interfaces;
 using CopyRecipeBookMVC.Application.ViewModels.Recipe;
 using CopyRecipeBookMVC.Application.ViewModels.RecipeIngredient;
 using Microsoft.AspNetCore.Authorization;
@@ -161,6 +162,43 @@ namespace CopyRecipeBook.Web.Controllers
 			model.IngredientIds = ingredientIds;
 			FillViewBags();
 			return View(model);
+		}
+		[HttpGet]
+		[Authorize]
+		public IActionResult ViewByDetails(int pageSize = 12, int pageNumber = 1,
+			int categoryId = 0, int difficultyId = 0, int timeId = 0, List<int> ingredientIds = null)
+		{
+			FillViewBags();
+			var model = _recipeService.GetRecipesByDetails(pageSize, pageNumber,
+				categoryId, null,
+				difficultyId, null,
+				timeId, null, null,
+				null, null
+				);
+			return View(model);
+		}
+		[HttpPost]
+		[AutoValidateAntiforgeryToken]
+		public IActionResult ViewByDetails(int pageSize, int? pageNumber,
+			int categoryId,	int difficultyId, int timeId, List<int> ingredientIds)
+		{
+			if (!pageNumber.HasValue)
+			{
+				pageNumber = 1;
+			}			
+			if (ModelState.IsValid)
+			{
+				var model = _recipeService.GetRecipesByDetails(pageSize, pageNumber.Value,
+					categoryId, null,
+					difficultyId, null,
+					timeId, null, null,
+					ingredientIds, null
+					);		
+				FillViewBags();
+				return View(model);
+			}			
+			FillViewBags();
+			return View(new ListRecipesByDetailsVm());
 		}
 		[HttpGet]
 		[Authorize(Roles = "Admin, SuperUser, User")]

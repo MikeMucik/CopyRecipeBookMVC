@@ -52,7 +52,6 @@ builder.Services.AddTransient<IValidator<IngredientForNewRecipeVm>, IngredientFo
 
 builder.Logging.AddFile("Logs/myLog-{Date}.txt");
 
-
 var app = builder.Build();
 
 var defaultCulture = new CultureInfo("en-US");

@@ -19,6 +19,6 @@ namespace CopyRecipeBookMVC.Domain.Interfaces
 		IQueryable<Recipe> GetRecipesByDifficulty(int? difficultyId, string? difficultyName);
 		IQueryable<Recipe> GetRecipesByIngredients(List<int>? ingredientsId, List<string>? ingredientsName);
 		IQueryable<Recipe> GetRecipesByTime(int? timeId, int? timeAmount, string? timeUnit);		
-		bool RecipeExist (int id);
+		bool RecipeExist (int id);		
 	}
 }

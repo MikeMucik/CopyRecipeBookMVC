@@ -12,8 +12,7 @@ namespace CopyRecipeBookMVC.Application.Interfaces
 {
 	public interface ITimeService
 	{
-		int AddTime (NewRecipeVm time);
-		//Time GetTime (int id);
+		int AddTime (NewRecipeVm time);		
 		ListTimeForListVm GetListTimeForList ();
 		List<SelectListItem> GetTimeSelectItem();
 
